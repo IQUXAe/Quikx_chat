@@ -1,7 +1,7 @@
 name: simplemessenger
 title: Simple Messenger
 base: core24
-version: 2.1.0
+version: 0.2.3
 license: AGPL-3.0
 summary: Simple and secure messaging app
 description: |
