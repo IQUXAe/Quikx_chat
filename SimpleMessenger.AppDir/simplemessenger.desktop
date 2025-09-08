@@ -1,0 +1,6 @@
+[Desktop Entry]
+Type=Application
+Name=Simple Messenger
+Exec=simple_messenger
+Icon=simplemessenger
+Categories=Network;InstantMessaging;

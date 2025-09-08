@@ -1,0 +1,31 @@
+Simple Messenger is an open source, secure Matrix messenger app for Android, iOS, Linux, macOS and Windows.
+
+Open Source
+Open source development where everyone can contribute.
+
+Secure
+End-to-end encryption by default.
+
+Simple
+Clean design and intuitive interface.
+
+One-to-one and group chats
+Unlimited groups and direct chats.
+
+Easy
+Simple Messenger is made as simple to use as possible.
+
+Free
+Free to use for everyone without ads.
+
+Decentralized
+Choose your own server or host your own.
+
+Compatible
+Compatible with Element, Nheko, NeoChat and all Matrix messengers.
+
+
+Simple Messenger - Privacy-focused messaging
+
+A secure, decentralized messaging app that puts your privacy first.
+No tracking, no ads, just simple and secure communication.

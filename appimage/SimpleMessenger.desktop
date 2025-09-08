@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Simple Messenger
+Comment=Simple and secure messaging app
+Exec=AppRun
+Icon=simplemessenger
+Terminal=false
+Categories=Network;Chat;InstantMessaging;X-Matrix;
