@@ -44,11 +44,13 @@ class EnhancedVoipPlugin with WidgetsBindingObserver implements WebRTCDelegate {
 
   Future<void> _initializeAudio() async {
     try {
-      _audioPlayer = AudioPlayer();
-      
-      if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
-        _audioSession = await AudioSession.instance;
-        await _audioSession!.configure(const AudioSessionConfiguration.speech());
+      if (!kIsWeb) {
+        _audioPlayer = AudioPlayer();
+        
+        if (Platform.isAndroid || Platform.isIOS) {
+          _audioSession = await AudioSession.instance;
+          await _audioSession!.configure(const AudioSessionConfiguration.speech());
+        }
       }
     } catch (e) {
       Logs().e('Failed to initialize audio: $e');
@@ -134,25 +136,22 @@ class EnhancedVoipPlugin with WidgetsBindingObserver implements WebRTCDelegate {
 
   @override
   Future<void> playRingtone() async {
-    if (background) return;
+    if (background || kIsWeb) return;
     
     try {
-      // Use just_audio for all platforms
       await _playRingtoneWithAudio();
     } catch (e) {
       Logs().e('Failed to play ringtone: $e');
-      // Fallback to system beep
-      // Fallback sound
     }
   }
 
   Future<void> _playRingtoneWithAudio() async {
+    if (kIsWeb || _audioPlayer == null) return;
+    
     try {
-      if (_audioPlayer != null) {
-        await _audioPlayer!.setAsset('assets/sounds/phone.ogg');
-        await _audioPlayer!.setLoopMode(LoopMode.all);
-        await _audioPlayer!.play();
-      }
+      await _audioPlayer!.setAsset('assets/sounds/phone.ogg');
+      await _audioPlayer!.setLoopMode(LoopMode.all);
+      await _audioPlayer!.play();
     } catch (e) {
       Logs().e('Ringtone playback failed: $e');
     }
@@ -160,8 +159,10 @@ class EnhancedVoipPlugin with WidgetsBindingObserver implements WebRTCDelegate {
 
   @override
   Future<void> stopRingtone() async {
+    if (kIsWeb || _audioPlayer == null) return;
+    
     try {
-      await _audioPlayer?.stop();
+      await _audioPlayer!.stop();
     } catch (e) {
       Logs().e('Failed to stop ringtone: $e');
     }
@@ -321,8 +322,14 @@ class EnhancedVoipPlugin with WidgetsBindingObserver implements WebRTCDelegate {
   }
 
   void dispose() {
-    _audioPlayer?.dispose();
-    _audioSession?.setActive(false);
-    WidgetsBinding.instance.removeObserver(this);
+    try {
+      if (!kIsWeb) {
+        _audioPlayer?.dispose();
+        _audioSession?.setActive(false);
+      }
+      WidgetsBinding.instance.removeObserver(this);
+    } catch (e) {
+      Logs().e('Error during VoIP plugin dispose: $e');
+    }
   }
 }

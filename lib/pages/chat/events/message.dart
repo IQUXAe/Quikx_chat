@@ -589,34 +589,24 @@ class Message extends StatelessWidget {
                                                             // Compact time display in bubble
                                                             if (!noBubble)
                                                               Padding(
-                                                                padding: EdgeInsets.only(
+                                                                padding: const EdgeInsets.only(
                                                                   bottom: 6.0,
-                                                                  left: ownMessage ? 10.0 : 10.0,
-                                                                  right: ownMessage ? 6.0 : 10.0,
+                                                                  left: 10.0,
+                                                                  right: 10.0,
                                                                 ),
                                                                 child: Row(
-                                                                  mainAxisAlignment: ownMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
+                                                                  mainAxisAlignment: MainAxisAlignment.end,
                                                                   mainAxisSize: MainAxisSize.min,
                                                                   children: [
-                                                                    if (!ownMessage) ...[
-                                                                      Text(
-                                                                        displayEvent.originServerTs.localizedTimeShort(context),
-                                                                        style: TextStyle(
-                                                                          fontSize: 11,
-                                                                          color: textColor.withAlpha(180),
-                                                                          fontWeight: FontWeight.w500,
-                                                                        ),
+                                                                    Text(
+                                                                      displayEvent.originServerTs.localizedTimeShort(context),
+                                                                      style: TextStyle(
+                                                                        fontSize: 11,
+                                                                        color: textColor.withAlpha(180),
+                                                                        fontWeight: FontWeight.w500,
                                                                       ),
-                                                                    ],
+                                                                    ),
                                                                     if (ownMessage) ...[
-                                                                      Text(
-                                                                        displayEvent.originServerTs.localizedTimeShort(context),
-                                                                        style: TextStyle(
-                                                                          fontSize: 11,
-                                                                          color: textColor.withAlpha(180),
-                                                                          fontWeight: FontWeight.w500,
-                                                                        ),
-                                                                      ),
                                                                       const SizedBox(width: 4),
                                                                       Icon(
                                                                         displayEvent.status.isError

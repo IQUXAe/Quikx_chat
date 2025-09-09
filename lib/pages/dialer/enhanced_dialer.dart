@@ -155,7 +155,9 @@ class EnhancedCallingState extends State<EnhancedCalling>
 
   void _cleanUp() {
     _callTimer?.cancel();
-    _pulseController.dispose();
+    if (!_pulseController.isDisposed) {
+      _pulseController.dispose();
+    }
     Timer(
       const Duration(seconds: 2),
       () => widget.onClear?.call(),
@@ -170,10 +172,16 @@ class EnhancedCallingState extends State<EnhancedCalling>
   @override
   void dispose() {
     _callTimer?.cancel();
-    _pulseController.dispose();
-    _audioSession?.setActive(false);
+    if (!_pulseController.isDisposed) {
+      _pulseController.dispose();
+    }
+    try {
+      _audioSession?.setActive(false);
+    } catch (_) {}
     super.dispose();
-    call.cleanUp.call();
+    try {
+      call.cleanUp.call();
+    } catch (_) {}
   }
 
   void _resizeLocalVideo(Orientation orientation) {
@@ -253,9 +261,11 @@ class EnhancedCallingState extends State<EnhancedCalling>
   }
 
   void _toggleSpeaker() async {
-    setState(() {
-      _speakerOn = !_speakerOn;
-    });
+    if (mounted) {
+      setState(() {
+        _speakerOn = !_speakerOn;
+      });
+    }
     
     try {
       if (!kIsWeb && (Platform.isAndroid || Platform.isIOS)) {
@@ -265,7 +275,9 @@ class EnhancedCallingState extends State<EnhancedCalling>
       Logs().e('Failed to toggle speaker: $e');
     }
     
-    HapticFeedback.lightImpact();
+    if (mounted) {
+      HapticFeedback.lightImpact();
+    }
   }
 
   void _screenSharing() async {

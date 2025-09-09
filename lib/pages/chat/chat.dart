@@ -120,11 +120,15 @@ class ChatController extends State<ChatPageWithRoom>
   }
   
   void clearTranslations() {
-    messageTranslations.clear();
-    if (mounted) {
-      setState(() {});
+    try {
+      messageTranslations.clear();
+      if (mounted) {
+        setState(() {});
+      }
+      notifyTranslationChanged();
+    } catch (e) {
+      // Ignore setState errors during disposal
     }
-    notifyTranslationChanged();
   }
 
   final AutoScrollController scrollController = AutoScrollController();
