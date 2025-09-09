@@ -137,14 +137,14 @@ class ChatAppBarTitle extends StatelessWidget {
           if (room.isDirectChat && Matrix.of(context).voipPlugin != null) ...[
             const SizedBox(width: 8),
             IconButton(
-              icon: const Icon(Icons.call, size: 20),
-              onPressed: () => _makeCall(context, CallType.kVoice),
-              tooltip: 'Голосовой звонок',
-            ),
-            IconButton(
               icon: const Icon(Icons.videocam, size: 20),
               onPressed: () => _makeCall(context, CallType.kVideo),
-              tooltip: 'Видео звонок',
+              tooltip: '🚧 Видео звонок (БЕТА)',
+            ),
+            IconButton(
+              icon: const Icon(Icons.call, size: 20),
+              onPressed: () => _makeCall(context, CallType.kVoice),
+              tooltip: '🚧 Голосовой звонок (БЕТА)',
             ),
           ],
         ],
@@ -153,16 +153,85 @@ class ChatAppBarTitle extends StatelessWidget {
   }
 
   void _makeCall(BuildContext context, CallType type) async {
+    final client = Matrix.of(context).client;
+    
+    // Show beta warning
+    final shouldProceed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('🚧 Звонки (БЕТА)'),
+        content: const Text(
+          'Функция звонков находится в стадии бета-тестирования. '
+          'Возможны ошибки и нестабильная работа. Продолжить?'
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Отмена'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Продолжить'),
+          ),
+        ],
+      ),
+    );
+    
+    if (shouldProceed != true) return;
+    
     try {
+      // Force flush any pending events first
+      if (controller.room.sendingQueue.isNotEmpty) {
+        Logs().i('Waiting for ${controller.room.sendingQueue.length} pending events to be sent');
+        
+        // Wait up to 10 seconds for queue to clear
+        var waitTime = 0;
+        while (controller.room.sendingQueue.isNotEmpty && waitTime < 10000) {
+          await Future.delayed(const Duration(milliseconds: 100));
+          waitTime += 100;
+        }
+        
+        if (controller.room.sendingQueue.isNotEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Не удалось отправить все сообщения. Попробуйте позже.'),
+              backgroundColor: Colors.orange,
+            ),
+          );
+          return;
+        }
+      }
+      
+      // Wait for sync to complete
+      var syncAttempts = 0;
+      while (client.onSyncStatus.value?.status == SyncStatus.processing && syncAttempts < 20) {
+        await Future.delayed(const Duration(milliseconds: 100));
+        syncAttempts++;
+      }
+      
+      // Additional delay to ensure everything is settled
+      await Future.delayed(const Duration(milliseconds: 500));
+      
       await Matrix.of(context).voipPlugin!.voip.inviteToCall(
         controller.room,
         type,
       );
     } catch (e) {
+      String errorMessage = 'Звонок не удался (БЕТА)';
+      
+      if (e.toString().contains('Event blocked by other events')) {
+        errorMessage = 'Система занята отправкой данных. Подождите 5-10 секунд и попробуйте снова.';
+      } else if (e.toString().contains('timeout') || e.toString().contains('Timeout')) {
+        errorMessage = 'Таймаут соединения. Проверьте интернет.';
+      } else if (e.toString().contains('Failed to send invite')) {
+        errorMessage = 'Не удалось отправить приглашение. Попробуйте перезапустить приложение.';
+      }
+      
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Ошибка при инициации звонка: $e'),
+          content: Text(errorMessage),
           backgroundColor: Colors.red,
+          duration: const Duration(seconds: 7),
         ),
       );
     }

@@ -1400,15 +1400,60 @@ class ChatController extends State<ChatPageWithRoom>
     }
     
     try {
-      // Only audio calls - video calls removed
+      final client = Matrix.of(context).client;
+      
+      // Force flush any pending events first
+      if (room.sendingQueue.isNotEmpty) {
+        Logs().i('Waiting for ${room.sendingQueue.length} pending events to be sent');
+        
+        // Wait up to 10 seconds for queue to clear
+        var waitTime = 0;
+        while (room.sendingQueue.isNotEmpty && waitTime < 10000) {
+          await Future.delayed(const Duration(milliseconds: 100));
+          waitTime += 100;
+        }
+        
+        if (room.sendingQueue.isNotEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Не удалось отправить все сообщения. Попробуйте позже.'),
+              backgroundColor: Colors.orange,
+            ),
+          );
+          return;
+        }
+      }
+      
+      // Wait for sync to complete
+      var syncAttempts = 0;
+      while (client.onSyncStatus.value?.status == SyncStatus.processing && syncAttempts < 20) {
+        await Future.delayed(const Duration(milliseconds: 100));
+        syncAttempts++;
+      }
+      
+      // Additional delay to ensure everything is settled
+      await Future.delayed(const Duration(milliseconds: 500));
+      
       const callType = CallType.kVoice;
       await voipPlugin.voip.inviteToCall(room, callType);
+      
     } catch (e, s) {
       Logs().e('Failed to start call', e, s);
+      
+      String errorMessage = 'Звонок не удался (БЕТА)';
+      if (e.toString().contains('Event blocked by other events')) {
+        errorMessage = 'Система занята отправкой данных. Подождите 5-10 секунд и попробуйте снова.';
+      } else if (e.toString().contains('timeout') || e.toString().contains('Timeout')) {
+        errorMessage = 'Таймаут соединения. Проверьте интернет.';
+      } else if (e.toString().contains('Failed to send invite')) {
+        errorMessage = 'Не удалось отправить приглашение. Попробуйте перезапустить приложение.';
+      }
+      
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('${L10n.of(context).oopsSomethingWentWrong}: ${e.toString()}'),
+          content: Text(errorMessage),
           backgroundColor: Colors.red,
+          duration: const Duration(seconds: 7),
         ),
       );
     }

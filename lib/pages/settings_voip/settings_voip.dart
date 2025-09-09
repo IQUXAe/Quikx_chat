@@ -95,7 +95,9 @@ class _SettingsVoipViewState extends State<SettingsVoipView> {
   Widget build(BuildContext context) {
     if (_loading) {
       return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
+        body: SafeArea(
+          child: Center(child: CircularProgressIndicator()),
+        ),
       );
     }
 
@@ -103,83 +105,102 @@ class _SettingsVoipViewState extends State<SettingsVoipView> {
       appBar: AppBar(
         title: const Text('Настройки VoIP'),
       ),
-      body: MaxWidthBody(
-        child: ListView(
-          children: [
-            SwitchListTile.adaptive(
-              title: const Text('Включить VoIP звонки'),
-              subtitle: const Text('Голосовые и видео звонки через Matrix'),
-              value: _voipEnabled,
-              onChanged: _toggleVoip,
+      body: SafeArea(
+        child: MaxWidthBody(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Card(
+                  child: SwitchListTile.adaptive(
+                    title: const Text('🚧 Включить VoIP звонки (БЕТА)'),
+                    subtitle: const Text('Голосовые и видео звонки через Matrix. Функция в стадии бета-тестирования'),
+                    value: _voipEnabled,
+                    onChanged: _toggleVoip,
+                  ),
+                ),
+                
+                const SizedBox(height: 16),
+                
+                if (_voipEnabled) ...[
+                  Card(
+                    child: Column(
+                      children: [
+                        const ListTile(
+                          title: Text('Разрешения'),
+                          subtitle: Text('Необходимые разрешения для работы звонков'),
+                          leading: Icon(Icons.security),
+                        ),
+                        const Divider(height: 1),
+                        
+                        ListTile(
+                          leading: Icon(
+                            Icons.mic,
+                            color: _microphonePermission ? Colors.green : Colors.red,
+                          ),
+                          title: const Text('Микрофон'),
+                          subtitle: Text(
+                            _microphonePermission ? 'Разрешено' : 'Не разрешено',
+                          ),
+                          trailing: _microphonePermission 
+                            ? const Icon(Icons.check, color: Colors.green)
+                            : ElevatedButton(
+                                onPressed: _requestPermissions,
+                                child: const Text('Разрешить'),
+                              ),
+                        ),
+                        
+                        ListTile(
+                          leading: Icon(
+                            Icons.videocam,
+                            color: _cameraPermission ? Colors.green : Colors.red,
+                          ),
+                          title: const Text('Камера'),
+                          subtitle: Text(
+                            _cameraPermission ? 'Разрешено' : 'Не разрешено',
+                          ),
+                          trailing: _cameraPermission 
+                            ? const Icon(Icons.check, color: Colors.green)
+                            : ElevatedButton(
+                                onPressed: _requestPermissions,
+                                child: const Text('Разрешить'),
+                              ),
+                        ),
+                        
+                        ListTile(
+                          leading: Icon(
+                            Icons.phone,
+                            color: _phonePermission ? Colors.green : Colors.red,
+                          ),
+                          title: const Text('Телефон'),
+                          subtitle: Text(
+                            _phonePermission ? 'Разрешено' : 'Не разрешено',
+                          ),
+                          trailing: _phonePermission 
+                            ? const Icon(Icons.check, color: Colors.green)
+                            : ElevatedButton(
+                                onPressed: _requestPermissions,
+                                child: const Text('Разрешить'),
+                              ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  
+                  const SizedBox(height: 16),
+                  
+                  const Card(
+                    child: ListTile(
+                      title: Text('Инструкции'),
+                      subtitle: Text('Нажмите на иконку телефона в чате для звонка'),
+                      leading: Icon(Icons.info_outline),
+                    ),
+                  ),
+                ],
+              ],
             ),
-            const Divider(),
-            
-            if (_voipEnabled) ...[
-              const ListTile(
-                title: Text('Разрешения'),
-                subtitle: Text('Необходимые разрешения для работы звонков'),
-              ),
-              
-              ListTile(
-                leading: Icon(
-                  Icons.mic,
-                  color: _microphonePermission ? Colors.green : Colors.red,
-                ),
-                title: const Text('Микрофон'),
-                subtitle: Text(
-                  _microphonePermission ? 'Разрешено' : 'Не разрешено',
-                ),
-                trailing: _microphonePermission 
-                  ? const Icon(Icons.check, color: Colors.green)
-                  : TextButton(
-                      onPressed: _requestPermissions,
-                      child: const Text('Разрешить'),
-                    ),
-              ),
-              
-              ListTile(
-                leading: Icon(
-                  Icons.videocam,
-                  color: _cameraPermission ? Colors.green : Colors.red,
-                ),
-                title: const Text('Камера'),
-                subtitle: Text(
-                  _cameraPermission ? 'Разрешено' : 'Не разрешено',
-                ),
-                trailing: _cameraPermission 
-                  ? const Icon(Icons.check, color: Colors.green)
-                  : TextButton(
-                      onPressed: _requestPermissions,
-                      child: const Text('Разрешить'),
-                    ),
-              ),
-              
-              ListTile(
-                leading: Icon(
-                  Icons.phone,
-                  color: _phonePermission ? Colors.green : Colors.red,
-                ),
-                title: const Text('Телефон'),
-                subtitle: Text(
-                  _phonePermission ? 'Разрешено' : 'Не разрешено',
-                ),
-                trailing: _phonePermission 
-                  ? const Icon(Icons.check, color: Colors.green)
-                  : TextButton(
-                      onPressed: _requestPermissions,
-                      child: const Text('Разрешить'),
-                    ),
-              ),
-              
-              const Divider(),
-              
-              const ListTile(
-                title: Text('Инструкции'),
-                subtitle: Text('Нажмите на иконку телефона в чате для звонка'),
-                leading: Icon(Icons.info_outline),
-              ),
-            ],
-          ],
+          ),
         ),
       ),
     );
