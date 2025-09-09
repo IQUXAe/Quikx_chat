@@ -595,18 +595,28 @@ class Message extends StatelessWidget {
                                                                   right: 10.0,
                                                                 ),
                                                                 child: Row(
-                                                                  mainAxisAlignment: MainAxisAlignment.end,
+                                                                  mainAxisAlignment: ownMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
                                                                   mainAxisSize: MainAxisSize.min,
                                                                   children: [
-                                                                    Text(
-                                                                      displayEvent.originServerTs.localizedTimeShort(context),
-                                                                      style: TextStyle(
-                                                                        fontSize: 11,
-                                                                        color: textColor.withAlpha(180),
-                                                                        fontWeight: FontWeight.w500,
+                                                                    if (!ownMessage) ...[
+                                                                      Text(
+                                                                        displayEvent.originServerTs.localizedTimeShort(context),
+                                                                        style: TextStyle(
+                                                                          fontSize: 11,
+                                                                          color: textColor.withAlpha(180),
+                                                                          fontWeight: FontWeight.w500,
+                                                                        ),
                                                                       ),
-                                                                    ),
+                                                                    ],
                                                                     if (ownMessage) ...[
+                                                                      Text(
+                                                                        displayEvent.originServerTs.localizedTimeShort(context),
+                                                                        style: TextStyle(
+                                                                          fontSize: 11,
+                                                                          color: textColor.withAlpha(180),
+                                                                          fontWeight: FontWeight.w500,
+                                                                        ),
+                                                                      ),
                                                                       const SizedBox(width: 4),
                                                                       Icon(
                                                                         displayEvent.status.isError
