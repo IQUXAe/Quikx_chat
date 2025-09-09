@@ -8,15 +8,17 @@ import 'package:matrix/matrix.dart';
 import 'package:simplemessenger/l10n/l10n.dart';
 import 'package:simplemessenger/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
 import 'package:simplemessenger/widgets/future_loading_dialog.dart';
+import 'package:simplemessenger/utils/message_translator.dart';
 import 'matrix.dart';
 
-enum ChatPopupMenuActions { details, mute, unmute, leave, search }
+enum ChatPopupMenuActions { details, mute, unmute, leave, search, translateToggle, translateAll, clearTranslations }
 
 class ChatSettingsPopupMenu extends StatefulWidget {
   final Room room;
   final bool displayChatDetails;
+  final dynamic translateController;
 
-  const ChatSettingsPopupMenu(this.room, this.displayChatDetails, {super.key});
+  const ChatSettingsPopupMenu(this.room, this.displayChatDetails, {super.key, this.translateController});
 
   @override
   ChatSettingsPopupMenuState createState() => ChatSettingsPopupMenuState();
@@ -95,6 +97,15 @@ class ChatSettingsPopupMenuState extends State<ChatSettingsPopupMenu> {
               case ChatPopupMenuActions.search:
                 context.go('/rooms/${widget.room.id}/search');
                 break;
+              case ChatPopupMenuActions.translateToggle:
+                widget.translateController?.translateAllVisibleMessages();
+                break;
+              case ChatPopupMenuActions.translateAll:
+                widget.translateController?.translateAllMessagesInChat();
+                break;
+              case ChatPopupMenuActions.clearTranslations:
+                widget.translateController?.clearTranslations();
+                break;
             }
           },
           itemBuilder: (BuildContext context) => [
@@ -141,6 +152,8 @@ class ChatSettingsPopupMenuState extends State<ChatSettingsPopupMenu> {
                 ],
               ),
             ),
+            // Translation menu items
+            if (widget.translateController != null) ..._buildTranslationMenuItems(),
             PopupMenuItem<ChatPopupMenuActions>(
               value: ChatPopupMenuActions.leave,
               child: Row(
@@ -163,5 +176,49 @@ class ChatSettingsPopupMenuState extends State<ChatSettingsPopupMenu> {
     } else {
       context.go('/rooms/${widget.room.id}/details');
     }
+  }
+
+  List<PopupMenuEntry<ChatPopupMenuActions>> _buildTranslationMenuItems() {
+    return [
+      PopupMenuItem<ChatPopupMenuActions>(
+        value: ChatPopupMenuActions.translateToggle,
+        child: Row(
+          children: [
+            Icon(
+              widget.translateController?.autoTranslateEnabled == true
+                  ? Icons.toggle_on
+                  : Icons.toggle_off,
+              color: widget.translateController?.autoTranslateEnabled == true
+                  ? Colors.blue
+                  : null,
+            ),
+            const SizedBox(width: 12),
+            Text(widget.translateController?.autoTranslateEnabled == true
+                ? L10n.of(context).disableAutoTranslate
+                : L10n.of(context).enableAutoTranslate),
+          ],
+        ),
+      ),
+      PopupMenuItem<ChatPopupMenuActions>(
+        value: ChatPopupMenuActions.translateAll,
+        child: Row(
+          children: [
+            const Icon(Icons.translate_outlined),
+            const SizedBox(width: 12),
+            Text(L10n.of(context).translateAllMessages),
+          ],
+        ),
+      ),
+      PopupMenuItem<ChatPopupMenuActions>(
+        value: ChatPopupMenuActions.clearTranslations,
+        child: Row(
+          children: [
+            const Icon(Icons.clear_all),
+            const SizedBox(width: 12),
+            Text(L10n.of(context).clearTranslations),
+          ],
+        ),
+      ),
+    ];
   }
 }

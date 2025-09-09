@@ -11,6 +11,7 @@ import 'package:simplemessenger/utils/matrix_sdk_extensions/matrix_locals.dart';
 import 'package:simplemessenger/utils/sync_status_localization.dart';
 import 'package:simplemessenger/widgets/avatar.dart';
 import 'package:simplemessenger/widgets/presence_builder.dart';
+import 'package:simplemessenger/widgets/matrix.dart';
 
 class ChatAppBarTitle extends StatelessWidget {
   final ChatController controller;
@@ -132,8 +133,38 @@ class ChatAppBarTitle extends StatelessWidget {
               ],
             ),
           ),
+          // VoIP call buttons
+          if (room.isDirectChat && Matrix.of(context).voipPlugin != null) ...[
+            const SizedBox(width: 8),
+            IconButton(
+              icon: const Icon(Icons.call, size: 20),
+              onPressed: () => _makeCall(context, CallType.kVoice),
+              tooltip: 'Голосовой звонок',
+            ),
+            IconButton(
+              icon: const Icon(Icons.videocam, size: 20),
+              onPressed: () => _makeCall(context, CallType.kVideo),
+              tooltip: 'Видео звонок',
+            ),
+          ],
         ],
       ),
     );
+  }
+
+  void _makeCall(BuildContext context, CallType type) async {
+    try {
+      await Matrix.of(context).voipPlugin!.voip.inviteToCall(
+        controller.room,
+        type,
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Ошибка при инициации звонка: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 }

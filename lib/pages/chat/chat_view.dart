@@ -23,7 +23,7 @@ import 'package:simplemessenger/widgets/matrix.dart';
 import 'package:simplemessenger/widgets/mxc_image.dart';
 import 'package:simplemessenger/widgets/unread_rooms_badge.dart';
 import '../../utils/stream_extension.dart';
-import '../../utils/message_translator.dart';
+
 import 'chat_emoji_picker.dart';
 import 'chat_input_row.dart';
 
@@ -119,84 +119,8 @@ class ChatView extends StatelessWidget {
       ];
     } else if (!controller.room.isArchived) {
       return [
-        // Voice calls temporarily disabled
-        // if (controller.room.isDirectChat &&
-        //     controller.room.membership == Membership.join &&
-        //     Matrix.of(context).voipPlugin != null)
-        //   IconButton(
-        //     onPressed: controller.onPhoneButtonTap,
-        //     icon: const Icon(Icons.phone, color: Colors.green),
-        //     tooltip: L10n.of(context).voiceCall,
-        //   ),
-        FutureBuilder<bool>(
-          future: MessageTranslator.isEnabled,
-          builder: (context, snapshot) {
-            if (snapshot.data != true) return const SizedBox.shrink();
-            return PopupMenuButton<String>(
-              icon: Icon(
-                Icons.translate,
-                color: controller.autoTranslateEnabled ? Colors.blue : null,
-              ),
-              tooltip: 'Перевод сообщений',
-              onSelected: (value) {
-                switch (value) {
-                  case 'toggle_auto':
-                    controller.translateAllVisibleMessages();
-                    break;
-                  case 'translate_all':
-                    controller.translateAllMessagesInChat();
-                    break;
-                  case 'clear_translations':
-                    controller.clearTranslations();
-                    break;
-                }
-              },
-              itemBuilder: (context) => [
-                PopupMenuItem(
-                  value: 'toggle_auto',
-                  child: Row(
-                    children: [
-                      Icon(
-                        controller.autoTranslateEnabled 
-                            ? Icons.toggle_on 
-                            : Icons.toggle_off,
-                        color: controller.autoTranslateEnabled 
-                            ? Colors.blue 
-                            : null,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(controller.autoTranslateEnabled 
-                          ? 'Отключить автоперевод' 
-                          : 'Включить автоперевод'),
-                    ],
-                  ),
-                ),
-                const PopupMenuItem(
-                  value: 'translate_all',
-                  child: Row(
-                    children: [
-                      Icon(Icons.translate_outlined),
-                      SizedBox(width: 8),
-                      Text('Перевести все сообщения'),
-                    ],
-                  ),
-                ),
-                const PopupMenuItem(
-                  value: 'clear_translations',
-                  child: Row(
-                    children: [
-                      Icon(Icons.clear_all),
-                      SizedBox(width: 8),
-                      Text('Очистить переводы'),
-                    ],
-                  ),
-                ),
-              ],
-            );
-          },
-        ),
         EncryptionButton(controller.room),
-        ChatSettingsPopupMenu(controller.room, true),
+        ChatSettingsPopupMenu(controller.room, true, translateController: controller),
       ];
     }
     return [];

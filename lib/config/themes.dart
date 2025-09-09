@@ -34,10 +34,10 @@ abstract class SimpleMessengerThemes {
     );
   }
 
-  static const Duration animationDuration = Duration(milliseconds: 300);
-  static const Duration fastAnimationDuration = Duration(milliseconds: 200);
-  static const Duration slowAnimationDuration = Duration(milliseconds: 400);
-  static const Curve animationCurve = Curves.easeOutCubic;
+  static const Duration animationDuration = Duration(milliseconds: 250);
+  static const Duration fastAnimationDuration = Duration(milliseconds: 150);
+  static const Duration slowAnimationDuration = Duration(milliseconds: 350);
+  static const Curve animationCurve = Curves.easeInOutCubic;
   static const Curve fastAnimationCurve = Curves.easeOutQuart;
   static const Curve bounceAnimationCurve = Curves.elasticOut;
   static const Curve slideAnimationCurve = Curves.easeInOutCubic;
@@ -53,7 +53,7 @@ abstract class SimpleMessengerThemes {
     );
     final isColumnMode = SimpleMessengerThemes.isColumnMode(context);
     return ThemeData(
-      visualDensity: VisualDensity.standard,
+      visualDensity: VisualDensity.comfortable,
       useMaterial3: true,
       brightness: brightness,
       colorScheme: colorScheme,
@@ -131,6 +131,9 @@ abstract class SimpleMessengerThemes {
           elevation: 0,
           padding: const EdgeInsets.all(16),
           textStyle: const TextStyle(fontSize: 16),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppConfig.borderRadius / 2),
+          ),
         ),
       ),
     );

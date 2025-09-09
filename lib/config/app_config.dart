@@ -15,12 +15,12 @@ abstract class AppConfig {
   static double fontSizeFactor = 1;
   static const Color chatColor = primaryColor;
   static Color? colorSchemeSeed = primaryColor;
-  static const double messageFontSize = 16.0;
+  static const double messageFontSize = 15.0;
   static const bool allowOtherHomeservers = true;
   static const bool enableRegistration = true;
-  static const Color primaryColor = Color(0xFF6366F1);
-  static const Color primaryColorLight = Color(0xFFC7D2FE);
-  static const Color secondaryColor = Color(0xFF10B981);
+  static const Color primaryColor = Color(0xFF3B82F6);
+  static const Color primaryColorLight = Color(0xFFDBEAFE);
+  static const Color secondaryColor = Color(0xFF06B6D4);
   static String _privacyUrl = 'https://github.com/iquxae/simple-messenger/blob/main/PRIVACY.md';
 
   static const Set<String> defaultReactions = {'👍', '❤️', '😂', '😮', '😢'};
@@ -64,7 +64,7 @@ abstract class AppConfig {
   static const String schemePrefix = 'matrix:';
   static const String pushNotificationsChannelId = 'simplemessenger_push';
   static const String pushNotificationsAppId = 'com.iquxae.privacymessenger';
-  static const double borderRadius = 18.0;
+  static const double borderRadius = 16.0;
   static const double columnWidth = 360.0;
   
 

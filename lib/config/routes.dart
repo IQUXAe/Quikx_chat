@@ -32,6 +32,7 @@ import 'package:simplemessenger/pages/settings_notifications/settings_notificati
 import 'package:simplemessenger/pages/settings_password/settings_password.dart';
 import 'package:simplemessenger/pages/settings_security/settings_security.dart';
 import 'package:simplemessenger/pages/settings_style/settings_style.dart';
+import 'package:simplemessenger/pages/settings_voip/settings_voip.dart';
 
 import 'package:simplemessenger/widgets/config_viewer.dart';
 import 'package:simplemessenger/widgets/layouts/empty_page.dart';
@@ -287,6 +288,15 @@ abstract class AppRoutes {
                     context,
                     state,
                     const SettingsHomeserver(),
+                  ),
+                  redirect: loggedOutRedirect,
+                ),
+                GoRoute(
+                  path: 'voip',
+                  pageBuilder: (context, state) => defaultPageBuilder(
+                    context,
+                    state,
+                    const SettingsVoipView(),
                   ),
                   redirect: loggedOutRedirect,
                 ),

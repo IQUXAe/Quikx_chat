@@ -25,7 +25,7 @@ import 'package:simplemessenger/utils/init_with_restore.dart';
 import 'package:simplemessenger/utils/matrix_sdk_extensions/matrix_file_extension.dart';
 import 'package:simplemessenger/utils/platform_infos.dart';
 import 'package:simplemessenger/utils/uia_request_manager.dart';
-import 'package:simplemessenger/utils/voip_plugin.dart';
+import 'package:simplemessenger/utils/voip/enhanced_voip_plugin.dart';
 import 'package:simplemessenger/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
 import 'package:simplemessenger/widgets/simple_messenger_app.dart';
 import 'package:simplemessenger/widgets/future_loading_dialog.dart';
@@ -82,7 +82,7 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
     return widget.clients[_activeClient];
   }
 
-  VoipPlugin? voipPlugin;
+  EnhancedVoipPlugin? voipPlugin;
 
   bool get isMultiAccount => widget.clients.length > 1;
 
@@ -466,10 +466,12 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
 
   void createVoipPlugin() async {
     if (store.getBool(SettingKeys.experimentalVoip) == false) {
+      voipPlugin?.dispose();
       voipPlugin = null;
       return;
     }
-    voipPlugin = VoipPlugin(this);
+    voipPlugin?.dispose();
+    voipPlugin = EnhancedVoipPlugin(this);
   }
 
   @override
@@ -550,7 +552,7 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
     onBlurSub?.cancel();
 
     linuxNotifications?.close();
-
+    voipPlugin?.dispose();
 
     super.dispose();
   }

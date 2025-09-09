@@ -95,18 +95,39 @@ class ChatEventList extends StatelessWidget {
                   child: CircularProgressIndicator.adaptive(strokeWidth: 2),
                 );
               }
-              if (timeline.canRequestHistory) {
-                return Builder(
-                  builder: (context) {
-                    WidgetsBinding.instance
-                        .addPostFrameCallback(controller.requestHistory);
-                    return Center(
-                      child: IconButton(
-                        onPressed: controller.requestHistory,
-                        icon: const Icon(Icons.refresh_outlined),
+              // Fix infinite scroll bug - check if we can actually request more history
+              if (timeline.canRequestHistory && timeline.events.isNotEmpty) {
+                // Check if we have reached the beginning by comparing event count
+                final hasReachedStart = timeline.events.length < 50 && !timeline.canRequestHistory;
+                if (!hasReachedStart) {
+                  return Builder(
+                    builder: (context) {
+                      WidgetsBinding.instance
+                          .addPostFrameCallback(controller.requestHistory);
+                      return Center(
+                        child: IconButton(
+                          onPressed: controller.requestHistory,
+                          icon: const Icon(Icons.refresh_outlined),
+                        ),
+                      );
+                    },
+                  );
+                }
+              }
+              // Show "Beginning of conversation" indicator when no more history
+              if (!timeline.canRequestHistory && events.isNotEmpty) {
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      'Начало беседы',
+                      style: TextStyle(
+                        color: theme.colorScheme.onSurface.withAlpha(128),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
                       ),
-                    );
-                  },
+                    ),
+                  ),
                 );
               }
               return const SizedBox.shrink();

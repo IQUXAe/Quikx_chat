@@ -114,11 +114,16 @@ class ChatController extends State<ChatPageWithRoom>
   bool get autoTranslateEnabled => _autoTranslateEnabled;
   
   void notifyTranslationChanged() {
-    setState(() {});
+    if (mounted) {
+      setState(() {});
+    }
   }
   
   void clearTranslations() {
     messageTranslations.clear();
+    if (mounted) {
+      setState(() {});
+    }
     notifyTranslationChanged();
   }
 
@@ -352,8 +357,10 @@ class ChatController extends State<ChatPageWithRoom>
       onFocusSub = html.window.onFocus.listen((_) => setReadMarker());
     }
     
-    // Clear translation cache on startup
-    MessageTranslator.clearCache();
+    // Clear translation cache on startup (only once)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      MessageTranslator.clearCache();
+    });
     
 
   }
@@ -428,22 +435,25 @@ class ChatController extends State<ChatPageWithRoom>
 
   void updateView() {
     if (!mounted) return;
-    setReadMarker();
-    setState(() {});
     
-    // Auto-translate messages if enabled
-    if (_autoTranslateEnabled) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
+    // Проверяем, что виджет все еще активен перед setState
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      setReadMarker();
+      setState(() {});
+      
+      // Auto-translate messages if enabled
+      if (_autoTranslateEnabled) {
         _autoTranslateAllMessages();
-      });
-    }
+      }
+    });
   }
   
   void _autoTranslateAllMessages() async {
-    if (!await MessageTranslator.isEnabled || !_autoTranslateEnabled) return;
+    if (!mounted || !await MessageTranslator.isEnabled || !_autoTranslateEnabled) return;
     
     final timeline = this.timeline;
-    if (timeline == null) return;
+    if (timeline == null || !mounted) return;
     
     // Получаем ВСЕ текстовые сообщения в чате
     final allTextEvents = timeline.events
@@ -454,7 +464,7 @@ class ChatController extends State<ChatPageWithRoom>
             !messageTranslations.containsKey(event.eventId))
         .toList();
     
-    if (allTextEvents.isEmpty) return;
+    if (allTextEvents.isEmpty || !mounted) return;
     
     // Переводим все сообщения пакетами для оптимизации
     _translateMessagesBatch(allTextEvents);
@@ -478,11 +488,17 @@ class ChatController extends State<ChatPageWithRoom>
   }
   
   Future<void> _translateSingleMessage(Event event) async {
+    if (!mounted) return;
+    
     try {
       final translation = await MessageTranslator.translateMessage(event.body, 'auto');
       if (translation != null && mounted) {
         messageTranslations[event.eventId] = translation;
-        notifyTranslationChanged();
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) {
+            notifyTranslationChanged();
+          }
+        });
       }
     } catch (e) {
       Logs().w('Failed to translate message ${event.eventId}: $e');
@@ -586,6 +602,9 @@ class ChatController extends State<ChatPageWithRoom>
     timeline = null;
     inputFocus.removeListener(_inputFocusListener);
     onFocusSub?.cancel();
+    typingCoolDown?.cancel();
+    typingTimeout?.cancel();
+    _storeInputTimeoutTimer?.cancel();
     // Clear translations and auto-translate flag on chat disposal
     _autoTranslateEnabled = false;
     clearTranslations();
@@ -1411,12 +1430,18 @@ class ChatController extends State<ChatPageWithRoom>
   }
   
   void translateAllVisibleMessages() async {
+    if (!mounted) return;
+    
     _autoTranslateEnabled = !_autoTranslateEnabled;
     setState(() {});
     
     if (_autoTranslateEnabled) {
       // Немедленно переводим ВСЕ сообщения в чате
-      _autoTranslateAllMessages();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _autoTranslateAllMessages();
+        }
+      });
     } else {
       // Очищаем переводы при отключении
       clearTranslations();

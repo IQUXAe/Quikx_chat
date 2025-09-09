@@ -30,14 +30,33 @@ class ParticipantListItem extends StatelessWidget {
             ? L10n.of(context).moderator
             : '';
 
+    // Ensure displayname is not empty
+    final displayName = user.calcDisplayname();
+    final userName = user.id;
+
     return ListTile(
       onTap: () => showMemberActionsPopupMenu(context: context, user: user),
       title: Row(
         children: <Widget>[
           Expanded(
-            child: Text(
-              user.calcDisplayname(),
-              overflow: TextOverflow.ellipsis,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  displayName.isNotEmpty ? displayName : userName,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontWeight: FontWeight.w500),
+                ),
+                if (displayName.isNotEmpty && displayName != userName)
+                  Text(
+                    userName,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurface.withAlpha(160),
+                    ),
+                  ),
+              ],
             ),
           ),
           if (permissionBatch.isNotEmpty)
@@ -63,37 +82,30 @@ class ParticipantListItem extends StatelessWidget {
                 ),
               ),
             ),
-          membershipBatch == null
-              ? const SizedBox.shrink()
-              : Container(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                  margin: const EdgeInsets.symmetric(horizontal: 8),
-                  decoration: BoxDecoration(
-                    color: theme.colorScheme.secondaryContainer,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Center(
-                    child: Text(
-                      membershipBatch,
-                      style: theme.textTheme.labelSmall?.copyWith(
-                        color: theme.colorScheme.onSecondaryContainer,
-                      ),
-                    ),
+          if (membershipBatch != null)
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+              margin: const EdgeInsets.symmetric(horizontal: 8),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.secondaryContainer,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Center(
+                child: Text(
+                  membershipBatch,
+                  style: theme.textTheme.labelSmall?.copyWith(
+                    color: theme.colorScheme.onSecondaryContainer,
                   ),
                 ),
+              ),
+            ),
         ],
-      ),
-      subtitle: Text(
-        user.id,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
       ),
       leading: Opacity(
         opacity: user.membership == Membership.join ? 1 : 0.5,
         child: Avatar(
           mxContent: user.avatarUrl,
-          name: user.calcDisplayname(),
+          name: displayName.isNotEmpty ? displayName : userName,
           presenceUserId: user.stateKey,
         ),
       ),

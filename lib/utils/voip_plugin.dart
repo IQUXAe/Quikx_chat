@@ -8,7 +8,7 @@ import 'package:flutter_webrtc/flutter_webrtc.dart' as webrtc_impl;
 import 'package:matrix/matrix.dart';
 import 'package:webrtc_interface/webrtc_interface.dart' hide Navigator;
 
-import 'package:simplemessenger/pages/dialer/dialer.dart';
+import 'package:simplemessenger/pages/dialer/enhanced_dialer.dart';
 import 'package:simplemessenger/utils/platform_infos.dart';
 import '../../utils/voip/user_media_manager.dart';
 import '../widgets/matrix.dart';
@@ -43,7 +43,7 @@ class VoipPlugin with WidgetsBindingObserver implements WebRTCDelegate {
     showDialog(
       context: navigatorContext,
       barrierDismissible: false,
-      builder: (context) => Calling(
+      builder: (context) => EnhancedCalling(
         context: context,
         client: client,
         callId: callId,

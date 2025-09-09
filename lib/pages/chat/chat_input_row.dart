@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:animations/animations.dart';
 import 'package:matrix/matrix.dart';
 
 import 'package:simplemessenger/config/app_config.dart';
@@ -378,29 +377,54 @@ class _ChatInputRowState extends State<ChatInputRow> with TickerProviderStateMix
                           );
                         },
                       )
-                    : MessageSendAnimation(
-                        trigger: _triggerSendAnimation,
-                        child: AnimatedBuilder(
-                          animation: _buttonScaleAnimation,
-                          builder: (context, child) {
-                            return Transform.scale(
-                              scale: _buttonScaleAnimation.value,
-                              child: FloatingActionButton.small(
-                                tooltip: L10n.of(context).send,
-                                onPressed: _onSendPressed,
-                                elevation: 0,
-                                heroTag: null,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(height),
+                    : _triggerSendAnimation
+                        ? MessageSendAnimation(
+                            onAnimationComplete: () {
+                              setState(() {
+                                _triggerSendAnimation = false;
+                              });
+                            },
+                            child: AnimatedBuilder(
+                              animation: _buttonScaleAnimation,
+                              builder: (context, child) {
+                                return Transform.scale(
+                                  scale: _buttonScaleAnimation.value,
+                                  child: FloatingActionButton.small(
+                                    tooltip: L10n.of(context).send,
+                                    onPressed: _onSendPressed,
+                                    elevation: 0,
+                                    heroTag: null,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(height),
+                                    ),
+                                    backgroundColor: theme.bubbleColor,
+                                    foregroundColor: theme.onBubbleColor,
+                                    child: const Icon(Icons.send_outlined),
+                                  ),
+                                );
+                              },
+                            ),
+                          )
+                        : AnimatedBuilder(
+                            animation: _buttonScaleAnimation,
+                            builder: (context, child) {
+                              return Transform.scale(
+                                scale: _buttonScaleAnimation.value,
+                                child: FloatingActionButton.small(
+                                  tooltip: L10n.of(context).send,
+                                  onPressed: _onSendPressed,
+                                  elevation: 0,
+                                  heroTag: null,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(height),
+                                  ),
+                                  backgroundColor: theme.bubbleColor,
+                                  foregroundColor: theme.onBubbleColor,
+                                  child: const Icon(Icons.send_outlined),
                                 ),
-                                backgroundColor: theme.bubbleColor,
-                                foregroundColor: theme.onBubbleColor,
-                                child: const Icon(Icons.send_outlined),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
+                              );
+                            },
+                          ),
               ),
             ],
     );

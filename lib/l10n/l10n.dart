@@ -5228,6 +5228,30 @@ abstract class L10n {
   /// **'Translate message'**
   String get translateMessage;
 
+  /// No description provided for @enableAutoTranslate.
+  ///
+  /// In en, this message translates to:
+  /// **'Enable auto-translate'**
+  String get enableAutoTranslate;
+
+  /// No description provided for @disableAutoTranslate.
+  ///
+  /// In en, this message translates to:
+  /// **'Disable auto-translate'**
+  String get disableAutoTranslate;
+
+  /// No description provided for @translateAllMessages.
+  ///
+  /// In en, this message translates to:
+  /// **'Translate all messages'**
+  String get translateAllMessages;
+
+  /// No description provided for @clearTranslations.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear translations'**
+  String get clearTranslations;
+
   /// No description provided for @targetLanguage.
   ///
   /// In en, this message translates to:

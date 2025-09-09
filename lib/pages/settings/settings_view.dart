@@ -302,6 +302,22 @@ class SettingsView extends StatelessWidget {
                             ? theme.colorScheme.surfaceContainerHigh
                             : null,
                   ),
+                  ListTile(
+                    leading: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.deepPurple.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(Icons.call_outlined, color: Colors.deepPurple),
+                    ),
+                    title: const Text('Настройки VoIP'),
+                    onTap: () => context.go('/rooms/settings/voip'),
+                    tileColor:
+                        activeRoute.startsWith('/rooms/settings/voip')
+                            ? theme.colorScheme.surfaceContainerHigh
+                            : null,
+                  ),
 
                   Divider(color: theme.dividerColor),
                   ListTile(

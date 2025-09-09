@@ -12,6 +12,8 @@ import 'package:simplemessenger/utils/optimized_http_client.dart';
 import 'package:simplemessenger/utils/platform_infos.dart';
 import 'package:simplemessenger/utils/push_notification_manager.dart';
 import 'package:simplemessenger/utils/file_logger.dart';
+
+import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'config/setting_keys.dart';
 import 'utils/background_push.dart';
 import 'widgets/simple_messenger_app.dart';
@@ -95,6 +97,11 @@ void main() async {
   
   // Инициализируем оптимизированный HTTP клиент
   OptimizedHttpClient().initialize();
+  
+  // Инициализируем WebRTC для всех платформ
+  if (!PlatformInfos.isWeb) {
+    await WebRTC.initialize();
+  }
 
   await vod.init(wasmPath: './assets/assets/vodozemac/');
 
@@ -165,8 +172,11 @@ Future<void> startGui(List<Client> clients, SharedPreferences store) async {
     
     // Устанавливаем обработчик уведомлений
     final initialized = await PushNotificationManager.instance.localNotifications.initialize(
-      const InitializationSettings(
-        android: AndroidInitializationSettings('notifications_icon'),
+      InitializationSettings(
+        android: const AndroidInitializationSettings('notifications_icon'),
+        linux: PlatformInfos.isLinux ? const LinuxInitializationSettings(
+          defaultActionName: 'Open notification',
+        ) : null,
       ),
       onDidReceiveNotificationResponse: onNotificationResponse,
       onDidReceiveBackgroundNotificationResponse: onNotificationResponse,

@@ -3001,6 +3001,18 @@ class L10nRu extends L10n {
   String get translateMessage => 'Перевести сообщение';
 
   @override
+  String get enableAutoTranslate => 'Включить автоперевод';
+
+  @override
+  String get disableAutoTranslate => 'Отключить автоперевод';
+
+  @override
+  String get translateAllMessages => 'Перевести все сообщения';
+
+  @override
+  String get clearTranslations => 'Очистить переводы';
+
+  @override
   String get targetLanguage => 'Целевой язык';
 
   @override

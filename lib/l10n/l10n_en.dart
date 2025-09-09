@@ -2977,6 +2977,18 @@ class L10nEn extends L10n {
   String get translateMessage => 'Translate message';
 
   @override
+  String get enableAutoTranslate => 'Enable auto-translate';
+
+  @override
+  String get disableAutoTranslate => 'Disable auto-translate';
+
+  @override
+  String get translateAllMessages => 'Translate all messages';
+
+  @override
+  String get clearTranslations => 'Clear translations';
+
+  @override
   String get targetLanguage => 'Target language';
 
   @override
