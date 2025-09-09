@@ -596,7 +596,6 @@ class Message extends StatelessWidget {
                                                                 ),
                                                                 child: Row(
                                                                   mainAxisAlignment: ownMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
-                                                                  mainAxisSize: MainAxisSize.min,
                                                                   children: [
                                                                     if (!ownMessage) ...[
                                                                       Text(
