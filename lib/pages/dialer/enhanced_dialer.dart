@@ -206,13 +206,21 @@ class EnhancedCallingState extends State<EnhancedCalling>
   void _handleCallState(CallState state) {
     Logs().v('EnhancedCalling::handleCallState: ${state.toString()}');
     
-    if ({CallState.kConnected, CallState.kEnded}.contains(state)) {
-      HapticFeedback.heavyImpact();
+    try {
+      if ({CallState.kConnected, CallState.kEnded}.contains(state)) {
+        HapticFeedback.heavyImpact();
+      }
+    } catch (e) {
+      // Ignore haptic feedback errors
     }
 
-    if (state == CallState.kConnected) {
-      _pulseController.stop();
-      _pulseController.reset();
+    if (state == CallState.kConnected && !_isDisposed) {
+      try {
+        _pulseController.stop();
+        _pulseController.reset();
+      } catch (e) {
+        Logs().w('Failed to stop pulse animation: $e');
+      }
     }
 
     if (mounted) {
@@ -275,11 +283,21 @@ class EnhancedCallingState extends State<EnhancedCalling>
         await Helper.setSpeakerphoneOn(_speakerOn);
       }
     } catch (e) {
-      Logs().e('Failed to toggle speaker: $e');
+      Logs().w('Speaker toggle not supported on this platform: $e');
+      // Revert state on error
+      if (mounted) {
+        setState(() {
+          _speakerOn = !_speakerOn;
+        });
+      }
     }
     
     if (mounted) {
-      HapticFeedback.lightImpact();
+      try {
+        HapticFeedback.lightImpact();
+      } catch (e) {
+        // Ignore haptic feedback errors
+      }
     }
   }
 

@@ -257,18 +257,30 @@ class EnhancedVoipPlugin with WidgetsBindingObserver implements WebRTCDelegate {
       
       // Disable wakelock
       if (session.type == CallType.kVideo) {
-        await WakelockPlus.disable();
+        try {
+          await WakelockPlus.disable();
+        } catch (e) {
+          Logs().w('Failed to disable wakelock: $e');
+        }
       }
 
       // Platform-specific cleanup
-      if (Platform.isAndroid) {
-        FlutterForegroundTask.stopService();
-        FlutterForegroundTask.setOnLockScreenVisibility(false);
+      if (!kIsWeb && Platform.isAndroid) {
+        try {
+          FlutterForegroundTask.stopService();
+          FlutterForegroundTask.setOnLockScreenVisibility(false);
+        } catch (e) {
+          Logs().w('Failed Android cleanup: $e');
+        }
       }
       
       // Reset audio session
-      if (_audioSession != null) {
-        await _audioSession!.setActive(false);
+      if (!kIsWeb && _audioSession != null) {
+        try {
+          await _audioSession!.setActive(false);
+        } catch (e) {
+          Logs().w('Failed to deactivate audio session: $e');
+        }
       }
       
     } catch (e) {

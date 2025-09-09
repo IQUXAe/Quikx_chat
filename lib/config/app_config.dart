@@ -55,7 +55,7 @@ abstract class AppConfig {
   static bool sendPublicReadReceipts = true;
   static bool swipeRightToLeftToReply = true;
   static bool? sendOnEnter;
-  static bool showPresences = true;
+  static bool showPresences = false; // Disabled to reduce API calls
   static bool displayNavigationRail = false;
   static bool experimentalVoip = true; // Audio calls enabled by default, video calls remain experimental
   static const bool hideTypingUsernames = false;
