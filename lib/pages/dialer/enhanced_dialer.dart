@@ -67,6 +67,7 @@ class EnhancedCallingState extends State<EnhancedCalling>
   late Animation<double> _pulseAnimation;
   Timer? _callTimer;
   Duration _callDuration = Duration.zero;
+  bool _isDisposed = false;
 
   @override
   void initState() {
@@ -155,8 +156,9 @@ class EnhancedCallingState extends State<EnhancedCalling>
 
   void _cleanUp() {
     _callTimer?.cancel();
-    if (!_pulseController.isDisposed) {
+    if (!_isDisposed) {
       _pulseController.dispose();
+      _isDisposed = true;
     }
     Timer(
       const Duration(seconds: 2),
@@ -172,8 +174,9 @@ class EnhancedCallingState extends State<EnhancedCalling>
   @override
   void dispose() {
     _callTimer?.cancel();
-    if (!_pulseController.isDisposed) {
+    if (!_isDisposed) {
       _pulseController.dispose();
+      _isDisposed = true;
     }
     try {
       _audioSession?.setActive(false);
