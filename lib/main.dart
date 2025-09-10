@@ -12,6 +12,8 @@ import 'package:simplemessenger/utils/optimized_http_client.dart';
 import 'package:simplemessenger/utils/platform_infos.dart';
 import 'package:simplemessenger/utils/push_notification_manager.dart';
 import 'package:simplemessenger/utils/file_logger.dart';
+import 'package:simplemessenger/utils/memory_manager.dart';
+import 'package:simplemessenger/utils/optimized_message_translator.dart';
 
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'config/setting_keys.dart';
@@ -140,9 +142,9 @@ void main() async {
 
 /// Fetch the pincode for the applock and start the flutter engine.
 Future<void> startGui(List<Client> clients, SharedPreferences store) async {
-  // Fetch the pin for the applock if existing for mobile applications.
+  // Fetch the pin for the applock if existing for Android applications.
   String? pin;
-  if (PlatformInfos.isMobile) {
+  if (PlatformInfos.isAndroid) {
     try {
       pin =
           await const FlutterSecureStorage().read(key: SettingKeys.appLockKey);
@@ -166,6 +168,10 @@ Future<void> startGui(List<Client> clients, SharedPreferences store) async {
     }
   }
 
+  // Инициализируем менеджер памяти и оптимизированный переводчик
+  MemoryManager().initialize();
+  OptimizedMessageTranslator.initialize();
+  
   // Инициализируем менеджер push-уведомлений с глобальным обработчиком
   try {
     await PushNotificationManager.instance.initialize();

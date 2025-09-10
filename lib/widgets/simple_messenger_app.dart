@@ -8,6 +8,7 @@ import 'package:simplemessenger/config/routes.dart';
 import 'package:simplemessenger/config/themes.dart';
 import 'package:simplemessenger/l10n/l10n.dart';
 import 'package:simplemessenger/utils/optimized_http_client.dart';
+import 'package:simplemessenger/utils/memory_manager.dart';
 import 'package:simplemessenger/widgets/app_lock.dart';
 import 'package:simplemessenger/widgets/theme_builder.dart';
 import '../config/app_config.dart';
@@ -62,6 +63,7 @@ class _SimpleMessengerAppState extends State<SimpleMessengerApp> with WidgetsBin
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     OptimizedHttpClient().dispose();
+    MemoryManager().dispose();
     super.dispose();
   }
 

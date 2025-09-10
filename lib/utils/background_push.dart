@@ -147,19 +147,6 @@ class BackgroundPush {
   Future<void> cancelNotification(String roomId) async {
     Logs().v('Cancel notification for room', roomId);
     await PushNotificationManager.instance.localNotifications.cancel(roomId.hashCode);
-
-    // Workaround for app icon badge not updating
-    if (Platform.isIOS) {
-      final unreadCount = client.rooms
-          .where((room) => room.isUnreadOrInvited && room.id != roomId)
-          .length;
-      if (unreadCount == 0) {
-        FlutterNewBadger.removeBadge();
-      } else {
-        FlutterNewBadger.setBadge(unreadCount);
-      }
-      return;
-    }
   }
 
   Future<void> setupPusher({
@@ -866,29 +853,20 @@ class BackgroundPush {
     }
   }
 
+  static int _activeSyncs = 0;
+  static const int _maxConcurrentSyncs = 2;
+  
   Future<void> _performReliableSyncWithService() async {
+    if (_activeSyncs >= _maxConcurrentSyncs) {
+      await Future.delayed(const Duration(seconds: 1));
+      return;
+    }
+    
+    _activeSyncs++;
     try {
-      // Запускаем синхронизацию с повышенным приоритетом
       await _performReliableSync();
-      
-      // Дополнительная проверка состояния после синхронизации
-      await Future.delayed(const Duration(seconds: 2));
-      
-      if (client.onSyncStatus.value != SyncStatus.finished) {
-        Logs().w('[Push] Sync status not finished after completion, retrying once');
-        await _performReliableSync();
-      }
-      
-    } catch (e) {
-      Logs().e('[Push] Sync service failed: $e');
-      
-      // Последняя попытка с минимальными настройками
-      try {
-        await client.oneShotSync().timeout(const Duration(seconds: 60));
-      } catch (finalError) {
-        Logs().e('[Push] Final sync attempt failed: $finalError');
-        await _showFallbackNotification('All sync attempts failed');
-      }
+    } finally {
+      _activeSyncs--;
     }
   }
 
@@ -909,74 +887,41 @@ class BackgroundPush {
 
   Future<void> _performReliableSync() async {
     var attempts = 0;
-    const maxAttempts = 7;
+    const maxAttempts = 3; // Уменьшено для производительности
     
     while (attempts < maxAttempts) {
       try {
         if (client.onLoginStateChanged.value == LoginState.loggedIn) {
-          // Проверяем и восстанавливаем сетевое соединение
-          if (!await NetworkErrorHandler.isNetworkAvailable()) {
-            Logs().w('[Push] Network not available, waiting...');
-            await NetworkErrorHandler.waitForNetwork(timeout: const Duration(seconds: 15));
+          // Проверяем сеть только при первой попытке
+          if (attempts == 0 && !await NetworkErrorHandler.isNetworkAvailable()) {
+            await NetworkErrorHandler.waitForNetwork(timeout: const Duration(seconds: 10));
           }
           
-          // Агрессивное переподключение при ошибках
-          if (client.onSyncStatus.value == SyncStatus.error || attempts > 0) {
-            Logs().i('[Push] Connection issue detected, attempting lightweight reconnect (attempt ${attempts + 1})');
+          // Легкое переподключение только при ошибках
+          if (client.onSyncStatus.value == SyncStatus.error && attempts > 0) {
             try {
-              // Легкое переподключение без разлогина: проверяем доступность homeserver
-              await client.checkHomeserver(client.homeserver!).timeout(const Duration(seconds: 15));
-              await Future.delayed(const Duration(milliseconds: 500));
-            } catch (e) {
-              Logs().w('[Push] Lightweight reconnect failed: $e');
-            }
+              await client.checkHomeserver(client.homeserver!).timeout(const Duration(seconds: 8));
+            } catch (_) {}
           }
           
-          // Синхронизация с увеличенным таймаутом
-          await client.oneShotSync().timeout(const Duration(seconds: 45));
-          Logs().i('[Push] Sync successful on attempt ${attempts + 1}');
+          // Оптимизированная синхронизация
+          await client.oneShotSync().timeout(const Duration(seconds: 20));
           
-          // Проверяем результат синхронизации
-          await Future.delayed(const Duration(milliseconds: 500));
           if (client.onSyncStatus.value == SyncStatus.finished) {
-            Logs().i('[Push] Sync confirmed successful');
             return;
           }
         }
       } catch (e) {
         attempts++;
         
-        // Специальная обработка сетевых ошибок
-        if (NetworkErrorHandler.isNetworkError(e)) {
-          Logs().w('[Push] Network error: ${NetworkErrorHandler.getErrorDescription(e)}');
-          
-          // Агрессивное восстановление соединения
-          for (int i = 0; i < 3; i++) {
-            try {
-              await Future.delayed(Duration(seconds: 2 + i));
-              await client.checkHomeserver(client.homeserver!).timeout(const Duration(seconds: 10));
-              break;
-            } catch (reconnectError) {
-              Logs().w('[Push] Reconnect attempt ${i + 1} failed: $reconnectError');
-            }
-          }
-        }
-        
-        // Экспоненциальная задержка с джиттером
-        final baseDelay = [2, 5, 10, 20, 40, 60, 120][attempts - 1];
-        final jitter = (baseDelay * 0.1 * (DateTime.now().millisecond % 100) / 100).round();
-        final delay = Duration(seconds: baseDelay + jitter);
-        
-        Logs().w('[Push] Sync failed (attempt $attempts/$maxAttempts): $e. Retrying in ${delay.inSeconds}s');
-        
+        // Оптимизированная задержка
         if (attempts < maxAttempts) {
-          await Future.delayed(delay);
+          await Future.delayed(Duration(seconds: [1, 3, 5][attempts - 1]));
         }
       }
     }
     
-    Logs().e('[Push] All sync attempts failed after $maxAttempts tries');
-    await _showFallbackNotification('Sync failed after $maxAttempts attempts');
+    await _showFallbackNotification('Sync failed');
   }
   
 

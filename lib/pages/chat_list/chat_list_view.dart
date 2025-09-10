@@ -51,7 +51,9 @@ class ChatListView extends StatelessWidget {
               behavior: HitTestBehavior.translucent,
               child: Scaffold(
                 drawer: const AppDrawer(),
-                body: ChatListViewBody(controller),
+                body: RepaintBoundary(
+                  child: ChatListViewBody(controller),
+                ),
                 floatingActionButton: AnimatedSwitcher(
                   duration: SimpleMessengerThemes.animationDuration,
                   transitionBuilder: (child, animation) {
@@ -65,14 +67,16 @@ class ChatListView extends StatelessWidget {
                   },
                   child: !controller.isSearchMode &&
                           controller.activeSpaceId == null
-                      ? FloatingActionButton.extended(
-                          onPressed: () => context.go('/rooms/newprivatechat'),
-                          icon: const Icon(Icons.add_outlined),
-                          label: Text(
-                            L10n.of(context).chat,
-                            overflow: TextOverflow.fade,
+                      ? RepaintBoundary(
+                          child: FloatingActionButton.extended(
+                            onPressed: () => context.go('/rooms/newprivatechat'),
+                            icon: const Icon(Icons.add_outlined),
+                            label: Text(
+                              L10n.of(context).chat,
+                              overflow: TextOverflow.fade,
+                            ),
+                            heroTag: 'newChat',
                           ),
-                          heroTag: 'newChat',
                         )
                       : const SizedBox.shrink(),
                 ),

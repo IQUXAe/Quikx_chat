@@ -166,16 +166,35 @@ class ChatListController extends State<ChatList>
     }
   }
 
-  List<Room> get filteredRooms => Matrix.of(context)
-      .client
-      .rooms
-      .where(getRoomFilterByActiveFilter(activeFilter))
-      .toList();
+  List<Room>? _cachedFilteredRooms;
+  ActiveFilter? _lastFilter;
+  int? _lastRoomsHash;
+  
+  List<Room> get filteredRooms {
+    final rooms = Matrix.of(context).client.rooms;
+    final currentHash = rooms.length.hashCode ^ rooms.map((r) => r.id).join().hashCode;
+    
+    if (_cachedFilteredRooms == null || 
+        _lastFilter != activeFilter || 
+        _lastRoomsHash != currentHash) {
+      _cachedFilteredRooms = rooms
+          .where(getRoomFilterByActiveFilter(activeFilter))
+          .toList();
+      _lastFilter = activeFilter;
+      _lastRoomsHash = currentHash;
+    }
+    return _cachedFilteredRooms!;
+  }
+  
+  void _invalidateRoomsCache() {
+    _cachedFilteredRooms = null;
+  }
 
   bool isSearchMode = false;
   Future<QueryPublicRoomsResponse>? publicRoomsResponse;
   String? searchServer;
   Timer? _coolDown;
+  Timer? _searchDebouncer;
   SearchUserDirectoryResponse? userSearchResult;
   QueryPublicRoomsResponse? roomSearchResult;
 
@@ -278,9 +297,10 @@ class ChatListController extends State<ChatList>
     setState(() {
       isSearchMode = true;
     });
-    _coolDown?.cancel();
+    
+    _searchDebouncer?.cancel();
     if (globalSearch) {
-      _coolDown = Timer(const Duration(milliseconds: 500), _search);
+      _searchDebouncer = Timer(const Duration(milliseconds: 300), _search);
     }
   }
 
@@ -453,6 +473,7 @@ class ChatListController extends State<ChatList>
     _intentDataStreamSubscription?.cancel();
     _intentFileStreamSubscription?.cancel();
     _intentUriStreamSubscription?.cancel();
+    _searchDebouncer?.cancel();
     scrollController.removeListener(_onScroll);
     super.dispose();
   }
@@ -882,9 +903,12 @@ class ChatListController extends State<ChatList>
   }
 
   void setActiveFilter(ActiveFilter filter) {
-    setState(() {
-      activeFilter = filter;
-    });
+    if (activeFilter != filter) {
+      _invalidateRoomsCache();
+      setState(() {
+        activeFilter = filter;
+      });
+    }
   }
 
   void setActiveClient(Client client) {

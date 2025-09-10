@@ -385,26 +385,21 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
     _scheduleUpdateCheck();
   }
 
+  Timer? _updateCheckTimer;
+  
   void _scheduleUpdateCheck() async {
     final lastCheck = store.getString('last_update_check');
-    final lastCheckTime = store.getString('last_check_time');
     final now = DateTime.now();
     
-    // Проверяем не чаще раза в сутки и не чаще раза в час при перезапусках
+    // Проверяем не чаще раза в 3 дня (оптимизация)
     if (lastCheck == null || 
-        now.difference(DateTime.parse(lastCheck)).inDays >= 1) {
+        now.difference(DateTime.parse(lastCheck)).inDays >= 3) {
       
-      // Дополнительная проверка на частые перезапуски
-      if (lastCheckTime != null) {
-        final lastCheckDateTime = DateTime.parse(lastCheckTime);
-        if (now.difference(lastCheckDateTime).inHours < 1) {
-          return; // Пропускаем проверку
-        }
-      }
-      
-      await store.setString('last_check_time', now.toIso8601String());
-      await _checkForUpdatesBackground();
-      await store.setString('last_update_check', now.toIso8601String());
+      // Отложенная проверка через 5 минут после запуска
+      _updateCheckTimer = Timer(const Duration(minutes: 5), () async {
+        await _checkForUpdatesBackground();
+        await store.setString('last_update_check', DateTime.now().toIso8601String());
+      });
     }
   }
 
@@ -550,6 +545,7 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
     client.httpClient.close();
     onFocusSub?.cancel();
     onBlurSub?.cancel();
+    _updateCheckTimer?.cancel();
 
     linuxNotifications?.close();
     voipPlugin?.dispose();

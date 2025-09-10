@@ -45,6 +45,7 @@ import 'send_file_dialog.dart';
 import 'send_location_dialog.dart';
 import 'events/message.dart';
 import '../../utils/message_translator.dart';
+import '../../utils/optimized_message_translator.dart';
 
 class ChatPage extends StatelessWidget {
   final String roomId;
@@ -113,21 +114,37 @@ class ChatController extends State<ChatPageWithRoom>
   bool _autoTranslateEnabled = false;
   bool get autoTranslateEnabled => _autoTranslateEnabled;
   
+  Timer? _updateTimer;
+  
   void notifyTranslationChanged() {
     if (mounted) {
-      setState(() {});
+      Future.delayed(const Duration(milliseconds: 50), () {
+        if (mounted) {
+          setState(() {});
+        }
+      });
     }
   }
   
+  void _scheduleUpdate() {
+    // Полностью убираем debouncing - просто ничего не делаем
+  }
+  
+  static const int _maxTranslations = 100;
   void clearTranslations() {
     try {
       messageTranslations.clear();
-      if (mounted) {
-        setState(() {});
-      }
-      notifyTranslationChanged();
     } catch (e) {
       // Ignore setState errors during disposal
+    }
+  }
+  
+  void _cleanupTranslations() {
+    if (messageTranslations.length > _maxTranslations) {
+      final keys = messageTranslations.keys.toList();
+      for (int i = 0; i < keys.length - _maxTranslations; i++) {
+        messageTranslations.remove(keys[i]);
+      }
     }
   }
 
@@ -186,7 +203,7 @@ class ChatController extends State<ChatPageWithRoom>
 
   bool get selectMode => selectedEvents.isNotEmpty;
 
-  final int _loadHistoryCount = 100;
+  final int _loadHistoryCount = 200; // Увеличено для лучшего кэширования
 
   String pendingText = '';
 
@@ -346,8 +363,6 @@ class ChatController extends State<ChatPageWithRoom>
     scrollController.addListener(_updateScrollController);
     inputFocus.addListener(_inputFocusListener);
 
-    _loadDraft();
-    WidgetsBinding.instance.addPostFrameCallback(_shareItems);
     super.initState();
     _displayChatDetailsColumn = ValueNotifier(
       AppSettings.displayChatDetailsColumn.getItem(Matrix.of(context).store),
@@ -356,7 +371,12 @@ class ChatController extends State<ChatPageWithRoom>
     sendingClient = Matrix.of(context).client;
     readMarkerEventId = room.hasNewMessages ? room.fullyRead : '';
     WidgetsBinding.instance.addObserver(this);
-    _tryLoadTimeline();
+    
+    // Предзагрузка данных чата с задержкой
+    Future.delayed(const Duration(milliseconds: 500), () {
+      if (mounted) _preloadChatData();
+    });
+    
     if (kIsWeb) {
       onFocusSub = html.window.onFocus.listen((_) => setReadMarker());
     }
@@ -364,9 +384,72 @@ class ChatController extends State<ChatPageWithRoom>
     // Clear translation cache on startup (only once)
     WidgetsBinding.instance.addPostFrameCallback((_) {
       MessageTranslator.clearCache();
+      _loadDraft();
+      _shareItems();
     });
-    
-
+  }
+  
+  Future<void> _preloadChatData() async {
+    try {
+      _tryLoadTimeline();
+      
+      // Предзагружаем ключи шифрования для быстрой расшифровки
+      Future.delayed(const Duration(milliseconds: 100), () {
+        if (mounted && timeline != null) {
+          timeline!.requestKeys(onlineKeyBackupOnly: false);
+        }
+      });
+    } catch (e) {
+      Logs().v('Failed to preload chat data: $e');
+    }
+  }
+  
+  Future<void> _preloadParticipantAvatars() async {
+    try {
+      final participants = room.getParticipants().take(10);
+      final futures = participants.map((user) async {
+        if (user.avatarUrl != null) {
+          try {
+            await precacheImage(
+              NetworkImage(user.avatarUrl!.getThumbnail(
+                room.client,
+                width: 56,
+                height: 56,
+              ).toString()),
+              context,
+            );
+          } catch (e) {
+            // Ignore 404 and other avatar loading errors
+          }
+        }
+      });
+      await Future.wait(futures, eagerError: false);
+    } catch (e) {
+      Logs().v('Failed to preload avatars: $e');
+    }
+  }
+  
+  Future<void> _preloadRoomSettings() async {
+    try {
+      await room.postLoad();
+      
+      if (room.avatar != null) {
+        try {
+          await precacheImage(
+            NetworkImage(room.avatar!.getThumbnail(
+              room.client,
+              width: 64,
+              height: 64,
+            ).toString()),
+            context,
+          );
+        } catch (e) {
+          // Ignore 404 and other avatar loading errors
+        }
+      }
+    } catch (e) {
+      Logs().v('Failed to preload room settings: $e');
+    }
   }
 
   final Set<String> expandedEventIds = {};
@@ -392,6 +475,12 @@ class ChatController extends State<ChatPageWithRoom>
     loadTimelineFuture = _getTimeline();
     try {
       await loadTimelineFuture;
+      
+      // Агрессивно загружаем больше истории для кэширования
+      if (timeline != null && timeline!.events.length < 50) {
+        await timeline!.requestHistory(historyCount: 200);
+      }
+      
       if (initialEventId != null) scrollToEventId(initialEventId);
 
       var readMarkerEventIndex = readMarkerEventId.isEmpty
@@ -400,8 +489,6 @@ class ChatController extends State<ChatPageWithRoom>
               .filterByVisibleInGui(exceptionEventId: readMarkerEventId)
               .indexWhere((e) => e.eventId == readMarkerEventId);
 
-      // Read marker is existing but not found in first events. Try a single
-      // requestHistory call before opening timeline on event context:
       if (readMarkerEventId.isNotEmpty && readMarkerEventIndex == -1) {
         await timeline?.requestHistory(historyCount: _loadHistoryCount);
         readMarkerEventIndex = timeline!.events
@@ -417,7 +504,6 @@ class ChatController extends State<ChatPageWithRoom>
         _showScrollUpMaterialBanner(readMarkerEventId);
       }
 
-      // Mark room as read on first visit if requirements are fulfilled
       setReadMarker();
 
       if (!mounted) return;
@@ -440,17 +526,19 @@ class ChatController extends State<ChatPageWithRoom>
   void updateView() {
     if (!mounted) return;
     
-    // Проверяем, что виджет все еще активен перед setState
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      setReadMarker();
-      setState(() {});
-      
-      // Auto-translate messages if enabled
-      if (_autoTranslateEnabled) {
-        _autoTranslateAllMessages();
+      if (mounted) {
+        setState(() {});
+        setReadMarker();
       }
     });
+    
+    // Auto-translate messages if enabled
+    if (_autoTranslateEnabled) {
+      Future.delayed(const Duration(milliseconds: 100), () {
+        if (mounted) _autoTranslateAllMessages();
+      });
+    }
   }
   
   void _autoTranslateAllMessages() async {
@@ -471,24 +559,59 @@ class ChatController extends State<ChatPageWithRoom>
     if (allTextEvents.isEmpty || !mounted) return;
     
     // Переводим все сообщения пакетами для оптимизации
-    _translateMessagesBatch(allTextEvents);
+    Future.microtask(() => _translateMessagesBatch(allTextEvents));
   }
   
   void _translateMessagesBatch(List<Event> events) async {
-    const batchSize = 5; // Переводим по 5 сообщений одновременно
+    const batchSize = 3; // Уменьшено для производительности
     
     for (int i = 0; i < events.length; i += batchSize) {
+      if (!mounted || !_autoTranslateEnabled) break;
+      
       final batch = events.skip(i).take(batchSize).toList();
       
-      // Запускаем перевод пакета параллельно
-      final futures = batch.map((event) => _translateSingleMessage(event));
-      await Future.wait(futures);
+      // Простой перевод без изолятов
+      for (final event in batch) {
+        if (!mounted || !_autoTranslateEnabled) break;
+        try {
+          final translation = await MessageTranslator.translateMessage(event.body, 'auto');
+          if (translation != null && mounted) {
+            messageTranslations[event.eventId] = translation;
+          }
+        } catch (e) {
+          Logs().v('Failed to translate ${event.eventId}: $e');
+        }
+      }
       
-      // Небольшая задержка между пакетами для избежания перегрузки API
+      if (mounted) {
+        _cleanupTranslations();
+        notifyTranslationChanged();
+      }
+      
+      // Задержка между пакетами
       if (i + batchSize < events.length) {
-        await Future.delayed(const Duration(milliseconds: 100));
+        await Future.delayed(const Duration(milliseconds: 200));
       }
     }
+  }
+  
+  static Future<List<Map<String, dynamic>>> _translateBatchInIsolate(Map<String, dynamic> data) async {
+    final events = data['events'] as List<Map<String, dynamic>>;
+    final results = <Map<String, dynamic>>[];
+    
+    for (final event in events) {
+      try {
+        final translation = await MessageTranslator.translateMessage(event['body'], data['targetLang']);
+        results.add({
+          'id': event['id'],
+          'translation': translation,
+        });
+      } catch (e) {
+        results.add({'id': event['id'], 'translation': null});
+      }
+    }
+    
+    return results;
   }
   
   Future<void> _translateSingleMessage(Event event) async {
@@ -498,11 +621,7 @@ class ChatController extends State<ChatPageWithRoom>
       final translation = await MessageTranslator.translateMessage(event.body, 'auto');
       if (translation != null && mounted) {
         messageTranslations[event.eventId] = translation;
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted) {
-            notifyTranslationChanged();
-          }
-        });
+        notifyTranslationChanged();
       }
     } catch (e) {
       Logs().w('Failed to translate message ${event.eventId}: $e');
@@ -602,6 +721,7 @@ class ChatController extends State<ChatPageWithRoom>
 
   @override
   void dispose() {
+    _updateTimer?.cancel();
     timeline?.cancelSubscriptions();
     timeline = null;
     inputFocus.removeListener(_inputFocusListener);
@@ -934,7 +1054,7 @@ class ChatController extends State<ChatPageWithRoom>
       for (final event in selectedEvents) {
         await event.cancelSend();
       }
-      setState(selectedEvents.clear);
+      setState(() => selectedEvents.clear());
     } catch (e, s) {
       ErrorReporter(
         context,
@@ -1520,7 +1640,7 @@ class ChatController extends State<ChatPageWithRoom>
       SnackBar(content: Text('Переводим ${allTextEvents.length} сообщений...')),
     );
     
-    _translateMessagesBatch(allTextEvents);
+    Future.microtask(() => _translateMessagesBatch(allTextEvents));
   }
 
   @override

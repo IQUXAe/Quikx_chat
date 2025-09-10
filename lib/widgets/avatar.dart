@@ -133,79 +133,84 @@ class _AvatarState extends State<Avatar> {
       );
     }
     
-    final container = Stack(
-      children: [
-        avatarContent,
-        if (presenceUserId != null)
-          PresenceBuilder(
-            client: widget.client,
-            userId: presenceUserId,
-            builder: (context, presence) {
-              if (presence == null ||
-                  (presence.presence == PresenceType.offline &&
-                      presence.lastActiveTimestamp == null)) {
-                return const SizedBox.shrink();
-              }
-              final dotColor = presence.presence.isOnline
-                  ? Colors.green
-                  : presence.presence.isUnavailable
-                      ? Colors.orange
-                      : Colors.grey;
-              
-              final hasStatusMsg = presence.statusMsg?.isNotEmpty == true;
-              
-              return Stack(
-                children: [
-                  // Status message border
-                  if (hasStatusMsg)
-                    Positioned.fill(
+    final container = SizedBox(
+      width: widget.size,
+      height: widget.size,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          avatarContent,
+          if (presenceUserId != null)
+            PresenceBuilder(
+              client: widget.client,
+              userId: presenceUserId,
+              builder: (context, presence) {
+                if (presence == null ||
+                    (presence.presence == PresenceType.offline &&
+                        presence.lastActiveTimestamp == null)) {
+                  return const SizedBox.shrink();
+                }
+                final dotColor = presence.presence.isOnline
+                    ? Colors.green
+                    : presence.presence.isUnavailable
+                        ? Colors.orange
+                        : Colors.grey;
+                
+                final hasStatusMsg = presence.statusMsg?.isNotEmpty == true;
+                
+                return Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    // Status message border
+                    if (hasStatusMsg)
+                      Positioned.fill(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            borderRadius: borderRadius,
+                            border: Border.all(
+                              color: Colors.blue,
+                              width: 2,
+                            ),
+                          ),
+                        ),
+                      ),
+                    // Presence dot
+                    Positioned(
+                      bottom: -3,
+                      right: -3,
                       child: Container(
+                        width: 16,
+                        height: 16,
                         decoration: BoxDecoration(
-                          borderRadius: borderRadius,
-                          border: Border.all(
-                            color: Colors.blue,
-                            width: 2,
+                          color: widget.presenceBackgroundColor ?? theme.colorScheme.surface,
+                          borderRadius: BorderRadius.circular(32),
+                        ),
+                        alignment: Alignment.center,
+                        child: Container(
+                          width: 10,
+                          height: 10,
+                          decoration: BoxDecoration(
+                            color: dotColor,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              width: 1,
+                              color: theme.colorScheme.surface,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  // Presence dot
-                  Positioned(
-                    bottom: -3,
-                    right: -3,
-                    child: Container(
-                      width: 16,
-                      height: 16,
-                      decoration: BoxDecoration(
-                        color: widget.presenceBackgroundColor ?? theme.colorScheme.surface,
-                        borderRadius: BorderRadius.circular(32),
-                      ),
-                      alignment: Alignment.center,
-                      child: Container(
-                        width: 10,
-                        height: 10,
-                        decoration: BoxDecoration(
-                          color: dotColor,
-                          borderRadius: BorderRadius.circular(16),
-                          border: Border.all(
-                            width: 1,
-                            color: theme.colorScheme.surface,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              );
-            },
-          ),
-      ],
+                  ],
+                );
+              },
+            ),
+        ],
+      ),
     );
     if (widget.onTap == null && presenceUserId == null) return container;
     
-    return InkWell(
+    return GestureDetector(
       onTap: widget.onTap ?? (presenceUserId != null ? () => _showStatusMessage(context, presenceUserId) : null),
-      borderRadius: borderRadius,
       child: container,
     );
   }
