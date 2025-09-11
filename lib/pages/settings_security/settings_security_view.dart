@@ -74,6 +74,13 @@ class SettingsSecurityView extends StatelessWidget {
                     storeKey: SettingKeys.sendPublicReadReceipts,
                     defaultValue: AppConfig.sendPublicReadReceipts,
                   ),
+                  SettingsSwitchListTile.adaptive(
+                    title: 'Show link previews',
+                    subtitle: 'Display previews for links in messages',
+                    onChanged: (b) => AppConfig.showLinkPreviews = b,
+                    storeKey: SettingKeys.showLinkPreviews,
+                    defaultValue: AppConfig.showLinkPreviews,
+                  ),
                   ListTile(
                     trailing: const Icon(Icons.chevron_right_outlined),
                     title: Text(L10n.of(context).blockedUsers),

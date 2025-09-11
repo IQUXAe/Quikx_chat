@@ -36,6 +36,8 @@ void _cleanupCache() {
   }
 }
 
+
+
 class LinkPreview extends StatefulWidget {
   final String url;
   final Color textColor;
@@ -176,7 +178,6 @@ class _LinkPreviewState extends State<LinkPreview> {
     }
 
     return Container(
-      width: 400,
       margin: const EdgeInsets.symmetric(vertical: 4),
       decoration: BoxDecoration(
         border: Border.all(color: widget.textColor.withOpacity(0.3)),

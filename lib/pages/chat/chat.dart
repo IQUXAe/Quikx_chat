@@ -45,6 +45,8 @@ import 'send_file_dialog.dart';
 import 'send_location_dialog.dart';
 import 'events/message.dart';
 import '../../utils/message_translator.dart';
+import '../../utils/link_extractor.dart';
+import 'events/compact_link_preview.dart';
 
 class ChatPage extends StatelessWidget {
   final String roomId;
@@ -718,9 +720,27 @@ class ChatController extends State<ChatPageWithRoom>
     }
   }
 
+  void _updateInputLinkPreview(String text) {
+    final links = LinkExtractor.extractLinks(text);
+    if (links.isNotEmpty && mounted) {
+      final firstLink = links.first;
+      setState(() {
+        inputLinkPreview = CompactLinkPreview(
+          key: ValueKey(firstLink),
+          url: firstLink,
+          textColor: Theme.of(context).colorScheme.onSurface,
+          linkColor: Theme.of(context).colorScheme.primary,
+        );
+      });
+    } else if (mounted) {
+      setState(() => inputLinkPreview = null);
+    }
+  }
+
   @override
   void dispose() {
     _updateTimer?.cancel();
+    _linkPreviewTimer?.cancel();
     timeline?.cancelSubscriptions();
     timeline = null;
     inputFocus.removeListener(_inputFocusListener);
@@ -799,6 +819,7 @@ class ChatController extends State<ChatPageWithRoom>
       replyEvent = null;
       editEvent = null;
       pendingText = '';
+      inputLinkPreview = null;
     });
 
     // Send message
@@ -1449,6 +1470,16 @@ class ChatController extends State<ChatPageWithRoom>
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('draft_$roomId', text);
     });
+
+    // Handle link preview in input
+    _linkPreviewTimer?.cancel();
+    if (AppConfig.showLinkPreviews && text.isNotEmpty) {
+      _linkPreviewTimer = Timer(const Duration(milliseconds: 500), () {
+        _updateInputLinkPreview(text);
+      });
+    } else {
+      setState(() => inputLinkPreview = null);
+    }
     if (text.endsWith(' ') && Matrix.of(context).hasComplexBundles) {
       final clients = currentRoomBundle;
       for (final client in clients) {
@@ -1485,6 +1516,8 @@ class ChatController extends State<ChatPageWithRoom>
   }
 
   bool _inputTextIsEmpty = true;
+  Widget? inputLinkPreview;
+  Timer? _linkPreviewTimer;
 
   bool get isArchived =>
       {Membership.leave, Membership.ban}.contains(room.membership);

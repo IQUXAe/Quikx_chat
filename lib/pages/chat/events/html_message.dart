@@ -533,13 +533,13 @@ class HtmlMessage extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        textWidget,
         ...links.take(5).map((link) => LinkPreview(
           key: ValueKey(link),
           url: link,
           textColor: textColor,
           linkColor: linkStyle.color ?? textColor,
         )),
+        textWidget,
       ],
     );
   }

@@ -317,38 +317,48 @@ class _ChatInputRowState extends State<ChatInputRow> with TickerProviderStateMix
                   child: _ChatAccountPicker(controller),
                 ),
               Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 0.0),
-                  child: InputBar(
-                    room: controller.room,
-                    minLines: 1,
-                    maxLines: 8,
-                    autofocus: !PlatformInfos.isMobile,
-                    keyboardType: TextInputType.multiline,
-                    textInputAction:
-                        AppConfig.sendOnEnter == true && PlatformInfos.isMobile
-                            ? TextInputAction.send
-                            : null,
-                    onSubmitted: controller.onInputBarSubmitted,
-                    onSubmitImage: controller.sendImageFromClipBoard,
-                    focusNode: controller.inputFocus,
-                    controller: controller.sendController,
-                    decoration: InputDecoration(
-                      contentPadding: const EdgeInsets.only(
-                        left: 6.0,
-                        right: 6.0,
-                        bottom: 6.0,
-                        top: 3.0,
+                child: Column(
+                  children: [
+                    if (controller.inputLinkPreview != null && AppConfig.showLinkPreviews)
+                      Container(
+                        width: double.infinity,
+                        margin: const EdgeInsets.only(bottom: 8),
+                        child: controller.inputLinkPreview!,
                       ),
-                      counter: const SizedBox.shrink(),
-                      hintText: L10n.of(context).writeAMessage,
-                      hintMaxLines: 1,
-                      border: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                      filled: false,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 0.0),
+                      child: InputBar(
+                        room: controller.room,
+                        minLines: 1,
+                        maxLines: 8,
+                        autofocus: !PlatformInfos.isMobile,
+                        keyboardType: TextInputType.multiline,
+                        textInputAction:
+                            AppConfig.sendOnEnter == true && PlatformInfos.isMobile
+                                ? TextInputAction.send
+                                : null,
+                        onSubmitted: controller.onInputBarSubmitted,
+                        onSubmitImage: controller.sendImageFromClipBoard,
+                        focusNode: controller.inputFocus,
+                        controller: controller.sendController,
+                        decoration: InputDecoration(
+                          contentPadding: const EdgeInsets.only(
+                            left: 6.0,
+                            right: 6.0,
+                            bottom: 6.0,
+                            top: 3.0,
+                          ),
+                          counter: const SizedBox.shrink(),
+                          hintText: L10n.of(context).writeAMessage,
+                          hintMaxLines: 1,
+                          border: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          filled: false,
+                        ),
+                        onChanged: controller.onInputBarChanged,
+                      ),
                     ),
-                    onChanged: controller.onInputBarChanged,
-                  ),
+                  ],
                 ),
               ),
               Container(
