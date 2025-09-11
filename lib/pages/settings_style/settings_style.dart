@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 
 import 'package:simplemessenger/config/app_config.dart';
@@ -31,7 +32,7 @@ class SettingsStyleController extends State<SettingsStyle> {
     final pickedFile = picked.firstOrNull;
     if (pickedFile == null) return;
 
-    await showFutureLoadingDialog(
+    final result = await showFutureLoadingDialog(
       context: context,
       future: () async {
         final url = await client.uploadContent(
@@ -41,8 +42,19 @@ class SettingsStyleController extends State<SettingsStyle> {
         await client.updateApplicationAccountConfig(
           ApplicationAccountConfig(wallpaperUrl: url),
         );
+        
+        await client.onSync.stream.firstWhere(
+          (syncUpdate) => syncUpdate.accountData?.any(
+            (accountData) => accountData.type == 'im.fluffychat.account_config',
+          ) ?? false,
+          orElse: () => throw TimeoutException('Sync timeout', const Duration(seconds: 10)),
+        ).timeout(const Duration(seconds: 10));
       },
     );
+    
+    if (result.isValue) {
+      setState(() {});
+    }
   }
 
   double get wallpaperOpacity =>
@@ -60,11 +72,17 @@ class SettingsStyleController extends State<SettingsStyle> {
         ApplicationAccountConfig(wallpaperOpacity: opacity),
       ),
     );
-    if (result.isValue) return;
-
-    setState(() {
-      _wallpaperOpacity = client.applicationAccountConfig.wallpaperOpacity;
-    });
+    if (result.isError) {
+      // При ошибке возвращаем предыдущее значение
+      setState(() {
+        _wallpaperOpacity = client.applicationAccountConfig.wallpaperOpacity;
+      });
+    } else {
+      // При успехе обнуляем локальное значение
+      setState(() {
+        _wallpaperOpacity = null;
+      });
+    }
   }
 
   void updateWallpaperOpacity(double opacity) {
@@ -87,11 +105,17 @@ class SettingsStyleController extends State<SettingsStyle> {
         ApplicationAccountConfig(wallpaperBlur: blur),
       ),
     );
-    if (result.isValue) return;
-
-    setState(() {
-      _wallpaperBlur = client.applicationAccountConfig.wallpaperBlur;
-    });
+    if (result.isError) {
+      // При ошибке возвращаем предыдущее значение
+      setState(() {
+        _wallpaperBlur = client.applicationAccountConfig.wallpaperBlur;
+      });
+    } else {
+      // При успехе обнуляем локальное значение
+      setState(() {
+        _wallpaperBlur = null;
+      });
+    }
   }
 
   void updateWallpaperBlur(double blur) {
