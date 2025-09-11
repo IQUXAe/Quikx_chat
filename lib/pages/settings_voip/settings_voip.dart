@@ -3,7 +3,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:simplemessenger/config/setting_keys.dart';
-import 'package:simplemessenger/l10n/l10n.dart';
 import 'package:simplemessenger/widgets/layouts/max_width_body.dart';
 import 'package:simplemessenger/widgets/matrix.dart';
 

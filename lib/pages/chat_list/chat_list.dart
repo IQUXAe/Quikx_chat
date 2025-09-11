@@ -800,8 +800,8 @@ class ChatListController extends State<ChatList>
     final client = Matrix.of(context).client;
     final store = Matrix.of(context).store;
     
-    String currentStatus = store.getString('user_status_msg') ?? '';
-    PresenceType currentPresence = PresenceType.values.firstWhere(
+    var currentStatus = store.getString('user_status_msg') ?? '';
+    var currentPresence = PresenceType.values.firstWhere(
       (p) => p.name == store.getString('user_presence_type'),
       orElse: () => PresenceType.online,
     );
@@ -1076,7 +1076,7 @@ class _StatusDialogState extends State<_StatusDialog> {
             ),
             const SizedBox(height: 8),
             SegmentedButton<PresenceType>(
-              segments: [
+              segments: const [
                 ButtonSegment(
                   value: PresenceType.online,
                   label: Text('🟢 Online'),

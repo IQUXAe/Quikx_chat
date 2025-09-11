@@ -3756,5 +3756,9 @@
   "selectTargetLanguage": "Выберите целевой язык",
   "@selectTargetLanguage": {},
   "setStatus": "Установить статус",
-  "@setStatus": {}
+  "@setStatus": {},
+  "linkPreviews": "Предпросмотр ссылок",
+  "@linkPreviews": {},
+  "linkPreviewsDescription": "Показывать предпросмотр ссылок в сообщениях",
+  "@linkPreviewsDescription": {}
 }

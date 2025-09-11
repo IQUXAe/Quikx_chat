@@ -2996,4 +2996,10 @@ class L10nEn extends L10n {
 
   @override
   String get selectTargetLanguage => 'Select target language';
+
+  @override
+  String get linkPreviews => 'Link previews';
+
+  @override
+  String get linkPreviewsDescription => 'Show previews for links in messages';
 }

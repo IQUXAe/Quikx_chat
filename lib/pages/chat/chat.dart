@@ -45,7 +45,6 @@ import 'send_file_dialog.dart';
 import 'send_location_dialog.dart';
 import 'events/message.dart';
 import '../../utils/message_translator.dart';
-import '../../utils/optimized_message_translator.dart';
 
 class ChatPage extends StatelessWidget {
   final String roomId;
@@ -142,7 +141,7 @@ class ChatController extends State<ChatPageWithRoom>
   void _cleanupTranslations() {
     if (messageTranslations.length > _maxTranslations) {
       final keys = messageTranslations.keys.toList();
-      for (int i = 0; i < keys.length - _maxTranslations; i++) {
+      for (var i = 0; i < keys.length - _maxTranslations; i++) {
         messageTranslations.remove(keys[i]);
       }
     }
@@ -273,7 +272,7 @@ class ChatController extends State<ChatPageWithRoom>
     }
   }
 
-  void _shareItems([_]) {
+  void _shareItems() {
     final shareItems = widget.shareItems;
     if (shareItems == null || shareItems.isEmpty) return;
     if (!room.otherPartyCanReceiveMessages) {
@@ -415,7 +414,7 @@ class ChatController extends State<ChatPageWithRoom>
                 room.client,
                 width: 56,
                 height: 56,
-              ).toString()),
+              ).toString(),),
               context,
             );
           } catch (e) {
@@ -440,7 +439,7 @@ class ChatController extends State<ChatPageWithRoom>
               room.client,
               width: 64,
               height: 64,
-            ).toString()),
+            ).toString(),),
             context,
           );
         } catch (e) {
@@ -553,7 +552,7 @@ class ChatController extends State<ChatPageWithRoom>
             event.type == EventTypes.Message && 
             event.messageType == MessageTypes.Text &&
             event.body.trim().isNotEmpty &&
-            !messageTranslations.containsKey(event.eventId))
+            !messageTranslations.containsKey(event.eventId),)
         .toList();
     
     if (allTextEvents.isEmpty || !mounted) return;
@@ -565,7 +564,7 @@ class ChatController extends State<ChatPageWithRoom>
   void _translateMessagesBatch(List<Event> events) async {
     const batchSize = 3; // Уменьшено для производительности
     
-    for (int i = 0; i < events.length; i += batchSize) {
+    for (var i = 0; i < events.length; i += batchSize) {
       if (!mounted || !_autoTranslateEnabled) break;
       
       final batch = events.skip(i).take(batchSize).toList();
@@ -1560,7 +1559,7 @@ class ChatController extends State<ChatPageWithRoom>
     } catch (e, s) {
       Logs().e('Failed to start call', e, s);
       
-      String errorMessage = 'Звонок не удался (БЕТА)';
+      var errorMessage = 'Звонок не удался (БЕТА)';
       if (e.toString().contains('Event blocked by other events')) {
         errorMessage = 'Система занята отправкой данных. Подождите 5-10 секунд и попробуйте снова.';
       } else if (e.toString().contains('timeout') || e.toString().contains('Timeout')) {
@@ -1626,7 +1625,7 @@ class ChatController extends State<ChatPageWithRoom>
         .where((event) => 
             event.type == EventTypes.Message && 
             event.messageType == MessageTypes.Text &&
-            event.body.trim().isNotEmpty)
+            event.body.trim().isNotEmpty,)
         .toList();
     
     if (allTextEvents.isEmpty) {

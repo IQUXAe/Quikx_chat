@@ -104,7 +104,7 @@ class GlobalCache {
 
   /// Получение размера кеша в байтах (приблизительно)
   int getCacheSize() {
-    int size = 0;
+    var size = 0;
     
     for (final data in _wallpaperCache.values) {
       size += data.length;

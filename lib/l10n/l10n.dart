@@ -5269,6 +5269,18 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'Select target language'**
   String get selectTargetLanguage;
+
+  /// No description provided for @linkPreviews.
+  ///
+  /// In en, this message translates to:
+  /// **'Link previews'**
+  String get linkPreviews;
+
+  /// No description provided for @linkPreviewsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Show previews for links in messages'**
+  String get linkPreviewsDescription;
 }
 
 class _L10nDelegate extends LocalizationsDelegate<L10n> {

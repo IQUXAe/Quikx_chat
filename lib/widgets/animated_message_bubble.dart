@@ -47,7 +47,7 @@ class _AnimatedMessageBubbleState extends State<AnimatedMessageBubble>
     ).animate(CurvedAnimation(
       parent: _slideController,
       curve: SimpleMessengerThemes.bounceAnimationCurve,
-    ));
+    ),);
 
     _scaleAnimation = Tween<double>(
       begin: 0.8,
@@ -55,7 +55,7 @@ class _AnimatedMessageBubbleState extends State<AnimatedMessageBubble>
     ).animate(CurvedAnimation(
       parent: _slideController,
       curve: SimpleMessengerThemes.bounceAnimationCurve,
-    ));
+    ),);
 
     _fadeAnimation = Tween<double>(
       begin: 0.0,
@@ -63,7 +63,7 @@ class _AnimatedMessageBubbleState extends State<AnimatedMessageBubble>
     ).animate(CurvedAnimation(
       parent: _slideController,
       curve: Curves.easeOut,
-    ));
+    ),);
 
     // Запускаем анимацию с небольшой задержкой
     Future.delayed(Duration(milliseconds: widget.index * 30), () {

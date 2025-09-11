@@ -47,7 +47,7 @@ class _StaggeredAnimationState extends State<StaggeredAnimation>
   }
 
   void _startAnimations() {
-    for (int i = 0; i < _controllers.length; i++) {
+    for (var i = 0; i < _controllers.length; i++) {
       Future.delayed(widget.delay * i, () {
         if (mounted) {
           _controllers[i].forward();

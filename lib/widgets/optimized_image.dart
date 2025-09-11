@@ -109,6 +109,7 @@ class _LazyLoadingImageState extends State<LazyLoadingImage> {
 
 // Простая реализация VisibilityDetector для демонстрации
 class VisibilityDetector extends StatefulWidget {
+  @override
   final Key key;
   final Widget child;
   final Function(VisibilityInfo) onVisibilityChanged;

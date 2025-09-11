@@ -34,6 +34,7 @@ abstract class SettingKeys {
   static const String showPresences = 'chat.fluffy.show_presences';
   static const String displayNavigationRail =
       'chat.fluffy.display_navigation_rail';
+  static const String showLinkPreviews = 'chat.fluffy.show_link_previews';
 }
 
 enum AppSettings<T> {
@@ -61,7 +62,8 @@ enum AppSettings<T> {
     'chat.fluffy.display_chat_details_column',
     false,
   ),
-  enableSoftLogout<bool>('chat.fluffy.enable_soft_logout', false);
+  enableSoftLogout<bool>('chat.fluffy.enable_soft_logout', false),
+  showLinkPreviews<bool>('chat.fluffy.show_link_previews', true);
 
   final String key;
   final T defaultValue;

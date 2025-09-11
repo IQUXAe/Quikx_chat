@@ -40,7 +40,7 @@ class _ChatInputRowState extends State<ChatInputRow> with TickerProviderStateMix
     ).animate(CurvedAnimation(
       parent: _buttonScaleController,
       curve: SimpleMessengerThemes.fastAnimationCurve,
-    ));
+    ),);
   }
 
   @override

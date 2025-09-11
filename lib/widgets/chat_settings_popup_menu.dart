@@ -8,7 +8,6 @@ import 'package:matrix/matrix.dart';
 import 'package:simplemessenger/l10n/l10n.dart';
 import 'package:simplemessenger/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
 import 'package:simplemessenger/widgets/future_loading_dialog.dart';
-import 'package:simplemessenger/utils/message_translator.dart';
 import 'matrix.dart';
 
 enum ChatPopupMenuActions { details, mute, unmute, leave, search, translateToggle, translateAll, clearTranslations }
@@ -195,7 +194,7 @@ class ChatSettingsPopupMenuState extends State<ChatSettingsPopupMenu> {
             const SizedBox(width: 12),
             Text(widget.translateController?.autoTranslateEnabled == true
                 ? L10n.of(context).disableAutoTranslate
-                : L10n.of(context).enableAutoTranslate),
+                : L10n.of(context).enableAutoTranslate,),
           ],
         ),
       ),

@@ -58,6 +58,7 @@ abstract class AppConfig {
   static bool showPresences = false; // Disabled to reduce API calls
   static bool displayNavigationRail = false;
   static bool experimentalVoip = true; // Audio calls enabled by default, video calls remain experimental
+  static bool showLinkPreviews = true;
   static const bool hideTypingUsernames = false;
   static const String inviteLinkPrefix = 'https://matrix.to/#/';
   static const String deepLinkPrefix = 'com.iquxae.privacymessenger://chat/';

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
 import 'package:simplemessenger/main.dart' as app;
 
 /// Полный тест приложения для ручного тестирования

@@ -5,7 +5,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'package:simplemessenger/config/app_config.dart';
 import 'package:simplemessenger/config/app_version.dart';
-import 'package:simplemessenger/config/themes.dart';
 import 'package:simplemessenger/l10n/l10n.dart';
 import 'package:simplemessenger/utils/optimized_http_client.dart';
 import 'package:simplemessenger/widgets/avatar.dart';
@@ -179,7 +178,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
     ).animate(CurvedAnimation(
       parent: _slideController,
       curve: Curves.easeOutCubic,
-    ));
+    ),);
     
     // Создаем контроллеры для каждого элемента меню
     const itemCount = 12;
@@ -203,7 +202,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
     // Запускаем анимации с задержкой
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _slideController.forward();
-      for (int i = 0; i < _itemControllers.length; i++) {
+      for (var i = 0; i < _itemControllers.length; i++) {
         Future.delayed(Duration(milliseconds: 50 + (i * 20)), () {
           if (mounted) _itemControllers[i].forward();
         });

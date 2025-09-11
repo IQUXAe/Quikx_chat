@@ -59,7 +59,7 @@ class ModernPageRoute<T> extends PageRouteBuilder<T> {
             ).animate(CurvedAnimation(
               parent: animation,
               curve: const Interval(0.3, 1.0, curve: Curves.easeOut),
-            )),
+            ),),
             child: child,
           ),
         );
@@ -77,7 +77,7 @@ class ModernPageRoute<T> extends PageRouteBuilder<T> {
             ).animate(CurvedAnimation(
               parent: animation,
               curve: const Interval(0.0, 0.7, curve: Curves.easeOut),
-            )),
+            ),),
             child: child,
           ),
         );

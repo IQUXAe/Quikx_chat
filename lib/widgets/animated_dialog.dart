@@ -41,7 +41,7 @@ class AnimatedDialog extends StatefulWidget {
             ).animate(CurvedAnimation(
               parent: animation,
               curve: SimpleMessengerThemes.bounceAnimationCurve,
-            )),
+            ),),
             child: child,
           ),
         );
@@ -71,7 +71,7 @@ class _AnimatedDialogState extends State<AnimatedDialog>
     ).animate(CurvedAnimation(
       parent: _controller,
       curve: SimpleMessengerThemes.bounceAnimationCurve,
-    ));
+    ),);
 
     _fadeAnimation = Tween<double>(
       begin: 0.0,
@@ -79,7 +79,7 @@ class _AnimatedDialogState extends State<AnimatedDialog>
     ).animate(CurvedAnimation(
       parent: _controller,
       curve: Curves.easeOut,
-    ));
+    ),);
 
     _controller.forward();
   }

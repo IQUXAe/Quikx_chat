@@ -3554,5 +3554,9 @@
   "selectTargetLanguage": "Select target language",
   "@selectTargetLanguage": {},
   "setStatus": "Set status",
-  "@setStatus": {}
+  "@setStatus": {},
+  "linkPreviews": "Link previews",
+  "@linkPreviews": {},
+  "linkPreviewsDescription": "Show previews for links in messages",
+  "@linkPreviewsDescription": {}
 }

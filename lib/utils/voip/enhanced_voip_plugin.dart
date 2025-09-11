@@ -93,7 +93,7 @@ class EnhancedVoipPlugin with WidgetsBindingObserver implements WebRTCDelegate {
       final statuses = await permissions.request();
       return statuses.values.every((status) => 
           status == PermissionStatus.granted || 
-          status == PermissionStatus.limited);
+          status == PermissionStatus.limited,);
     } catch (e) {
       Logs().e('Permission request failed: $e');
       return true; // Assume permissions are granted on error

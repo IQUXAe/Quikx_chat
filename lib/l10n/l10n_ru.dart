@@ -3020,4 +3020,11 @@ class L10nRu extends L10n {
 
   @override
   String get selectTargetLanguage => 'Выберите целевой язык';
+
+  @override
+  String get linkPreviews => 'Предпросмотр ссылок';
+
+  @override
+  String get linkPreviewsDescription =>
+      'Показывать предпросмотр ссылок в сообщениях';
 }

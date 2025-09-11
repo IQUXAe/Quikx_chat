@@ -52,7 +52,7 @@ class _AnimatedButtonState extends State<AnimatedButton>
     ).animate(CurvedAnimation(
       parent: _scaleController,
       curve: SimpleMessengerThemes.fastAnimationCurve,
-    ));
+    ),);
 
     _rippleAnimation = Tween<double>(
       begin: 0.0,
@@ -60,7 +60,7 @@ class _AnimatedButtonState extends State<AnimatedButton>
     ).animate(CurvedAnimation(
       parent: _rippleController,
       curve: Curves.easeOut,
-    ));
+    ),);
   }
 
   @override

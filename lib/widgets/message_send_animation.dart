@@ -50,7 +50,7 @@ class _MessageSendAnimationState extends State<MessageSendAnimation>
     ).animate(CurvedAnimation(
       parent: _scaleController,
       curve: Curves.easeInOut,
-    ));
+    ),);
 
     _slideAnimation = Tween<Offset>(
       begin: Offset.zero,
@@ -58,7 +58,7 @@ class _MessageSendAnimationState extends State<MessageSendAnimation>
     ).animate(CurvedAnimation(
       parent: _slideController,
       curve: Curves.easeOutCubic,
-    ));
+    ),);
 
     _fadeAnimation = Tween<double>(
       begin: 1.0,
@@ -66,7 +66,7 @@ class _MessageSendAnimationState extends State<MessageSendAnimation>
     ).animate(CurvedAnimation(
       parent: _fadeController,
       curve: Curves.easeOut,
-    ));
+    ),);
 
     _startAnimation();
   }
@@ -153,7 +153,7 @@ class _MessageBubbleAnimationState extends State<MessageBubbleAnimation>
     ).animate(CurvedAnimation(
       parent: _controller,
       curve: Curves.elasticOut,
-    ));
+    ),);
 
     _fadeAnimation = Tween<double>(
       begin: 0.0,
@@ -161,7 +161,7 @@ class _MessageBubbleAnimationState extends State<MessageBubbleAnimation>
     ).animate(CurvedAnimation(
       parent: _controller,
       curve: Curves.easeOut,
-    ));
+    ),);
 
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0.0, 0.3),
@@ -169,7 +169,7 @@ class _MessageBubbleAnimationState extends State<MessageBubbleAnimation>
     ).animate(CurvedAnimation(
       parent: _controller,
       curve: Curves.easeOutCubic,
-    ));
+    ),);
 
     if (widget.animate) {
       _controller.forward();

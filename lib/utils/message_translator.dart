@@ -104,7 +104,7 @@ class MessageTranslator {
       var splitIndex = maxLength;
       
       // Find last space, period, or comma before maxLength
-      for (int i = maxLength - 1; i >= maxLength ~/ 2; i--) {
+      for (var i = maxLength - 1; i >= maxLength ~/ 2; i--) {
         if (RegExp(r'[\s.,;!?]').hasMatch(remaining[i])) {
           splitIndex = i + 1;
           break;
@@ -162,7 +162,7 @@ class MessageTranslator {
       event.type == EventTypes.Message && 
       event.messageType == MessageTypes.Text &&
       event.body.trim().isNotEmpty && 
-      !_isNumericOnly(event.body.trim())
+      !_isNumericOnly(event.body.trim()),
     ).toList();
     
     Logs().i('[AutoTranslator] Found ${validEvents.length} valid events for translation');

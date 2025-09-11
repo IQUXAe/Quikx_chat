@@ -335,16 +335,11 @@ class Message extends StatelessWidget {
                                                     Icons.error,
                                                     color: Colors.red,
                                                   )
-                                                : event.fileSendingStatus != null
-                                                    ? const CircularProgressIndicator
-                                                        .adaptive(
-                                                        strokeWidth: 1,
-                                                      )
-                                                    : null,
+                                                : null,
                                           ),
                                         ),
                                       )
-                                    else
+                                    else if (!showReceiptsRow)
                                       FutureBuilder<User?>(
                                         future: event.fetchSenderUser(),
                                         builder: (context, snapshot) {
@@ -365,7 +360,9 @@ class Message extends StatelessWidget {
                                                 : null,
                                           );
                                         },
-                                      ),
+                                      )
+                                    else
+                                      SizedBox(width: Avatar.defaultSize),
                                     Expanded(
                                       child: Column(
                                         crossAxisAlignment:
@@ -617,19 +614,7 @@ class Message extends StatelessWidget {
                                                                         ),
                                                                       ),
                                                                       const SizedBox(width: 4),
-                                                                      Icon(
-                                                                        displayEvent.status.isError
-                                                                            ? Icons.error_outline
-                                                                            : displayEvent.status.isSending
-                                                                                ? Icons.access_time
-                                                                                : displayEvent.receipts.isNotEmpty
-                                                                                    ? Icons.done_all
-                                                                                    : Icons.done,
-                                                                        size: 14,
-                                                                        color: displayEvent.status.isError
-                                                                            ? Colors.red
-                                                                            : textColor.withAlpha(180),
-                                                                      ),
+                                                                      _buildMessageStatusIcon(displayEvent, textColor),
                                                                     ],
                                                                   ],
                                                                 ),
@@ -970,6 +955,25 @@ class Message extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  Widget _buildMessageStatusIcon(Event displayEvent, Color textColor) {
+    try {
+      if (displayEvent.status.isError) {
+        return Icon(Icons.error_outline, size: 14, color: Colors.red);
+      }
+      if (displayEvent.status.isSending) {
+        return Icon(Icons.access_time, size: 14, color: textColor.withAlpha(180));
+      }
+      final hasReceipts = displayEvent.receipts.isNotEmpty;
+      return Icon(
+        hasReceipts ? Icons.done_all : Icons.done,
+        size: 14,
+        color: hasReceipts ? Colors.blue.withAlpha(200) : textColor.withAlpha(180),
+      );
+    } catch (e) {
+      return Icon(Icons.done, size: 14, color: textColor.withAlpha(180));
+    }
   }
 }
 

@@ -41,7 +41,7 @@ class _AnimatedLoadingIndicatorState extends State<AnimatedLoadingIndicator>
     ).animate(CurvedAnimation(
       parent: _scaleController,
       curve: SimpleMessengerThemes.bounceAnimationCurve,
-    ));
+    ),);
 
     _scaleController.forward();
   }

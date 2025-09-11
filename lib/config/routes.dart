@@ -466,8 +466,8 @@ abstract class AppRoutes {
       return noTransitionPageBuilder(context, state, child);
     }
     
-    TransitionType transitionType = TransitionType.slideHorizontal;
-    bool isModal = false;
+    var transitionType = TransitionType.slideHorizontal;
+    var isModal = false;
     
     final path = state.fullPath ?? '';
     

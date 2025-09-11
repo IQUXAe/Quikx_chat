@@ -14,6 +14,9 @@ import 'package:simplemessenger/widgets/avatar.dart';
 import 'package:simplemessenger/widgets/future_loading_dialog.dart';
 import 'package:simplemessenger/widgets/mxc_image.dart';
 import '../../../utils/url_launcher.dart';
+import '../../../utils/link_extractor.dart';
+import '../../../config/app_config.dart';
+import 'link_preview.dart';
 
 class HtmlMessage extends StatelessWidget {
   final String html;
@@ -509,7 +512,10 @@ class HtmlMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final element = parser.parse(html).body ?? dom.Element.html('');
-    return Text.rich(
+    final plainText = element.text ?? '';
+    final links = LinkExtractor.extractLinks(plainText);
+    
+    final textWidget = Text.rich(
       _renderHtml(element, context),
       style: TextStyle(
         fontSize: fontSize,
@@ -517,6 +523,24 @@ class HtmlMessage extends StatelessWidget {
       ),
       maxLines: limitHeight ? 64 : null,
       overflow: TextOverflow.fade,
+    );
+    
+    if (!AppConfig.showLinkPreviews || links.isEmpty) {
+      return textWidget;
+    }
+    
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        textWidget,
+        ...links.take(5).map((link) => LinkPreview(
+          key: ValueKey(link),
+          url: link,
+          textColor: textColor,
+          linkColor: linkStyle.color ?? textColor,
+        )),
+      ],
     );
   }
 }

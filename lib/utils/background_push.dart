@@ -25,7 +25,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'package:flutter_new_badger/flutter_new_badger.dart';
 import 'package:http/http.dart' as http;
 import 'package:matrix/matrix.dart';
 import 'package:unifiedpush/unifiedpush.dart';
@@ -331,10 +330,10 @@ class BackgroundPush {
           
           // Проверяем конфигурацию pusher'а
           final data = ourPusher.data;
-          if (data?.url == null || data?.format == null) {
+          if (data.url == null || data.format == null) {
             Logs().w('[Push] Pusher has incomplete configuration');
           } else {
-            Logs().i('[Push] Pusher configuration: format=${data!.format}, url=${data.url}');
+            Logs().i('[Push] Pusher configuration: format=${data.format}, url=${data.url}');
           }
         } else {
           throw Exception('Pusher not found after creation');

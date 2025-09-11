@@ -89,7 +89,7 @@ class EnhancedCallingState extends State<EnhancedCalling>
     ).animate(CurvedAnimation(
       parent: _pulseController,
       curve: Curves.easeInOut,
-    ));
+    ),);
     
     if (!connected) {
       _pulseController.repeat(reverse: true);
@@ -393,7 +393,7 @@ class EnhancedCallingState extends State<EnhancedCalling>
             onPressed: _hangUp,
             backgroundColor: Colors.red,
             tooltip: 'Завершить звонок',
-          ));
+          ),);
         } else {
           buttons.addAll([
             _buildCallButton(
@@ -484,7 +484,7 @@ class EnhancedCallingState extends State<EnhancedCalling>
           onPressed: _hangUp,
           backgroundColor: Colors.black45,
           enabled: false,
-        ));
+        ),);
         break;
         
       default:

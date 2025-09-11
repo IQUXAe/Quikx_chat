@@ -217,7 +217,7 @@ class ChatAppBarTitle extends StatelessWidget {
         type,
       );
     } catch (e) {
-      String errorMessage = 'Звонок не удался (БЕТА)';
+      var errorMessage = 'Звонок не удался (БЕТА)';
       
       if (e.toString().contains('Event blocked by other events')) {
         errorMessage = 'Система занята отправкой данных. Подождите 5-10 секунд и попробуйте снова.';

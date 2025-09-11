@@ -13,7 +13,7 @@ class VoipPermissionsHelper {
     
     return statuses.values.every((status) => 
         status == PermissionStatus.granted || 
-        status == PermissionStatus.limited);
+        status == PermissionStatus.limited,);
   }
 
   static Future<Map<Permission, PermissionStatus>> getPermissionStatuses() async {
@@ -53,7 +53,7 @@ class VoipPermissionsHelper {
     
     return statuses.values.every((status) => 
         status == PermissionStatus.granted || 
-        status == PermissionStatus.limited);
+        status == PermissionStatus.limited,);
   }
 
   static String getPermissionName(Permission permission) {

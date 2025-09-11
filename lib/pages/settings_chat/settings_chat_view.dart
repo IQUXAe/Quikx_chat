@@ -72,6 +72,13 @@ class SettingsChatView extends StatelessWidget {
                 defaultValue: AppConfig.swipeRightToLeftToReply,
               ),
               SettingsSwitchListTile.adaptive(
+                title: L10n.of(context).linkPreviews,
+                subtitle: L10n.of(context).linkPreviewsDescription,
+                onChanged: (b) => AppConfig.showLinkPreviews = b,
+                storeKey: SettingKeys.showLinkPreviews,
+                defaultValue: AppConfig.showLinkPreviews,
+              ),
+              SettingsSwitchListTile.adaptive(
                 title: L10n.of(context).use24HourTimeFormat,
                 subtitle: L10n.of(context).use24HourTimeFormatDescription,
                 onChanged: (b) => Matrix.of(context).store.setBool('use24HourFormat', b),

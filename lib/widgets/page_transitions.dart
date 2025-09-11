@@ -19,7 +19,7 @@ class PageTransitions {
           ).animate(CurvedAnimation(
             parent: animation,
             curve: SimpleMessengerThemes.slideAnimationCurve,
-          )),
+          ),),
           child: SlideTransition(
             position: Tween<Offset>(
               begin: Offset.zero,
@@ -27,7 +27,7 @@ class PageTransitions {
             ).animate(CurvedAnimation(
               parent: secondaryAnimation,
               curve: SimpleMessengerThemes.slideAnimationCurve,
-            )),
+            ),),
             child: child,
           ),
         );
@@ -54,7 +54,7 @@ class PageTransitions {
             ).animate(CurvedAnimation(
               parent: animation,
               curve: SimpleMessengerThemes.bounceAnimationCurve,
-            )),
+            ),),
             child: child,
           ),
         );
@@ -79,7 +79,7 @@ class PageTransitions {
           ).animate(CurvedAnimation(
             parent: animation,
             curve: SimpleMessengerThemes.slideAnimationCurve,
-          )),
+          ),),
           child: child,
         );
       },
