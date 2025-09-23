@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/widgets/future_loading_dialog.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/widgets/future_loading_dialog.dart';
 import '../../widgets/matrix.dart';
 import 'settings_ignore_list_view.dart';
 

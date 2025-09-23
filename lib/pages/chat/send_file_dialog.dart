@@ -5,15 +5,15 @@ import 'package:cross_file/cross_file.dart';
 import 'package:matrix/matrix.dart';
 import 'package:mime/mime.dart';
 
-import 'package:simplemessenger/config/app_config.dart';
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/utils/localized_exception_extension.dart';
-import 'package:simplemessenger/utils/matrix_sdk_extensions/matrix_file_extension.dart';
-import 'package:simplemessenger/utils/other_party_can_receive.dart';
-import 'package:simplemessenger/utils/platform_infos.dart';
-import 'package:simplemessenger/utils/size_string.dart';
-import 'package:simplemessenger/widgets/adaptive_dialogs/adaptive_dialog_action.dart';
-import 'package:simplemessenger/widgets/adaptive_dialogs/dialog_text_field.dart';
+import 'package:quikxchat/config/app_config.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/utils/localized_exception_extension.dart';
+import 'package:quikxchat/utils/matrix_sdk_extensions/matrix_file_extension.dart';
+import 'package:quikxchat/utils/other_party_can_receive.dart';
+import 'package:quikxchat/utils/platform_infos.dart';
+import 'package:quikxchat/utils/size_string.dart';
+import 'package:quikxchat/widgets/adaptive_dialogs/adaptive_dialog_action.dart';
+import 'package:quikxchat/widgets/adaptive_dialogs/dialog_text_field.dart';
 import '../../utils/resize_video.dart';
 
 class SendFileDialog extends StatefulWidget {

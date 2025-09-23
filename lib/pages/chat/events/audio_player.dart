@@ -11,14 +11,14 @@ import 'package:matrix/matrix.dart';
 import 'package:opus_caf_converter_dart/opus_caf_converter_dart.dart';
 import 'package:path_provider/path_provider.dart';
 
-import 'package:simplemessenger/config/app_config.dart';
-import 'package:simplemessenger/config/themes.dart';
-import 'package:simplemessenger/utils/error_reporter.dart';
-import 'package:simplemessenger/utils/file_description.dart';
-import 'package:simplemessenger/utils/localized_exception_extension.dart';
-import 'package:simplemessenger/utils/url_launcher.dart';
+import 'package:quikxchat/config/app_config.dart';
+import 'package:quikxchat/config/themes.dart';
+import 'package:quikxchat/utils/error_reporter.dart';
+import 'package:quikxchat/utils/file_description.dart';
+import 'package:quikxchat/utils/localized_exception_extension.dart';
+import 'package:quikxchat/utils/url_launcher.dart';
 import '../../../utils/matrix_sdk_extensions/event_extension.dart';
-import '../../../widgets/simple_messenger_app.dart';
+import '../../../widgets/quikx_chat_app.dart';
 import '../../../widgets/matrix.dart';
 
 class AudioPlayerWidget extends StatefulWidget {
@@ -84,7 +84,7 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
               content: StreamBuilder(
                 stream: audioPlayer.positionStream.asBroadcastStream(),
                 builder: (context, _) => GestureDetector(
-                  onTap: () => SimpleMessengerApp.router.go(
+                  onTap: () => QuikxChatApp.router.go(
                     '/rooms/${widget.event.room.id}?event=${widget.event.eventId}',
                   ),
                   child: Text(
@@ -308,7 +308,7 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
                 children: [
                   ConstrainedBox(
                     constraints: const BoxConstraints(
-                      maxWidth: SimpleMessengerThemes.columnWidth,
+                      maxWidth: QuikxChatThemes.columnWidth,
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -452,7 +452,7 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
                           crossFadeState: audioPlayer == null
                               ? CrossFadeState.showFirst
                               : CrossFadeState.showSecond,
-                          duration: SimpleMessengerThemes.animationDuration,
+                          duration: QuikxChatThemes.animationDuration,
                         ),
                       ],
                     ),

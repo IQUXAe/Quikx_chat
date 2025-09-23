@@ -6,10 +6,10 @@ import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart' as sdk;
 import 'package:matrix/matrix.dart';
 
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/pages/new_group/new_group_view.dart';
-import 'package:simplemessenger/utils/file_selector.dart';
-import 'package:simplemessenger/widgets/matrix.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/pages/new_group/new_group_view.dart';
+import 'package:quikxchat/utils/file_selector.dart';
+import 'package:quikxchat/widgets/matrix.dart';
 
 class NewGroup extends StatefulWidget {
   final CreateGroupType createGroupType;

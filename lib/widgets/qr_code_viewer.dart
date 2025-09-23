@@ -6,11 +6,11 @@ import 'package:matrix/matrix.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 import 'package:qr_image/qr_image.dart';
 
-import 'package:simplemessenger/config/app_config.dart';
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/utils/fluffy_share.dart';
-import 'package:simplemessenger/utils/matrix_sdk_extensions/matrix_file_extension.dart';
-import 'package:simplemessenger/widgets/future_loading_dialog.dart';
+import 'package:quikxchat/config/app_config.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/utils/fluffy_share.dart';
+import 'package:quikxchat/utils/matrix_sdk_extensions/matrix_file_extension.dart';
+import 'package:quikxchat/widgets/future_loading_dialog.dart';
 import '../config/themes.dart';
 
 Future<void> showQrCodeViewer(
@@ -109,7 +109,7 @@ class QrCodeViewer extends StatelessWidget {
             children: [
               ConstrainedBox(
                 constraints:
-                    const BoxConstraints(maxWidth: SimpleMessengerThemes.columnWidth),
+                    const BoxConstraints(maxWidth: QuikxChatThemes.columnWidth),
                 child: PrettyQrView.data(
                   data: inviteLink,
                   decoration: PrettyQrDecoration(

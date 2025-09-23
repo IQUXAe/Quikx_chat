@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/widgets/adaptive_dialogs/adaptive_dialog_action.dart';
-import 'package:simplemessenger/widgets/adaptive_dialogs/dialog_text_field.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/widgets/adaptive_dialogs/adaptive_dialog_action.dart';
+import 'package:quikxchat/widgets/adaptive_dialogs/dialog_text_field.dart';
 
 Future<int?> showPermissionChooser(
   BuildContext context, {

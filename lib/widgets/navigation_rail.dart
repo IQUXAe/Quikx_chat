@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:simplemessenger/config/app_config.dart';
-import 'package:simplemessenger/config/themes.dart';
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/pages/chat_list/navi_rail_item.dart';
-import 'package:simplemessenger/utils/matrix_sdk_extensions/matrix_locals.dart';
-import 'package:simplemessenger/utils/stream_extension.dart';
-import 'package:simplemessenger/widgets/avatar.dart';
-import 'package:simplemessenger/widgets/matrix.dart';
+import 'package:quikxchat/config/app_config.dart';
+import 'package:quikxchat/config/themes.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/pages/chat_list/navi_rail_item.dart';
+import 'package:quikxchat/utils/matrix_sdk_extensions/matrix_locals.dart';
+import 'package:quikxchat/utils/stream_extension.dart';
+import 'package:quikxchat/widgets/avatar.dart';
+import 'package:quikxchat/widgets/matrix.dart';
 
 class SpacesNavigationRail extends StatelessWidget {
   final String? activeSpaceId;
@@ -54,9 +54,9 @@ class SpacesNavigationRail extends StatelessWidget {
                 .toList();
 
             return SizedBox(
-              width: SimpleMessengerThemes.isColumnMode(context)
-                  ? SimpleMessengerThemes.navRailWidth
-                  : SimpleMessengerThemes.navRailWidth * 0.75,
+              width: QuikxChatThemes.isColumnMode(context)
+                  ? QuikxChatThemes.navRailWidth
+                  : QuikxChatThemes.navRailWidth * 0.75,
               child: Column(
                 children: [
                   Expanded(

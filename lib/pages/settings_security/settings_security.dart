@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
-import 'package:simplemessenger/config/setting_keys.dart';
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
-import 'package:simplemessenger/widgets/adaptive_dialogs/show_text_input_dialog.dart';
-import 'package:simplemessenger/widgets/app_lock.dart';
-import 'package:simplemessenger/widgets/future_loading_dialog.dart';
-import 'package:simplemessenger/widgets/matrix.dart';
+import 'package:quikxchat/config/setting_keys.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
+import 'package:quikxchat/widgets/adaptive_dialogs/show_text_input_dialog.dart';
+import 'package:quikxchat/widgets/app_lock.dart';
+import 'package:quikxchat/widgets/future_loading_dialog.dart';
+import 'package:quikxchat/widgets/matrix.dart';
 import '../bootstrap/bootstrap_dialog.dart';
 import 'settings_security_view.dart';
 

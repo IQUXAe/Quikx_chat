@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:intl/intl.dart';
 
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/widgets/matrix.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/widgets/matrix.dart';
 
 /// Provides extra functionality for formatting the time.
 extension DateTimeExtension on DateTime {

@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
 
-import 'package:simplemessenger/config/app_config.dart';
-import 'package:simplemessenger/config/setting_keys.dart';
-import 'package:simplemessenger/config/themes.dart';
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/utils/platform_infos.dart';
-import 'package:simplemessenger/widgets/layouts/max_width_body.dart';
-import 'package:simplemessenger/widgets/matrix.dart';
-import 'package:simplemessenger/widgets/settings_switch_list_tile.dart';
+import 'package:quikxchat/config/app_config.dart';
+import 'package:quikxchat/config/setting_keys.dart';
+import 'package:quikxchat/config/themes.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/utils/platform_infos.dart';
+import 'package:quikxchat/widgets/layouts/max_width_body.dart';
+import 'package:quikxchat/widgets/matrix.dart';
+import 'package:quikxchat/widgets/settings_switch_list_tile.dart';
 import '../../utils/message_translator.dart';
 import 'settings_chat.dart';
 
@@ -23,9 +23,9 @@ class SettingsChatView extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        leading: const BackButton(),
         title: Text(L10n.of(context).chat),
-        automaticallyImplyLeading: !SimpleMessengerThemes.isColumnMode(context),
-        centerTitle: SimpleMessengerThemes.isColumnMode(context),
+        centerTitle: QuikxChatThemes.isColumnMode(context),
       ),
       body: ListTileTheme(
         iconColor: theme.textTheme.bodyLarge!.color,
@@ -74,17 +74,29 @@ class SettingsChatView extends StatelessWidget {
               SettingsSwitchListTile.adaptive(
                 title: L10n.of(context).linkPreviews,
                 subtitle: L10n.of(context).linkPreviewsDescription,
-                onChanged: (b) => AppConfig.showLinkPreviews = b,
+                onChanged: (b) async {
+                  AppConfig.showLinkPreviews = b;
+                  await AppSettings.showLinkPreviews.setItem(Matrix.of(context).store, b);
+                },
                 storeKey: SettingKeys.showLinkPreviews,
-                defaultValue: AppConfig.showLinkPreviews,
+                defaultValue: AppSettings.showLinkPreviews.getItem(Matrix.of(context).store),
               ),
               SettingsSwitchListTile.adaptive(
                 title: L10n.of(context).use24HourTimeFormat,
                 subtitle: L10n.of(context).use24HourTimeFormatDescription,
-                onChanged: (b) => Matrix.of(context).store.setBool('use24HourFormat', b),
+                onChanged: (b) =>
+                    Matrix.of(context).store.setBool('use24HourFormat', b),
                 storeKey: 'use24HourFormat',
                 defaultValue: true,
               ),
+              SettingsSwitchListTile.adaptive(
+                title: L10n.of(context).desktopMode,
+                subtitle: L10n.of(context).desktopModeDescription,
+                onChanged: (b) => AppConfig.forceDesktopMode = b,
+                storeKey: SettingKeys.forceDesktopMode,
+                defaultValue: AppConfig.forceDesktopMode,
+              ),
+              
               StatefulBuilder(
                 builder: (context, setState) {
                   return FutureBuilder<bool>(
@@ -100,10 +112,12 @@ class SettingsChatView extends StatelessWidget {
                             color: Colors.lightBlue.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: const Icon(Icons.translate, color: Colors.lightBlue),
+                          child: const Icon(Icons.translate,
+                              color: Colors.lightBlue),
                         ),
                         title: Text(L10n.of(context).messageTranslation),
-                        subtitle: Text(L10n.of(context).messageTranslationDescription),
+                        subtitle: Text(
+                            L10n.of(context).messageTranslationDescription),
                         onChanged: (value) async {
                           await MessageTranslator.setEnabled(value);
                           setState(() {});
@@ -139,7 +153,8 @@ class SettingsChatView extends StatelessWidget {
                             color: Colors.green.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(8),
                           ),
-                          child: const Icon(Icons.language, color: Colors.green),
+                          child:
+                              const Icon(Icons.language, color: Colors.green),
                         ),
                         title: Text(L10n.of(context).targetLanguage),
                         subtitle: Text(languages[targetLang] ?? targetLang),
@@ -148,13 +163,17 @@ class SettingsChatView extends StatelessWidget {
                           final selected = await showDialog<String>(
                             context: context,
                             builder: (context) => SimpleDialog(
-                              title: Text(L10n.of(context).selectTargetLanguage),
-                              children: languages.entries.map((entry) => 
-                                SimpleDialogOption(
-                                  onPressed: () => Navigator.pop(context, entry.key),
-                                  child: Text(entry.value),
-                                ),
-                              ).toList(),
+                              title:
+                                  Text(L10n.of(context).selectTargetLanguage),
+                              children: languages.entries
+                                  .map(
+                                    (entry) => SimpleDialogOption(
+                                      onPressed: () =>
+                                          Navigator.pop(context, entry.key),
+                                      child: Text(entry.value),
+                                    ),
+                                  )
+                                  .toList(),
                             ),
                           );
                           if (selected != null) {
@@ -176,7 +195,8 @@ class SettingsChatView extends StatelessWidget {
                     color: Colors.purple.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(Icons.emoji_emotions_outlined, color: Colors.purple),
+                  child: const Icon(Icons.emoji_emotions_outlined,
+                      color: Colors.purple),
                 ),
                 title: Text(L10n.of(context).personalEmojis),
                 subtitle: Text(L10n.of(context).personalEmojisDescription),

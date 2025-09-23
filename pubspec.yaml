@@ -1,4 +1,4 @@
-name: simplemessenger
+name: quikxchat
 description: Simple and secure messaging app.
 publish_to: none
 # On version bump also increase the build number for F-Droid
@@ -120,15 +120,15 @@ flutter:
     - assets/vodozemac/
 
 msix_config:
-  display_name: Simple Messenger
-  publisher_display_name: Simple Messenger
-  publisher: CN=Simple Messenger, O=Privacy Messenger, L=Matrix, S=Internet, C=EU
-  identity_name: com.iquxae.privacymessenger
+  display_name: QuikxChat
+  publisher_display_name: QuikxChat
+  publisher: CN=QuikxChat, O=QuikxChat, L=Matrix, S=Internet, C=EU
+  identity_name: com.iquxae.quikxchat
   logo_path: assets/logo.png
   capabilities: internetClient, location, microphone, webcam
   protocol_activation: https
   app_uri_handler_hosts: matrix.to
-  execution_alias: simplemessenger
+  execution_alias: quikxchat
   sign_msix: false
   install_certificate: false
 

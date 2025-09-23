@@ -3,11 +3,11 @@ import 'package:flutter/services.dart';
 
 import 'package:matrix/matrix.dart';
 
-import 'package:simplemessenger/config/themes.dart';
-import 'package:simplemessenger/pages/image_viewer/image_viewer_view.dart';
-import 'package:simplemessenger/utils/platform_infos.dart';
-import 'package:simplemessenger/utils/show_scaffold_dialog.dart';
-import 'package:simplemessenger/widgets/share_scaffold_dialog.dart';
+import 'package:quikxchat/config/themes.dart';
+import 'package:quikxchat/pages/image_viewer/image_viewer_view.dart';
+import 'package:quikxchat/utils/platform_infos.dart';
+import 'package:quikxchat/utils/show_scaffold_dialog.dart';
+import 'package:quikxchat/widgets/share_scaffold_dialog.dart';
 import '../../utils/matrix_sdk_extensions/event_extension.dart';
 
 class ImageViewer extends StatefulWidget {
@@ -67,8 +67,8 @@ class ImageViewerController extends State<ImageViewer> {
 
   void prevImage() async {
     await pageController.previousPage(
-      duration: SimpleMessengerThemes.animationDuration,
-      curve: SimpleMessengerThemes.animationCurve,
+      duration: QuikxChatThemes.animationDuration,
+      curve: QuikxChatThemes.animationCurve,
     );
     if (!mounted) return;
     setState(() {});
@@ -76,8 +76,8 @@ class ImageViewerController extends State<ImageViewer> {
 
   void nextImage() async {
     await pageController.nextPage(
-      duration: SimpleMessengerThemes.animationDuration,
-      curve: SimpleMessengerThemes.animationCurve,
+      duration: QuikxChatThemes.animationDuration,
+      curve: QuikxChatThemes.animationCurve,
     );
     if (!mounted) return;
     setState(() {});

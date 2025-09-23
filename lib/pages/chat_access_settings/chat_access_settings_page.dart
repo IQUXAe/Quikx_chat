@@ -2,11 +2,11 @@ import 'package:flutter/material.dart' hide Visibility;
 
 import 'package:matrix/matrix.dart';
 
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/pages/chat_access_settings/chat_access_settings_controller.dart';
-import 'package:simplemessenger/utils/fluffy_share.dart';
-import 'package:simplemessenger/utils/matrix_sdk_extensions/matrix_locals.dart';
-import 'package:simplemessenger/widgets/layouts/max_width_body.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/pages/chat_access_settings/chat_access_settings_controller.dart';
+import 'package:quikxchat/utils/fluffy_share.dart';
+import 'package:quikxchat/utils/matrix_sdk_extensions/matrix_locals.dart';
+import 'package:quikxchat/widgets/layouts/max_width_body.dart';
 
 class ChatAccessSettingsPageView extends StatelessWidget {
   final ChatAccessSettingsController controller;

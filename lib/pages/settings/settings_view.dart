@@ -4,14 +4,14 @@ import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-import 'package:simplemessenger/config/app_config.dart';
-import 'package:simplemessenger/config/app_version.dart';
-import 'package:simplemessenger/config/themes.dart';
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/utils/fluffy_share.dart';
-import 'package:simplemessenger/widgets/avatar.dart';
-import 'package:simplemessenger/widgets/matrix.dart';
-import 'package:simplemessenger/widgets/navigation_rail.dart';
+import 'package:quikxchat/config/app_config.dart';
+import 'package:quikxchat/config/app_version.dart';
+import 'package:quikxchat/config/themes.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/utils/fluffy_share.dart';
+import 'package:quikxchat/widgets/avatar.dart';
+import 'package:quikxchat/widgets/matrix.dart';
+import 'package:quikxchat/widgets/navigation_rail.dart';
 import '../../widgets/mxc_image_viewer.dart';
 import 'settings.dart';
 
@@ -54,7 +54,7 @@ class SettingsView extends StatelessWidget {
         ?.tryGet<String>('account');
     return Row(
       children: [
-        if (SimpleMessengerThemes.isColumnMode(context)) ...[
+        if (QuikxChatThemes.isColumnMode(context)) ...[
           SpacesNavigationRail(
             activeSpaceId: null,
             onGoToChats: () => context.go('/rooms'),
@@ -67,7 +67,7 @@ class SettingsView extends StatelessWidget {
         ],
         Expanded(
           child: Scaffold(
-            appBar: SimpleMessengerThemes.isColumnMode(context)
+            appBar: QuikxChatThemes.isColumnMode(context)
                 ? null
                 : AppBar(
                     title: Text(L10n.of(context).settings),

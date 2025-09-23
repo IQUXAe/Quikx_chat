@@ -1241,7 +1241,7 @@ abstract class L10n {
   /// No description provided for @fluffychat.
   ///
   /// In en, this message translates to:
-  /// **'Simple Messenger'**
+  /// **'QuikxChat'**
   String get fluffychat;
 
   /// No description provided for @fontSize.
@@ -1493,7 +1493,7 @@ abstract class L10n {
   /// No description provided for @inviteText.
   ///
   /// In en, this message translates to:
-  /// **'{username} invited you to Simple Messenger.\n1. Download the app from https://drive.google.com/drive/folders/1Lh-bMUZU-fTK2qlSOd3ZHgHxG-jFNBb5?usp=sharing \n2. Sign up or sign in \n3. Open the invite link: \n {link}'**
+  /// **'{username} invited you to QuikxChat.\n1. Download the app from https://drive.google.com/drive/folders/1Lh-bMUZU-fTK2qlSOd3ZHgHxG-jFNBb5?usp=sharing \n2. Sign up or sign in \n3. Open the invite link: \n {link}'**
   String inviteText(String username, String link);
 
   /// No description provided for @isTyping.
@@ -1703,7 +1703,7 @@ abstract class L10n {
   /// No description provided for @newMessageInFluffyChat.
   ///
   /// In en, this message translates to:
-  /// **'💬 New message in Simple Messenger'**
+  /// **'💬 New message in QuikxChat'**
   String get newMessageInFluffyChat;
 
   /// No description provided for @newVerificationRequest.
@@ -2426,6 +2426,18 @@ abstract class L10n {
   /// **'Share'**
   String get share;
 
+  /// No description provided for @desktopMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Desktop Mode'**
+  String get desktopMode;
+
+  /// No description provided for @desktopModeDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Force desktop layout on mobile devices'**
+  String get desktopModeDescription;
+
   /// No description provided for @sharedTheLocation.
   ///
   /// In en, this message translates to:
@@ -2549,7 +2561,7 @@ abstract class L10n {
   /// Title for the application
   ///
   /// In en, this message translates to:
-  /// **'Simple Messenger'**
+  /// **'QuikxChat'**
   String get title;
 
   /// No description provided for @toggleFavorite.
@@ -3011,7 +3023,7 @@ abstract class L10n {
   /// No description provided for @indexedDbErrorLong.
   ///
   /// In en, this message translates to:
-  /// **'The message storage is unfortunately not enabled in private mode by default.\nPlease visit\n - about:config\n - set dom.indexedDB.privateBrowsing.enabled to true\nOtherwise, it is not possible to run Simple Messenger.'**
+  /// **'The message storage is unfortunately not enabled in private mode by default.\nPlease visit\n - about:config\n - set dom.indexedDB.privateBrowsing.enabled to true\nOtherwise, it is not possible to run QuikxChat.'**
   String get indexedDbErrorLong;
 
   /// No description provided for @switchToAccount.
@@ -3269,7 +3281,7 @@ abstract class L10n {
   /// No description provided for @screenSharingDetail.
   ///
   /// In en, this message translates to:
-  /// **'You are sharing your screen in Simple Messenger'**
+  /// **'You are sharing your screen in QuikxChat'**
   String get screenSharingDetail;
 
   /// No description provided for @callingPermissions.
@@ -3287,7 +3299,7 @@ abstract class L10n {
   /// No description provided for @callingAccountDetails.
   ///
   /// In en, this message translates to:
-  /// **'Allows Simple Messenger to use the native android dialer app.'**
+  /// **'Allows QuikxChat to use the native android dialer app.'**
   String get callingAccountDetails;
 
   /// No description provided for @appearOnTop.
@@ -3305,7 +3317,7 @@ abstract class L10n {
   /// No description provided for @otherCallingPermissions.
   ///
   /// In en, this message translates to:
-  /// **'Microphone, camera and other Simple Messenger permissions'**
+  /// **'Microphone, camera and other QuikxChat permissions'**
   String get otherCallingPermissions;
 
   /// No description provided for @whyIsThisMessageEncrypted.
@@ -4199,7 +4211,7 @@ abstract class L10n {
   /// No description provided for @welcomeText.
   ///
   /// In en, this message translates to:
-  /// **'Hey Hey 👋 This is Simple Messenger. You can sign in to any homeserver, which is compatible with https://matrix.org. And then chat with anyone. It\'s a huge decentralized messaging network!'**
+  /// **'Hey Hey 👋 This is QuikxChat. You can sign in to any homeserver, which is compatible with https://matrix.org. And then chat with anyone. It\'s a huge decentralized messaging network!'**
   String get welcomeText;
 
   /// No description provided for @blur.
@@ -4361,7 +4373,7 @@ abstract class L10n {
   /// No description provided for @appIntroduction.
   ///
   /// In en, this message translates to:
-  /// **'Simple Messenger uses the Matrix protocol. To create an account, use app.element.io or a similar service. Learn more at https://matrix.org or just tap *Continue*.'**
+  /// **'QuikxChat uses the Matrix protocol. To create an account, use app.element.io or a similar service. Learn more at https://matrix.org or just tap *Continue*.'**
   String get appIntroduction;
 
   /// No description provided for @newChatRequest.
@@ -5239,12 +5251,6 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'Disable auto-translate'**
   String get disableAutoTranslate;
-
-  /// No description provided for @translateAllMessages.
-  ///
-  /// In en, this message translates to:
-  /// **'Translate all messages'**
-  String get translateAllMessages;
 
   /// No description provided for @clearTranslations.
   ///

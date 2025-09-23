@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 
 import 'package:scroll_to_index/scroll_to_index.dart';
 
-import 'package:simplemessenger/config/themes.dart';
-import 'package:simplemessenger/pages/chat/chat.dart';
-import 'package:simplemessenger/pages/chat/events/message.dart';
-import 'package:simplemessenger/pages/chat/seen_by_row.dart';
-import 'package:simplemessenger/pages/chat/typing_indicators.dart';
-import 'package:simplemessenger/utils/account_config.dart';
-import 'package:simplemessenger/utils/matrix_sdk_extensions/filtered_timeline_extension.dart';
-import 'package:simplemessenger/utils/platform_infos.dart';
+import 'package:quikxchat/config/themes.dart';
+import 'package:quikxchat/pages/chat/chat.dart';
+import 'package:quikxchat/pages/chat/events/message.dart';
+import 'package:quikxchat/pages/chat/seen_by_row.dart';
+import 'package:quikxchat/pages/chat/typing_indicators.dart';
+import 'package:quikxchat/utils/account_config.dart';
+import 'package:quikxchat/utils/matrix_sdk_extensions/filtered_timeline_extension.dart';
+import 'package:quikxchat/utils/platform_infos.dart';
 
 class ChatEventList extends StatelessWidget {
   final ChatController controller;
@@ -34,7 +34,7 @@ class ChatEventList extends StatelessWidget {
       theme.bubbleColor,
     ];
 
-    final horizontalPadding = SimpleMessengerThemes.isColumnMode(context) ? 8.0 : 0.0;
+    final horizontalPadding = QuikxChatThemes.isColumnMode(context) ? 8.0 : 0.0;
 
     final events = timeline.events.filterByVisibleInGui();
     final animateInEventIndex = controller.animateInEventIndex;

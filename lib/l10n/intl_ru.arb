@@ -826,7 +826,7 @@
     "type": "String",
     "placeholders": {}
   },
-  "simplemessenger": "Simple Messenger",
+  "simplemessenger": "QuikxChat",
   "@simplemessenger": {
     "type": "String",
     "placeholders": {}
@@ -998,7 +998,7 @@
     "type": "String",
     "placeholders": {}
   },
-  "inviteText": "{username} пригласил(а) вас в Simple Messenger. \n1. Скачайте приложение с https://drive.google.com/drive/folders/1Lh-bMUZU-fTK2qlSOd3ZHgHxG-jFNBb5?usp=sharing \n2. Зарегистрируйтесь или войдите \n3. Откройте ссылку приглашения: \n {link}",
+  "inviteText": "{username} пригласил(а) вас в QuikxChat. \n1. Скачайте приложение с https://drive.google.com/drive/folders/1Lh-bMUZU-fTK2qlSOd3ZHgHxG-jFNBb5?usp=sharing \n2. Зарегистрируйтесь или войдите \n3. Откройте ссылку приглашения: \n {link}",
   "@inviteText": {
     "type": "String",
     "placeholders": {
@@ -1170,7 +1170,7 @@
     "type": "String",
     "placeholders": {}
   },
-  "newMessageInFluffyChat": "💬 Новое сообщение во Simple Messenger",
+  "newMessageInFluffyChat": "💬 Новое сообщение в QuikxChat",
   "@newMessageInFluffyChat": {
     "type": "String",
     "placeholders": {}
@@ -1792,7 +1792,7 @@
     "type": "String",
     "placeholders": {}
   },
-  "title": "Simple Messenger",
+  "title": "QuikxChat",
   "@title": {
     "description": "Title for the application",
     "type": "String",
@@ -2351,7 +2351,7 @@
   },
   "dehydrateTor": "Пользователи TOR: Экспорт сеанса",
   "@dehydrateTor": {},
-  "indexedDbErrorLong": "К сожалению, по умолчанию хранилище сообщений не включено в приватном режиме.\nПожалуйста, посетите\n- about:config\n- установите для dom.indexedDB.privateBrowsing.enabled значение true\nВ противном случае запуск Simple Messenger будет невозможен.",
+  "indexedDbErrorLong": "К сожалению, по умолчанию хранилище сообщений не включено в приватном режиме.\nПожалуйста, посетите\n- about:config\n- установите для dom.indexedDB.privateBrowsing.enabled значение true\nВ противном случае запуск QuikxChat будет невозможен.",
   "@indexedDbErrorLong": {},
   "custom": "Пользовательское",
   "@custom": {},
@@ -2369,13 +2369,13 @@
   "@dehydrateWarning": {},
   "indexedDbErrorTitle": "Проблемы с приватным режимом",
   "@indexedDbErrorTitle": {},
-  "otherCallingPermissions": "Микрофон, камера и другие разрешения Simple Messenger",
+  "otherCallingPermissions": "Микрофон, камера и другие разрешения QuikxChat",
   "@otherCallingPermissions": {},
   "enterSpace": "Войти в пространство",
   "@enterSpace": {},
-  "screenSharingDetail": "Вы делитесь своим экраном в FuffyChat",
+  "screenSharingDetail": "Вы делитесь своим экраном в QuikxChat",
   "@screenSharingDetail": {},
-  "callingAccountDetails": "Позволяет Simple Messenger использовать родное android приложение для звонков.",
+  "callingAccountDetails": "Позволяет QuikxChat использовать родное android приложение для звонков.",
   "@callingAccountDetails": {},
   "newSpace": "Новое пространство",
   "@newSpace": {},
@@ -3109,7 +3109,7 @@
       }
     }
   },
-  "welcomeText": "Привет. Это Simple Messenger. Вы можете подписаться на любой сервер, который совместим с https://matrix.org. А потом поболтать с кем нибудь. Это огромная децентрализованная сеть обмена сообщениями!",
+  "welcomeText": "Привет. Это QuikxChat. Вы можете подписаться на любой сервер, который совместим с https://matrix.org. А потом поболтать с кем нибудь. Это огромная децентрализованная сеть обмена сообщениями!",
   "@welcomeText": {},
   "noContactInformationProvided": "Сервер не предоставляет никакой правдивой контактной информации",
   "@noContactInformationProvided": {},
@@ -3260,7 +3260,7 @@
   "@open": {},
   "waitingForServer": "Ожидание сервера...",
   "@waitingForServer": {},
-  "appIntroduction": "Simple Messenger использует протокол Matrix. Чтобы создать аккаунт воспользуйтесь app.element.io или подобным сервисом. Узнайте больше на https://matrix.org или просто нажмите *Продолжить*.",
+  "appIntroduction": "QuikxChat использует протокол Matrix. Чтобы создать аккаунт воспользуйтесь app.element.io или подобным сервисом. Узнайте больше на https://matrix.org или просто нажмите *Продолжить*.",
   "@appIntroduction": {},
   "previous": "Предыдущий",
   "@previous": {},
@@ -3745,8 +3745,7 @@
   "@enableAutoTranslate": {},
   "disableAutoTranslate": "Отключить автоперевод",
   "@disableAutoTranslate": {},
-  "translateAllMessages": "Перевести все сообщения",
-  "@translateAllMessages": {},
+
   "clearTranslations": "Очистить переводы",
   "@clearTranslations": {},
   "targetLanguage": "Целевой язык",

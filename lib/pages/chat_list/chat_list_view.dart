@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
 
-import 'package:simplemessenger/config/app_config.dart';
-import 'package:simplemessenger/config/themes.dart';
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/pages/chat_list/chat_list.dart';
-import 'package:simplemessenger/widgets/app_drawer.dart';
-import 'package:simplemessenger/widgets/navigation_rail.dart';
+import 'package:quikxchat/config/app_config.dart';
+import 'package:quikxchat/config/themes.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/pages/chat_list/chat_list.dart';
+import 'package:quikxchat/widgets/app_drawer.dart';
+import 'package:quikxchat/widgets/navigation_rail.dart';
 import 'chat_list_body.dart';
 
 class ChatListView extends StatelessWidget {
@@ -32,7 +32,7 @@ class ChatListView extends StatelessWidget {
       },
       child: Row(
         children: [
-          if (SimpleMessengerThemes.isColumnMode(context) ||
+          if (QuikxChatThemes.isColumnMode(context) ||
               AppConfig.displayNavigationRail) ...[
             SpacesNavigationRail(
               activeSpaceId: controller.activeSpaceId,
@@ -55,7 +55,7 @@ class ChatListView extends StatelessWidget {
                   child: ChatListViewBody(controller),
                 ),
                 floatingActionButton: AnimatedSwitcher(
-                  duration: SimpleMessengerThemes.animationDuration,
+                  duration: QuikxChatThemes.animationDuration,
                   transitionBuilder: (child, animation) {
                     return ScaleTransition(
                       scale: animation,

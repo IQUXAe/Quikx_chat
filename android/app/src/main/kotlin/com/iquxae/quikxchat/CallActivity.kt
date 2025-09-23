@@ -1,4 +1,4 @@
-package com.iquxae.privacymessenger
+package com.iquxae.quikxchat
 
 import android.app.Activity
 import android.content.Intent

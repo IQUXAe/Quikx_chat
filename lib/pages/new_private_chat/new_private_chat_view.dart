@@ -4,16 +4,16 @@ import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 import 'package:pretty_qr_code/pretty_qr_code.dart';
 
-import 'package:simplemessenger/config/app_config.dart';
-import 'package:simplemessenger/config/themes.dart';
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/pages/new_private_chat/new_private_chat.dart';
-import 'package:simplemessenger/utils/localized_exception_extension.dart';
-import 'package:simplemessenger/utils/platform_infos.dart';
-import 'package:simplemessenger/utils/url_launcher.dart';
-import 'package:simplemessenger/widgets/avatar.dart';
-import 'package:simplemessenger/widgets/layouts/max_width_body.dart';
-import 'package:simplemessenger/widgets/matrix.dart';
+import 'package:quikxchat/config/app_config.dart';
+import 'package:quikxchat/config/themes.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/pages/new_private_chat/new_private_chat.dart';
+import 'package:quikxchat/utils/localized_exception_extension.dart';
+import 'package:quikxchat/utils/platform_infos.dart';
+import 'package:quikxchat/utils/url_launcher.dart';
+import 'package:quikxchat/widgets/avatar.dart';
+import 'package:quikxchat/widgets/layouts/max_width_body.dart';
+import 'package:quikxchat/widgets/matrix.dart';
 import '../../widgets/qr_code_viewer.dart';
 
 class NewPrivateChatView extends StatelessWidget {
@@ -100,7 +100,7 @@ class NewPrivateChatView extends StatelessWidget {
             ),
             Expanded(
               child: AnimatedSwitcher(
-                duration: SimpleMessengerThemes.animationDuration,
+                duration: QuikxChatThemes.animationDuration,
                 child: searchResponse == null
                     ? ListView(
                         children: [

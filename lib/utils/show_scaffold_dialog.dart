@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:simplemessenger/config/app_config.dart';
-import 'package:simplemessenger/config/themes.dart';
+import 'package:quikxchat/config/app_config.dart';
+import 'package:quikxchat/config/themes.dart';
 
 Future<T?> showScaffoldDialog<T>({
   required BuildContext context,
@@ -14,7 +14,7 @@ Future<T?> showScaffoldDialog<T>({
     showDialog<T>(
       context: context,
       useSafeArea: false,
-      builder: SimpleMessengerThemes.isColumnMode(context)
+      builder: QuikxChatThemes.isColumnMode(context)
           ? (context) => Center(
                 child: Container(
                   decoration: BoxDecoration(

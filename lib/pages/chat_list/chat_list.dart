@@ -12,28 +12,28 @@ import 'package:matrix/matrix.dart' as sdk;
 import 'package:matrix/matrix.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 
-import 'package:simplemessenger/config/app_config.dart';
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/pages/chat_list/chat_list_view.dart';
-import 'package:simplemessenger/utils/error_reporter.dart';
-import 'package:simplemessenger/utils/localized_exception_extension.dart';
-import 'package:simplemessenger/utils/matrix_sdk_extensions/matrix_locals.dart';
-import 'package:simplemessenger/utils/platform_infos.dart';
-import 'package:simplemessenger/utils/show_scaffold_dialog.dart';
-import 'package:simplemessenger/utils/show_update_snackbar.dart';
-import 'package:simplemessenger/widgets/adaptive_dialogs/show_modal_action_popup.dart';
-import 'package:simplemessenger/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
-import 'package:simplemessenger/widgets/adaptive_dialogs/show_text_input_dialog.dart';
-import 'package:simplemessenger/widgets/avatar.dart';
-import 'package:simplemessenger/widgets/future_loading_dialog.dart';
-import 'package:simplemessenger/widgets/share_scaffold_dialog.dart';
+import 'package:quikxchat/config/app_config.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/pages/chat_list/chat_list_view.dart';
+import 'package:quikxchat/utils/error_reporter.dart';
+import 'package:quikxchat/utils/localized_exception_extension.dart';
+import 'package:quikxchat/utils/matrix_sdk_extensions/matrix_locals.dart';
+import 'package:quikxchat/utils/platform_infos.dart';
+import 'package:quikxchat/utils/show_scaffold_dialog.dart';
+import 'package:quikxchat/utils/show_update_snackbar.dart';
+import 'package:quikxchat/widgets/adaptive_dialogs/show_modal_action_popup.dart';
+import 'package:quikxchat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
+import 'package:quikxchat/widgets/adaptive_dialogs/show_text_input_dialog.dart';
+import 'package:quikxchat/widgets/avatar.dart';
+import 'package:quikxchat/widgets/future_loading_dialog.dart';
+import 'package:quikxchat/widgets/share_scaffold_dialog.dart';
 import '../../../utils/account_bundles.dart';
 import '../../config/setting_keys.dart';
 import '../../utils/url_launcher.dart';
 import '../../widgets/matrix.dart';
 import '../bootstrap/bootstrap_dialog.dart';
 
-import 'package:simplemessenger/utils/tor_stub.dart'
+import 'package:quikxchat/utils/tor_stub.dart'
     if (dart.library.html) 'package:tor_detector_web/tor_detector_web.dart';
 
 enum PopupMenuAction {

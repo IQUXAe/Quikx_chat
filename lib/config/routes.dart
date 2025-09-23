@@ -5,42 +5,42 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:simplemessenger/config/themes.dart';
-import 'package:simplemessenger/pages/archive/archive.dart';
-import 'package:simplemessenger/pages/chat/chat.dart';
-import 'package:simplemessenger/pages/chat_access_settings/chat_access_settings_controller.dart';
-import 'package:simplemessenger/pages/chat_details/chat_details.dart';
-import 'package:simplemessenger/pages/chat_encryption_settings/chat_encryption_settings.dart';
-import 'package:simplemessenger/pages/chat_list/chat_list.dart';
-import 'package:simplemessenger/pages/chat_members/chat_members.dart';
-import 'package:simplemessenger/pages/chat_permissions_settings/chat_permissions_settings.dart';
-import 'package:simplemessenger/pages/chat_search/chat_search_page.dart';
-import 'package:simplemessenger/pages/device_settings/device_settings.dart';
-import 'package:simplemessenger/pages/homeserver_picker/homeserver_picker.dart';
-import 'package:simplemessenger/pages/invitation_selection/invitation_selection.dart';
-import 'package:simplemessenger/pages/login/login.dart';
-import 'package:simplemessenger/pages/new_group/new_group.dart';
-import 'package:simplemessenger/pages/new_private_chat/new_private_chat.dart';
-import 'package:simplemessenger/pages/settings/settings.dart';
-import 'package:simplemessenger/pages/settings_3pid/settings_3pid.dart';
-import 'package:simplemessenger/pages/settings_chat/settings_chat.dart';
-import 'package:simplemessenger/pages/settings_emotes/settings_emotes.dart';
-import 'package:simplemessenger/pages/settings_homeserver/settings_homeserver.dart';
-import 'package:simplemessenger/pages/settings_ignore_list/settings_ignore_list.dart';
-import 'package:simplemessenger/pages/settings_multiple_emotes/settings_multiple_emotes.dart';
-import 'package:simplemessenger/pages/settings_notifications/settings_notifications.dart';
-import 'package:simplemessenger/pages/settings_password/settings_password.dart';
-import 'package:simplemessenger/pages/settings_security/settings_security.dart';
-import 'package:simplemessenger/pages/settings_style/settings_style.dart';
-import 'package:simplemessenger/pages/settings_voip/settings_voip.dart';
+import 'package:quikxchat/config/themes.dart';
+import 'package:quikxchat/pages/archive/archive.dart';
+import 'package:quikxchat/pages/chat/chat.dart';
+import 'package:quikxchat/pages/chat_access_settings/chat_access_settings_controller.dart';
+import 'package:quikxchat/pages/chat_details/chat_details.dart';
+import 'package:quikxchat/pages/chat_encryption_settings/chat_encryption_settings.dart';
+import 'package:quikxchat/pages/chat_list/chat_list.dart';
+import 'package:quikxchat/pages/chat_members/chat_members.dart';
+import 'package:quikxchat/pages/chat_permissions_settings/chat_permissions_settings.dart';
+import 'package:quikxchat/pages/chat_search/chat_search_page.dart';
+import 'package:quikxchat/pages/device_settings/device_settings.dart';
+import 'package:quikxchat/pages/homeserver_picker/homeserver_picker.dart';
+import 'package:quikxchat/pages/invitation_selection/invitation_selection.dart';
+import 'package:quikxchat/pages/login/login.dart';
+import 'package:quikxchat/pages/new_group/new_group.dart';
+import 'package:quikxchat/pages/new_private_chat/new_private_chat.dart';
+import 'package:quikxchat/pages/settings/settings.dart';
+import 'package:quikxchat/pages/settings_3pid/settings_3pid.dart';
+import 'package:quikxchat/pages/settings_chat/settings_chat.dart';
+import 'package:quikxchat/pages/settings_emotes/settings_emotes.dart';
+import 'package:quikxchat/pages/settings_homeserver/settings_homeserver.dart';
+import 'package:quikxchat/pages/settings_ignore_list/settings_ignore_list.dart';
+import 'package:quikxchat/pages/settings_multiple_emotes/settings_multiple_emotes.dart';
+import 'package:quikxchat/pages/settings_notifications/settings_notifications.dart';
+import 'package:quikxchat/pages/settings_password/settings_password.dart';
+import 'package:quikxchat/pages/settings_security/settings_security.dart';
+import 'package:quikxchat/pages/settings_style/settings_style.dart';
+import 'package:quikxchat/pages/settings_voip/settings_voip.dart';
 
-import 'package:simplemessenger/widgets/config_viewer.dart';
-import 'package:simplemessenger/widgets/layouts/empty_page.dart';
-import 'package:simplemessenger/widgets/layouts/two_column_layout.dart';
-import 'package:simplemessenger/widgets/log_view.dart';
-import 'package:simplemessenger/widgets/matrix.dart';
-import 'package:simplemessenger/widgets/share_scaffold_dialog.dart';
-import 'package:simplemessenger/widgets/animated_page_route.dart';
+import 'package:quikxchat/widgets/config_viewer.dart';
+import 'package:quikxchat/widgets/layouts/empty_page.dart';
+import 'package:quikxchat/widgets/layouts/two_column_layout.dart';
+import 'package:quikxchat/widgets/log_view.dart';
+import 'package:quikxchat/widgets/matrix.dart';
+import 'package:quikxchat/widgets/share_scaffold_dialog.dart';
+import 'package:quikxchat/widgets/animated_page_route.dart';
 
 abstract class AppRoutes {
   static FutureOr<String?> loggedInRedirect(
@@ -112,7 +112,7 @@ abstract class AppRoutes {
       pageBuilder: (context, state, child) => noTransitionPageBuilder(
         context,
         state,
-        SimpleMessengerThemes.isColumnMode(context) &&
+        QuikxChatThemes.isColumnMode(context) &&
                 state.fullPath?.startsWith('/rooms/settings') == false
             ? TwoColumnLayout(
                 mainView: ChatList(
@@ -131,7 +131,7 @@ abstract class AppRoutes {
           pageBuilder: (context, state) => defaultPageBuilder(
             context,
             state,
-            SimpleMessengerThemes.isColumnMode(context)
+            QuikxChatThemes.isColumnMode(context)
                 ? const EmptyPage()
                 : ChatList(
                     activeChat: state.pathParameters['roomid'],
@@ -462,7 +462,7 @@ abstract class AppRoutes {
     GoRouterState state,
     Widget child,
   ) {
-    if (SimpleMessengerThemes.isColumnMode(context)) {
+    if (QuikxChatThemes.isColumnMode(context)) {
       return noTransitionPageBuilder(context, state, child);
     }
     

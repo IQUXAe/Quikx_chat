@@ -5,11 +5,11 @@ import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-import 'package:simplemessenger/config/app_config.dart';
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/pages/chat_encryption_settings/chat_encryption_settings.dart';
-import 'package:simplemessenger/utils/beautify_string_extension.dart';
-import 'package:simplemessenger/widgets/layouts/max_width_body.dart';
+import 'package:quikxchat/config/app_config.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/pages/chat_encryption_settings/chat_encryption_settings.dart';
+import 'package:quikxchat/utils/beautify_string_extension.dart';
+import 'package:quikxchat/widgets/layouts/max_width_body.dart';
 
 class ChatEncryptionSettingsView extends StatelessWidget {
   final ChatEncryptionSettingsController controller;

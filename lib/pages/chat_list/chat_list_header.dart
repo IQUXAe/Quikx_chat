@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
-import 'package:simplemessenger/config/themes.dart';
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/pages/chat_list/chat_list.dart';
-import 'package:simplemessenger/pages/chat_list/client_chooser_button.dart';
-import 'package:simplemessenger/utils/sync_status_localization.dart';
+import 'package:quikxchat/config/themes.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/pages/chat_list/chat_list.dart';
+import 'package:quikxchat/pages/chat_list/client_chooser_button.dart';
+import 'package:quikxchat/utils/sync_status_localization.dart';
 import '../../widgets/matrix.dart';
 
 class ChatListHeader extends StatelessWidget implements PreferredSizeWidget {
@@ -27,7 +27,7 @@ class ChatListHeader extends StatelessWidget implements PreferredSizeWidget {
     return SliverAppBar(
       floating: true,
       toolbarHeight: 56,
-      pinned: SimpleMessengerThemes.isColumnMode(context),
+      pinned: QuikxChatThemes.isColumnMode(context),
       scrolledUnderElevation: 0,
       backgroundColor: Colors.transparent,
       leading: Builder(

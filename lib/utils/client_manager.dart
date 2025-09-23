@@ -11,14 +11,14 @@ import 'package:matrix/matrix.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:universal_html/html.dart' as html;
 
-import 'package:simplemessenger/config/app_config.dart';
-import 'package:simplemessenger/config/setting_keys.dart';
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/utils/custom_http_client.dart';
+import 'package:quikxchat/config/app_config.dart';
+import 'package:quikxchat/config/setting_keys.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/utils/custom_http_client.dart';
 
-import 'package:simplemessenger/utils/custom_image_resizer.dart';
-import 'package:simplemessenger/utils/init_with_restore.dart';
-import 'package:simplemessenger/utils/platform_infos.dart';
+import 'package:quikxchat/utils/custom_image_resizer.dart';
+import 'package:quikxchat/utils/init_with_restore.dart';
+import 'package:quikxchat/utils/platform_infos.dart';
 import 'matrix_sdk_extensions/flutter_matrix_dart_sdk_database/builder.dart';
 
 abstract class ClientManager {

@@ -8,9 +8,9 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:matrix/matrix.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:simplemessenger/config/setting_keys.dart';
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/utils/client_manager.dart';
+import 'package:quikxchat/config/setting_keys.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/utils/client_manager.dart';
 
 const _passwordStorageKey = 'database_password';
 

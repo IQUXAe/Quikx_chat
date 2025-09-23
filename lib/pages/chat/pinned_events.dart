@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/pages/chat/chat.dart';
-import 'package:simplemessenger/pages/chat/chat_app_bar_list_tile.dart';
-import 'package:simplemessenger/utils/matrix_sdk_extensions/matrix_locals.dart';
-import 'package:simplemessenger/widgets/adaptive_dialogs/show_modal_action_popup.dart';
-import 'package:simplemessenger/widgets/future_loading_dialog.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/pages/chat/chat.dart';
+import 'package:quikxchat/pages/chat/chat_app_bar_list_tile.dart';
+import 'package:quikxchat/utils/matrix_sdk_extensions/matrix_locals.dart';
+import 'package:quikxchat/widgets/adaptive_dialogs/show_modal_action_popup.dart';
+import 'package:quikxchat/widgets/future_loading_dialog.dart';
 
 class PinnedEvents extends StatelessWidget {
   final ChatController controller;

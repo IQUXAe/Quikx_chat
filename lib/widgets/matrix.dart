@@ -17,18 +17,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:url_launcher/url_launcher_string.dart';
 
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/utils/client_manager.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/utils/client_manager.dart';
 
 
-import 'package:simplemessenger/utils/init_with_restore.dart';
-import 'package:simplemessenger/utils/matrix_sdk_extensions/matrix_file_extension.dart';
-import 'package:simplemessenger/utils/platform_infos.dart';
-import 'package:simplemessenger/utils/uia_request_manager.dart';
-import 'package:simplemessenger/utils/voip/enhanced_voip_plugin.dart';
-import 'package:simplemessenger/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
-import 'package:simplemessenger/widgets/simple_messenger_app.dart';
-import 'package:simplemessenger/widgets/future_loading_dialog.dart';
+import 'package:quikxchat/utils/init_with_restore.dart';
+import 'package:quikxchat/utils/matrix_sdk_extensions/matrix_file_extension.dart';
+import 'package:quikxchat/utils/platform_infos.dart';
+import 'package:quikxchat/utils/uia_request_manager.dart';
+import 'package:quikxchat/utils/voip/enhanced_voip_plugin.dart';
+import 'package:quikxchat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
+import 'package:quikxchat/widgets/quikx_chat_app.dart';
+import 'package:quikxchat/widgets/future_loading_dialog.dart';
 import '../config/app_config.dart';
 import '../config/setting_keys.dart';
 import '../pages/key_verification/key_verification_dialog.dart';
@@ -175,7 +175,7 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
         );
         _registerSubs(_loginClientCandidate!.clientName);
         _loginClientCandidate = null;
-        SimpleMessengerApp.router.go('/rooms');
+        QuikxChatApp.router.go('/rooms');
       });
     }
     if (widget.clients.isEmpty) widget.clients.add(_loginClientCandidate!);
@@ -211,7 +211,7 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
   bool webHasFocus = true;
 
   String? get activeRoomId {
-    final route = SimpleMessengerApp.router.routeInformationProvider.value.uri.path;
+    final route = QuikxChatApp.router.routeInformationProvider.value.uri.path;
     if (!route.startsWith('/rooms/')) return null;
     return route.split('/')[2];
   }
@@ -274,14 +274,14 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
         if (!hidPopup &&
             {KeyVerificationState.done, KeyVerificationState.error}
                 .contains(request.state)) {
-          SimpleMessengerApp.router.pop('dialog');
+          QuikxChatApp.router.pop('dialog');
         }
         hidPopup = true;
       };
       request.onUpdate = null;
       hidPopup = true;
       await KeyVerificationDialog(request: request).show(
-        SimpleMessengerApp.router.routerDelegate.navigatorKey.currentContext ??
+        QuikxChatApp.router.routerDelegate.navigatorKey.currentContext ??
             context,
       );
     });
@@ -295,7 +295,7 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
       }
       if (loggedInWithMultipleClients && state != LoginState.loggedIn) {
         ScaffoldMessenger.of(
-          SimpleMessengerApp.router.routerDelegate.navigatorKey.currentContext ??
+          QuikxChatApp.router.routerDelegate.navigatorKey.currentContext ??
               context,
         ).showSnackBar(
           SnackBar(
@@ -304,10 +304,10 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
         );
 
         if (state != LoginState.loggedIn) {
-          SimpleMessengerApp.router.go('/rooms');
+          QuikxChatApp.router.go('/rooms');
         }
       } else {
-        SimpleMessengerApp.router
+        QuikxChatApp.router
             .go(state == LoginState.loggedIn ? '/rooms' : '/home');
       }
     });
@@ -359,7 +359,7 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
         this,
         onFcmError: (errorMsg, {Uri? link}) async {
           final result = await showOkCancelAlertDialog(
-            context: SimpleMessengerApp
+            context: QuikxChatApp
                     .router.routerDelegate.navigatorKey.currentContext ??
                 context,
             title: L10n.of(context).pushNotificationsNotAvailable,
@@ -442,7 +442,7 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
   }
 
   void _showUpdateNotification(Map<String, dynamic> data) {
-    final context = SimpleMessengerApp.router.routerDelegate.navigatorKey.currentContext;
+    final context = QuikxChatApp.router.routerDelegate.navigatorKey.currentContext;
     if (context != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -532,6 +532,9 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
     AppConfig.displayNavigationRail =
         store.getBool(SettingKeys.displayNavigationRail) ??
             AppConfig.displayNavigationRail;
+
+    AppConfig.showLinkPreviews =
+        AppSettings.showLinkPreviews.getItem(store);
   }
 
   @override

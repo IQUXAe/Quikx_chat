@@ -1,6 +1,6 @@
 // This file is auto-generated using scripts/generate_command_hints_glue.sh.
 
-import 'package:simplemessenger/l10n/l10n.dart';
+import 'package:quikxchat/l10n/l10n.dart';
 
 String commandExample(String command) {
   switch (command) {

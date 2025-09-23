@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/pages/settings_multiple_emotes/settings_multiple_emotes.dart';
-import 'package:simplemessenger/widgets/matrix.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/pages/settings_multiple_emotes/settings_multiple_emotes.dart';
+import 'package:quikxchat/widgets/matrix.dart';
 
 class MultipleEmotesSettingsView extends StatelessWidget {
   final MultipleEmotesSettingsController controller;

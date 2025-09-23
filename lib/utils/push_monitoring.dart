@@ -5,8 +5,8 @@ import 'dart:io';
 import 'package:matrix/matrix.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:simplemessenger/config/setting_keys.dart';
-import 'package:simplemessenger/utils/network_error_handler.dart';
+import 'package:quikxchat/config/setting_keys.dart';
+import 'package:quikxchat/utils/network_error_handler.dart';
 
 /// Мониторинг и диагностика пуш-уведомлений
 class PushMonitoring {

@@ -4,24 +4,24 @@ import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:simplemessenger/config/routes.dart';
-import 'package:simplemessenger/config/themes.dart';
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/utils/optimized_http_client.dart';
-import 'package:simplemessenger/utils/memory_manager.dart';
-import 'package:simplemessenger/widgets/app_lock.dart';
-import 'package:simplemessenger/widgets/theme_builder.dart';
+import 'package:quikxchat/config/routes.dart';
+import 'package:quikxchat/config/themes.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/utils/optimized_http_client.dart';
+import 'package:quikxchat/utils/memory_manager.dart';
+import 'package:quikxchat/widgets/app_lock.dart';
+import 'package:quikxchat/widgets/theme_builder.dart';
 import '../config/app_config.dart';
 import '../utils/custom_scroll_behaviour.dart';
 import 'matrix.dart';
 
-class SimpleMessengerApp extends StatefulWidget {
+class QuikxChatApp extends StatefulWidget {
   final Widget? testWidget;
   final List<Client> clients;
   final String? pincode;
   final SharedPreferences store;
 
-  const SimpleMessengerApp({
+  const QuikxChatApp({
     super.key,
     this.testWidget,
     required this.clients,
@@ -30,13 +30,13 @@ class SimpleMessengerApp extends StatefulWidget {
   });
 
   // Статический геттер для доступа к роутеру
-  static GoRouter get router => _SimpleMessengerAppState.appRouter;
+  static GoRouter get router => _QuikxChatAppState.appRouter;
 
   @override
-  State<SimpleMessengerApp> createState() => _SimpleMessengerAppState();
+  State<QuikxChatApp> createState() => _QuikxChatAppState();
 }
 
-class _SimpleMessengerAppState extends State<SimpleMessengerApp> with WidgetsBindingObserver {
+class _QuikxChatAppState extends State<QuikxChatApp> with WidgetsBindingObserver {
 
   /// getInitialLink may rereturn the value multiple times if this view is
   /// opened multiple times for example if the user logs out after they logged
@@ -106,9 +106,9 @@ class _SimpleMessengerAppState extends State<SimpleMessengerApp> with WidgetsBin
       builder: (context, themeMode, primaryColor) => MaterialApp.router(
         title: AppConfig.applicationName,
         themeMode: themeMode,
-        theme: SimpleMessengerThemes.buildTheme(context, Brightness.light, primaryColor),
+        theme: QuikxChatThemes.buildTheme(context, Brightness.light, primaryColor),
         darkTheme:
-            SimpleMessengerThemes.buildTheme(context, Brightness.dark, primaryColor),
+            QuikxChatThemes.buildTheme(context, Brightness.dark, primaryColor),
         scrollBehavior: CustomScrollBehavior(),
         localizationsDelegates: L10n.localizationsDelegates,
         supportedLocales: L10n.supportedLocales,

@@ -6,10 +6,10 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import 'package:matrix/matrix.dart';
 import 'package:slugify/slugify.dart';
 
-import 'package:simplemessenger/config/setting_keys.dart';
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/utils/markdown_context_builder.dart';
-import 'package:simplemessenger/widgets/mxc_image.dart';
+import 'package:quikxchat/config/setting_keys.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/utils/markdown_context_builder.dart';
+import 'package:quikxchat/widgets/mxc_image.dart';
 import '../../widgets/avatar.dart';
 import '../../widgets/matrix.dart';
 import 'command_hints.dart';

@@ -9,11 +9,11 @@ import 'package:path_provider/path_provider.dart';
 import 'package:record/record.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
-import 'package:simplemessenger/config/app_config.dart';
-import 'package:simplemessenger/config/setting_keys.dart';
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/utils/platform_infos.dart';
-import 'package:simplemessenger/widgets/matrix.dart';
+import 'package:quikxchat/config/app_config.dart';
+import 'package:quikxchat/config/setting_keys.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/utils/platform_infos.dart';
+import 'package:quikxchat/widgets/matrix.dart';
 import 'events/audio_player.dart';
 
 class RecordingDialog extends StatefulWidget {

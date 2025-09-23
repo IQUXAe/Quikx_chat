@@ -4,16 +4,16 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
-import 'package:simplemessenger/config/app_config.dart';
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/pages/settings_notifications/push_rule_extensions.dart';
-import 'package:simplemessenger/utils/localized_exception_extension.dart';
-import 'package:simplemessenger/widgets/adaptive_dialogs/adaptive_dialog_action.dart';
-import 'package:simplemessenger/widgets/adaptive_dialogs/show_modal_action_popup.dart';
-import 'package:simplemessenger/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
-import 'package:simplemessenger/widgets/future_loading_dialog.dart';
-import 'package:simplemessenger/utils/push_test.dart';
-import 'package:simplemessenger/utils/pusher_debug.dart';
+import 'package:quikxchat/config/app_config.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/pages/settings_notifications/push_rule_extensions.dart';
+import 'package:quikxchat/utils/localized_exception_extension.dart';
+import 'package:quikxchat/widgets/adaptive_dialogs/adaptive_dialog_action.dart';
+import 'package:quikxchat/widgets/adaptive_dialogs/show_modal_action_popup.dart';
+import 'package:quikxchat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
+import 'package:quikxchat/widgets/future_loading_dialog.dart';
+import 'package:quikxchat/utils/push_test.dart';
+import 'package:quikxchat/utils/pusher_debug.dart';
 import '../../widgets/matrix.dart';
 import 'settings_notifications_view.dart';
 

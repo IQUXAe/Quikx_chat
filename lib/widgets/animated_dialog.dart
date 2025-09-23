@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:simplemessenger/config/themes.dart';
+import 'package:quikxchat/config/themes.dart';
 
 class AnimatedDialog extends StatefulWidget {
   final Widget child;
@@ -24,7 +24,7 @@ class AnimatedDialog extends StatefulWidget {
       barrierDismissible: barrierDismissible,
       barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
       barrierColor: Colors.black54,
-      transitionDuration: SimpleMessengerThemes.animationDuration,
+      transitionDuration: QuikxChatThemes.animationDuration,
       pageBuilder: (context, animation, secondaryAnimation) {
         return AnimatedDialog(
           barrierDismissible: barrierDismissible,
@@ -40,7 +40,7 @@ class AnimatedDialog extends StatefulWidget {
               end: 1.0,
             ).animate(CurvedAnimation(
               parent: animation,
-              curve: SimpleMessengerThemes.bounceAnimationCurve,
+              curve: QuikxChatThemes.bounceAnimationCurve,
             ),),
             child: child,
           ),
@@ -61,7 +61,7 @@ class _AnimatedDialogState extends State<AnimatedDialog>
     super.initState();
     
     _controller = AnimationController(
-      duration: SimpleMessengerThemes.animationDuration,
+      duration: QuikxChatThemes.animationDuration,
       vsync: this,
     );
 
@@ -70,7 +70,7 @@ class _AnimatedDialogState extends State<AnimatedDialog>
       end: 1.0,
     ).animate(CurvedAnimation(
       parent: _controller,
-      curve: SimpleMessengerThemes.bounceAnimationCurve,
+      curve: QuikxChatThemes.bounceAnimationCurve,
     ),);
 
     _fadeAnimation = Tween<double>(

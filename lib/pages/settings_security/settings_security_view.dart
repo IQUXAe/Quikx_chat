@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:simplemessenger/config/app_config.dart';
-import 'package:simplemessenger/config/setting_keys.dart';
-import 'package:simplemessenger/config/themes.dart';
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/utils/beautify_string_extension.dart';
-import 'package:simplemessenger/utils/platform_infos.dart';
-import 'package:simplemessenger/widgets/layouts/max_width_body.dart';
-import 'package:simplemessenger/widgets/matrix.dart';
-import 'package:simplemessenger/widgets/settings_switch_list_tile.dart';
+import 'package:quikxchat/config/app_config.dart';
+import 'package:quikxchat/config/setting_keys.dart';
+import 'package:quikxchat/config/themes.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/utils/beautify_string_extension.dart';
+import 'package:quikxchat/utils/platform_infos.dart';
+import 'package:quikxchat/widgets/layouts/max_width_body.dart';
+import 'package:quikxchat/widgets/matrix.dart';
+import 'package:quikxchat/widgets/settings_switch_list_tile.dart';
 import 'settings_security.dart';
 
 class SettingsSecurityView extends StatelessWidget {
@@ -26,8 +26,7 @@ class SettingsSecurityView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(L10n.of(context).security),
-        automaticallyImplyLeading: !SimpleMessengerThemes.isColumnMode(context),
-        centerTitle: SimpleMessengerThemes.isColumnMode(context),
+        centerTitle: QuikxChatThemes.isColumnMode(context),
       ),
       body: ListTileTheme(
         iconColor: theme.colorScheme.onSurface,
@@ -74,13 +73,7 @@ class SettingsSecurityView extends StatelessWidget {
                     storeKey: SettingKeys.sendPublicReadReceipts,
                     defaultValue: AppConfig.sendPublicReadReceipts,
                   ),
-                  SettingsSwitchListTile.adaptive(
-                    title: 'Show link previews',
-                    subtitle: 'Display previews for links in messages',
-                    onChanged: (b) => AppConfig.showLinkPreviews = b,
-                    storeKey: SettingKeys.showLinkPreviews,
-                    defaultValue: AppConfig.showLinkPreviews,
-                  ),
+
                   ListTile(
                     trailing: const Icon(Icons.chevron_right_outlined),
                     title: Text(L10n.of(context).blockedUsers),

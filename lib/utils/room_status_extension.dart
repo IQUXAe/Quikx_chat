@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart';
 
 import 'package:matrix/matrix.dart';
 
-import 'package:simplemessenger/l10n/l10n.dart';
+import 'package:quikxchat/l10n/l10n.dart';
 import '../config/app_config.dart';
 
 extension RoomStatusExtension on Room {

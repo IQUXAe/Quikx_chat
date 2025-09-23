@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:simplemessenger/utils/memory_manager.dart';
+import 'package:quikxchat/utils/memory_manager.dart';
 
 class OptimizedNetworkImage extends StatefulWidget {
   final String imageUrl;

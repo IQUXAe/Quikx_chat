@@ -6,11 +6,11 @@ import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:matrix/matrix.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-import 'package:simplemessenger/config/app_config.dart';
-import 'package:simplemessenger/config/themes.dart';
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/utils/localized_exception_extension.dart';
-import 'package:simplemessenger/widgets/layouts/max_width_body.dart';
+import 'package:quikxchat/config/app_config.dart';
+import 'package:quikxchat/config/themes.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/utils/localized_exception_extension.dart';
+import 'package:quikxchat/widgets/layouts/max_width_body.dart';
 import '../../widgets/matrix.dart';
 import 'settings_homeserver.dart';
 
@@ -27,12 +27,11 @@ class SettingsHomeserverView extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: !SimpleMessengerThemes.isColumnMode(context),
-        centerTitle: SimpleMessengerThemes.isColumnMode(context),
         title: Text(
           L10n.of(context)
               .aboutHomeserver(client.userID?.domain ?? 'Homeserver'),
         ),
+        centerTitle: QuikxChatThemes.isColumnMode(context),
       ),
       body: MaxWidthBody(
         withScrolling: true,

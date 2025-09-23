@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import 'package:simplemessenger/config/themes.dart';
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/widgets/app_lock.dart';
+import 'package:quikxchat/config/themes.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/widgets/app_lock.dart';
 
 class LockScreen extends StatefulWidget {
   const LockScreen({super.key});
@@ -71,7 +71,7 @@ class _LockScreenState extends State<LockScreen> {
           padding: const EdgeInsets.all(16.0),
           child: ConstrainedBox(
             constraints: const BoxConstraints(
-              maxWidth: SimpleMessengerThemes.columnWidth,
+              maxWidth: QuikxChatThemes.columnWidth,
             ),
             child: ListView(
               shrinkWrap: true,

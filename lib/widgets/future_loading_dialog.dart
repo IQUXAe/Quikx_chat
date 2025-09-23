@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 
 import 'package:async/async.dart';
 
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/utils/localized_exception_extension.dart';
-import 'package:simplemessenger/widgets/adaptive_dialogs/adaptive_dialog_action.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/utils/localized_exception_extension.dart';
+import 'package:quikxchat/widgets/adaptive_dialogs/adaptive_dialog_action.dart';
 
 /// Displays a loading dialog which reacts to the given [future]. The dialog
 /// will be dismissed and the value will be returned when the future completes.

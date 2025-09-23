@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/pages/image_viewer/video_player.dart';
-import 'package:simplemessenger/utils/platform_infos.dart';
-import 'package:simplemessenger/widgets/hover_builder.dart';
-import 'package:simplemessenger/widgets/mxc_image.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/pages/image_viewer/video_player.dart';
+import 'package:quikxchat/utils/platform_infos.dart';
+import 'package:quikxchat/widgets/hover_builder.dart';
+import 'package:quikxchat/widgets/mxc_image.dart';
 import 'image_viewer.dart';
 
 class ImageViewerView extends StatelessWidget {

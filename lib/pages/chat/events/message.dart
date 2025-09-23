@@ -7,17 +7,17 @@ import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:matrix/matrix.dart';
 import 'package:swipe_to_action/swipe_to_action.dart';
 
-import 'package:simplemessenger/config/themes.dart';
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/pages/chat/events/room_creation_state_event.dart';
-import 'package:simplemessenger/utils/adaptive_bottom_sheet.dart';
-import 'package:simplemessenger/utils/date_time_extension.dart';
-import 'package:simplemessenger/utils/file_description.dart';
-import 'package:simplemessenger/utils/matrix_sdk_extensions/matrix_locals.dart';
-import 'package:simplemessenger/utils/string_color.dart';
-import 'package:simplemessenger/widgets/avatar.dart';
-import 'package:simplemessenger/widgets/matrix.dart';
-import 'package:simplemessenger/widgets/member_actions_popup_menu_button.dart';
+import 'package:quikxchat/config/themes.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/pages/chat/events/room_creation_state_event.dart';
+import 'package:quikxchat/utils/adaptive_bottom_sheet.dart';
+import 'package:quikxchat/utils/date_time_extension.dart';
+import 'package:quikxchat/utils/file_description.dart';
+import 'package:quikxchat/utils/matrix_sdk_extensions/matrix_locals.dart';
+import 'package:quikxchat/utils/string_color.dart';
+import 'package:quikxchat/widgets/avatar.dart';
+import 'package:quikxchat/widgets/matrix.dart';
+import 'package:quikxchat/widgets/member_actions_popup_menu_button.dart';
 import '../../../config/app_config.dart';
 import '../../../utils/message_translator.dart';
 import 'message_content.dart';
@@ -212,7 +212,7 @@ class Message extends StatelessWidget {
         onSwipe: (_) => onSwipe(),
         child: Container(
           constraints: const BoxConstraints(
-            maxWidth: SimpleMessengerThemes.maxTimelineWidth,
+            maxWidth: QuikxChatThemes.maxTimelineWidth,
           ),
           padding: EdgeInsets.only(
             left: 8.0,
@@ -265,8 +265,8 @@ class Message extends StatelessWidget {
                       });
                     }
                     return AnimatedSize(
-                      duration: SimpleMessengerThemes.animationDuration,
-                      curve: SimpleMessengerThemes.animationCurve,
+                      duration: QuikxChatThemes.animationDuration,
+                      curve: QuikxChatThemes.animationCurve,
                       clipBehavior: Clip.none,
                       alignment: ownMessage
                           ? Alignment.bottomRight
@@ -447,10 +447,10 @@ class Message extends StatelessWidget {
                                                             event.status.isSending
                                                         ? 0.5
                                                         : 1,
-                                                duration: SimpleMessengerThemes
+                                                duration: QuikxChatThemes
                                                     .animationDuration,
                                                 curve:
-                                                    SimpleMessengerThemes.animationCurve,
+                                                    QuikxChatThemes.animationCurve,
                                                 child: Container(
                                                   decoration: BoxDecoration(
                                                     color: noBubble
@@ -477,7 +477,7 @@ class Message extends StatelessWidget {
                                                       ),
                                                       constraints:
                                                           const BoxConstraints(
-                                                        maxWidth: SimpleMessengerThemes
+                                                        maxWidth: QuikxChatThemes
                                                                 .columnWidth *
                                                             1.4, // Slightly smaller
                                                       ),
@@ -683,8 +683,8 @@ class Message extends StatelessWidget {
                                                   : Alignment.bottomLeft,
                                               child: AnimatedSize(
                                                 duration:
-                                                    SimpleMessengerThemes.animationDuration,
-                                                curve: SimpleMessengerThemes.animationCurve,
+                                                    QuikxChatThemes.animationDuration,
+                                                curve: QuikxChatThemes.animationCurve,
                                                 child: Padding(
                                                   padding:
                                                       const EdgeInsets.all(
@@ -874,7 +874,7 @@ class Message extends StatelessWidget {
                                                           FutureBuilder<bool>(
                                                             future: MessageTranslator.isEnabled,
                                                             builder: (context, snapshot) {
-                                                              if (!(snapshot.data ?? false)) return const SizedBox.shrink();
+                                                              if (!(snapshot.data ?? true)) return const SizedBox.shrink();
                                                               return Padding(
                                                                 padding: const EdgeInsets.only(right: 8.0),
                                                                 child: _TranslateButton(event: event, timeline: timeline),
@@ -901,8 +901,8 @@ class Message extends StatelessWidget {
               ),
               if (showReceiptsRow)
                 AnimatedSize(
-                  duration: SimpleMessengerThemes.animationDuration,
-                  curve: SimpleMessengerThemes.animationCurve,
+                  duration: QuikxChatThemes.animationDuration,
+                  curve: QuikxChatThemes.animationCurve,
                   alignment: Alignment.bottomCenter,
                   child: Padding(
                     padding: EdgeInsets.only(

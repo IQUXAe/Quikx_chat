@@ -3,8 +3,8 @@ import 'package:flutter/services.dart';
 
 import 'package:share_plus/share_plus.dart';
 
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/utils/platform_infos.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/utils/platform_infos.dart';
 import '../widgets/matrix.dart';
 
 abstract class FluffyShare {

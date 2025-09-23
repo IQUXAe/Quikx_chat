@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/widgets/layouts/login_scaffold.dart';
-import 'package:simplemessenger/widgets/matrix.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/widgets/layouts/login_scaffold.dart';
+import 'package:quikxchat/widgets/matrix.dart';
 import 'login.dart';
 
 class LoginView extends StatelessWidget {

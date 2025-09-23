@@ -30,12 +30,12 @@ import 'package:matrix/matrix.dart';
 import 'package:unifiedpush/unifiedpush.dart';
 import 'package:unifiedpush_ui/unifiedpush_ui.dart';
 
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/utils/push_helper.dart';
-import 'package:simplemessenger/utils/push_notification_manager.dart';
-import 'package:simplemessenger/utils/file_logger.dart';
-import 'package:simplemessenger/utils/network_error_handler.dart';
-import 'package:simplemessenger/widgets/simple_messenger_app.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/utils/push_helper.dart';
+import 'package:quikxchat/utils/push_notification_manager.dart';
+import 'package:quikxchat/utils/file_logger.dart';
+import 'package:quikxchat/utils/network_error_handler.dart';
+import 'package:quikxchat/widgets/quikx_chat_app.dart';
 import '../config/app_config.dart';
 import '../config/setting_keys.dart';
 import '../widgets/matrix.dart';
@@ -617,7 +617,7 @@ class BackgroundPush {
             .waitForRoomInSync(roomId)
             .timeout(const Duration(seconds: 30));
       }
-      SimpleMessengerApp.router.go(
+      QuikxChatApp.router.go(
         client.getRoomById(roomId)?.membership == Membership.invite
             ? '/rooms'
             : '/rooms/$roomId',

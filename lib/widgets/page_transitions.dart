@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:simplemessenger/config/themes.dart';
+import 'package:quikxchat/config/themes.dart';
 
 class PageTransitions {
   static Route<T> slideFromRight<T extends Object?>(
@@ -9,8 +9,8 @@ class PageTransitions {
     return PageRouteBuilder<T>(
       settings: settings,
       pageBuilder: (context, animation, secondaryAnimation) => page,
-      transitionDuration: SimpleMessengerThemes.animationDuration,
-      reverseTransitionDuration: SimpleMessengerThemes.animationDuration,
+      transitionDuration: QuikxChatThemes.animationDuration,
+      reverseTransitionDuration: QuikxChatThemes.animationDuration,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         return SlideTransition(
           position: Tween<Offset>(
@@ -18,7 +18,7 @@ class PageTransitions {
             end: Offset.zero,
           ).animate(CurvedAnimation(
             parent: animation,
-            curve: SimpleMessengerThemes.slideAnimationCurve,
+            curve: QuikxChatThemes.slideAnimationCurve,
           ),),
           child: SlideTransition(
             position: Tween<Offset>(
@@ -26,7 +26,7 @@ class PageTransitions {
               end: const Offset(-0.3, 0.0),
             ).animate(CurvedAnimation(
               parent: secondaryAnimation,
-              curve: SimpleMessengerThemes.slideAnimationCurve,
+              curve: QuikxChatThemes.slideAnimationCurve,
             ),),
             child: child,
           ),
@@ -42,8 +42,8 @@ class PageTransitions {
     return PageRouteBuilder<T>(
       settings: settings,
       pageBuilder: (context, animation, secondaryAnimation) => page,
-      transitionDuration: SimpleMessengerThemes.animationDuration,
-      reverseTransitionDuration: SimpleMessengerThemes.animationDuration,
+      transitionDuration: QuikxChatThemes.animationDuration,
+      reverseTransitionDuration: QuikxChatThemes.animationDuration,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         return FadeTransition(
           opacity: animation,
@@ -53,7 +53,7 @@ class PageTransitions {
               end: 1.0,
             ).animate(CurvedAnimation(
               parent: animation,
-              curve: SimpleMessengerThemes.bounceAnimationCurve,
+              curve: QuikxChatThemes.bounceAnimationCurve,
             ),),
             child: child,
           ),
@@ -69,8 +69,8 @@ class PageTransitions {
     return PageRouteBuilder<T>(
       settings: settings,
       pageBuilder: (context, animation, secondaryAnimation) => page,
-      transitionDuration: SimpleMessengerThemes.animationDuration,
-      reverseTransitionDuration: SimpleMessengerThemes.animationDuration,
+      transitionDuration: QuikxChatThemes.animationDuration,
+      reverseTransitionDuration: QuikxChatThemes.animationDuration,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         return SlideTransition(
           position: Tween<Offset>(
@@ -78,7 +78,7 @@ class PageTransitions {
             end: Offset.zero,
           ).animate(CurvedAnimation(
             parent: animation,
-            curve: SimpleMessengerThemes.slideAnimationCurve,
+            curve: QuikxChatThemes.slideAnimationCurve,
           ),),
           child: child,
         );

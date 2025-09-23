@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'package:simplemessenger/config/themes.dart';
-import 'package:simplemessenger/pages/chat/chat.dart';
-import 'package:simplemessenger/utils/room_status_extension.dart';
-import 'package:simplemessenger/widgets/avatar.dart';
-import 'package:simplemessenger/widgets/matrix.dart';
+import 'package:quikxchat/config/themes.dart';
+import 'package:quikxchat/pages/chat/chat.dart';
+import 'package:quikxchat/utils/room_status_extension.dart';
+import 'package:quikxchat/widgets/avatar.dart';
+import 'package:quikxchat/widgets/matrix.dart';
 
 class SeenByRow extends StatelessWidget {
   final ChatController controller;
@@ -21,12 +21,12 @@ class SeenByRow extends StatelessWidget {
       alignment: Alignment.center,
       child: AnimatedContainer(
         constraints:
-            const BoxConstraints(maxWidth: SimpleMessengerThemes.maxTimelineWidth),
+            const BoxConstraints(maxWidth: QuikxChatThemes.maxTimelineWidth),
         height: seenByUsers.isEmpty ? 0 : 24,
         duration: seenByUsers.isEmpty
             ? Duration.zero
-            : SimpleMessengerThemes.animationDuration,
-        curve: SimpleMessengerThemes.animationCurve,
+            : QuikxChatThemes.animationDuration,
+        curve: QuikxChatThemes.animationCurve,
         alignment: controller.timeline!.events.isNotEmpty &&
                 controller.timeline!.events.first.senderId ==
                     Matrix.of(context).client.userID

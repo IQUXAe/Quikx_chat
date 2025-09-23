@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 
-import 'package:simplemessenger/config/app_config.dart';
-import 'package:simplemessenger/config/setting_keys.dart';
-import 'package:simplemessenger/utils/account_config.dart';
-import 'package:simplemessenger/utils/file_selector.dart';
-import 'package:simplemessenger/widgets/future_loading_dialog.dart';
-import 'package:simplemessenger/widgets/theme_builder.dart';
+import 'package:quikxchat/config/app_config.dart';
+import 'package:quikxchat/config/setting_keys.dart';
+import 'package:quikxchat/utils/account_config.dart';
+import 'package:quikxchat/utils/file_selector.dart';
+import 'package:quikxchat/widgets/future_loading_dialog.dart';
+import 'package:quikxchat/widgets/theme_builder.dart';
 import '../../widgets/matrix.dart';
 import 'settings_style_view.dart';
 

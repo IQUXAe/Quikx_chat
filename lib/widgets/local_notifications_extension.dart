@@ -9,14 +9,14 @@ import 'package:image/image.dart';
 import 'package:matrix/matrix.dart';
 import 'package:universal_html/html.dart' as html;
 
-import 'package:simplemessenger/config/app_config.dart';
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/utils/client_download_content_extension.dart';
-import 'package:simplemessenger/utils/matrix_sdk_extensions/matrix_locals.dart';
-import 'package:simplemessenger/utils/platform_infos.dart';
-import 'package:simplemessenger/utils/push_helper.dart';
-import 'package:simplemessenger/widgets/simple_messenger_app.dart';
-import 'package:simplemessenger/widgets/matrix.dart';
+import 'package:quikxchat/config/app_config.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/utils/client_download_content_extension.dart';
+import 'package:quikxchat/utils/matrix_sdk_extensions/matrix_locals.dart';
+import 'package:quikxchat/utils/platform_infos.dart';
+import 'package:quikxchat/utils/push_helper.dart';
+import 'package:quikxchat/widgets/quikx_chat_app.dart';
+import 'package:quikxchat/widgets/matrix.dart';
 
 extension LocalNotificationsExtension on MatrixState {
   static final html.AudioElement _audioPlayer = html.AudioElement()
@@ -83,7 +83,7 @@ extension LocalNotificationsExtension on MatrixState {
       // Добавляем обработчик клика по уведомлению
       notification.onClick.listen((_) {
         try {
-          SimpleMessengerApp.router.go('/rooms/${event.room.id}');
+          QuikxChatApp.router.go('/rooms/${event.room.id}');
           notification.close();
         } catch (e) {
           Logs().w('Failed to navigate to room from web notification', e);
@@ -172,7 +172,7 @@ extension LocalNotificationsExtension on MatrixState {
                 break;
               case DesktopNotificationActions.openChat:
                 try {
-                  SimpleMessengerApp.router.go('/rooms/${event.room.id}');
+                  QuikxChatApp.router.go('/rooms/${event.room.id}');
                 } catch (e) {
                   Logs().w('Failed to navigate to room', e);
                 }

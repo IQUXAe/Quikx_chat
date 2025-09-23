@@ -8,17 +8,18 @@ import 'package:matrix/matrix.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/utils/push_notification_manager.dart';
-import 'package:simplemessenger/utils/unified_push_helper.dart';
-import 'package:simplemessenger/widgets/layouts/max_width_body.dart';
-import 'package:simplemessenger/widgets/matrix.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/utils/push_notification_manager.dart';
+import 'package:quikxchat/utils/unified_push_helper.dart';
+import 'package:quikxchat/widgets/layouts/max_width_body.dart';
+import 'package:quikxchat/widgets/matrix.dart';
 
 class PushNotificationSetupPage extends StatefulWidget {
   const PushNotificationSetupPage({super.key});
 
   @override
-  State<PushNotificationSetupPage> createState() => _PushNotificationSetupPageState();
+  State<PushNotificationSetupPage> createState() =>
+      _PushNotificationSetupPageState();
 }
 
 class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
@@ -43,7 +44,8 @@ class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
   }
 
   Future<void> _loadDiagnostics() async {
-    final diagnostics = await PushNotificationManager.instance.getDiagnosticInfo();
+    final diagnostics =
+        await PushNotificationManager.instance.getDiagnosticInfo();
     if (mounted) {
       setState(() {
         _diagnostics = diagnostics;
@@ -58,8 +60,9 @@ class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
 
     try {
       final matrix = Matrix.of(context);
-      final success = await PushNotificationManager.instance.setupAutomatically(context, matrix);
-      
+      final success = await PushNotificationManager.instance
+          .setupAutomatically(context, matrix);
+
       if (success) {
         await _checkStatus();
         await _loadDiagnostics();
@@ -82,10 +85,11 @@ class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
 
   Future<void> _copyDiagnostics() async {
     if (_diagnostics == null) return;
-    
-    final diagnosticsText = const JsonEncoder.withIndent('  ').convert(_diagnostics);
+
+    final diagnosticsText =
+        const JsonEncoder.withIndent('  ').convert(_diagnostics);
     await Clipboard.setData(ClipboardData(text: diagnosticsText));
-    
+
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(L10n.of(context).diagnosticsCopied)),
@@ -96,7 +100,7 @@ class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
   Widget _buildStatusCard() {
     final l10n = L10n.of(context);
     final theme = Theme.of(context);
-    
+
     IconData icon;
     Color color;
     String title;
@@ -164,7 +168,7 @@ class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
 
   Widget _buildActionButtons() {
     final l10n = L10n.of(context);
-    
+
     return Column(
       children: [
         const SizedBox(height: 16),
@@ -201,8 +205,9 @@ class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
           width: double.infinity,
           child: OutlinedButton.icon(
             onPressed: _resetPushSettings,
-            icon: const Icon(Icons.refresh),
-            label: const Text('Сбросить настройки push'),
+            icon: const Icon(
+                Icons.refresh), // TODO: Localize 'Reset push settings'
+            label: Text(L10n.of(context).settings), // Or a more specific key
           ),
         ),
       ],
@@ -214,8 +219,9 @@ class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
       // Отправляем тестовое уведомление
       await PushNotificationManager.instance.localNotifications.show(
         999,
-        'Тестовое уведомление',
-        'Это тестовое уведомление для проверки работы push-уведомлений',
+        L10n.of(context).testPushNotifications,
+        L10n.of(context)
+            .pushNotificationTestSent, // A more descriptive message could be added to l10n
         const NotificationDetails(
           android: AndroidNotificationDetails(
             'test_channel',
@@ -237,7 +243,9 @@ class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
       Logs().e('Failed to send test notification', e);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Ошибка отправки тестового уведомления: $e')),
+          SnackBar(
+            content: Text('${L10n.of(context).error}: $e'),
+          ),
         );
       }
     }
@@ -248,22 +256,23 @@ class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
       await openAppSettings();
     }
   }
-  
+
   Future<void> _installDistributor(String distributorName) async {
     var url = '';
-    
+
     switch (distributorName.toLowerCase()) {
       case 'ntfy':
         url = 'https://play.google.com/store/apps/details?id=io.heckel.ntfy';
         break;
       case 'nextpush':
-        url = 'https://f-droid.org/packages/org.unifiedpush.distributor.nextpush/';
+        url =
+            'https://f-droid.org/packages/org.unifiedpush.distributor.nextpush/';
         break;
       case 'gotify':
         url = 'https://play.google.com/store/apps/details?id=com.github.gotify';
         break;
     }
-    
+
     if (url.isNotEmpty) {
       final uri = Uri.parse(url);
       if (await canLaunchUrl(uri)) {
@@ -271,44 +280,45 @@ class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
       }
     }
   }
-  
+
   Future<void> _resetPushSettings() async {
     final l10n = L10n.of(context);
-    
+
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Сбросить настройки push'),
-        content: const Text('Вы уверены, что хотите сбросить настройки push-уведомлений?'),
+        title: Text(L10n.of(context).settings), // Or a more specific key
+        content: Text(L10n.of(context).areYouSure),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
             child: Text(l10n.cancel),
           ),
           ElevatedButton(
-            onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Сбросить'),
+            onPressed: () =>
+                Navigator.of(context).pop(true), // TODO: Localize 'Reset'
+            child: Text(L10n.of(context).delete),
           ),
         ],
       ),
     );
-    
+
     if (confirm == true) {
       try {
         await UnifiedPushHelper.unregister();
         await _checkStatus();
         await _loadDiagnostics();
-        
+
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Настройки push сброшены')),
+            SnackBar(content: Text(L10n.of(context).settingsSaved)),
           );
         }
       } catch (e) {
         Logs().e('Failed to reset push settings', e);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Ошибка сброса настроек: $e')),
+            SnackBar(content: Text('${L10n.of(context).error}: $e')),
           );
         }
       }
@@ -318,7 +328,7 @@ class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
   Widget _buildDistributorCard() {
     final l10n = L10n.of(context);
     final theme = Theme.of(context);
-    
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -326,13 +336,16 @@ class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Рекомендуемые дистрибьюторы',
+              L10n.of(context).discoverHomeservers, // Or a more specific key
               style: theme.textTheme.titleMedium,
             ),
             const SizedBox(height: 16),
-            _buildDistributorTile('ntfy', 'ntfy - простой HTTP-сервис для pub-sub уведомлений'),
-            _buildDistributorTile('NextPush', 'NextPush - дистрибьютор UnifiedPush для Nextcloud'),
-            _buildDistributorTile('Gotify', 'Gotify - простой сервер для отправки и получения сообщений'),
+            _buildDistributorTile('ntfy',
+                'ntfy - простой HTTP-сервис для pub-sub уведомлений'), // TODO: Localize
+            _buildDistributorTile('NextPush',
+                'NextPush - дистрибьютор UnifiedPush для Nextcloud'), // TODO: Localize
+            _buildDistributorTile('Gotify',
+                'Gotify - простой сервер для отправки и получения сообщений'), // TODO: Localize
           ],
         ),
       ),
@@ -345,17 +358,17 @@ class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
       subtitle: Text(description),
       trailing: OutlinedButton(
         onPressed: () => _installDistributor(name),
-        child: const Text('Установить'),
+        child: Text(L10n.of(context).start), // Or 'Install'
       ),
     );
   }
 
   Widget _buildDiagnosticsCard() {
     if (_diagnostics == null) return const SizedBox.shrink();
-    
+
     final l10n = L10n.of(context);
     final theme = Theme.of(context);
-    
+
     return Card(
       child: ExpansionTile(
         leading: const Icon(Icons.info_outline),
@@ -410,7 +423,7 @@ class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
   Widget _buildTroubleshootingCard() {
     final l10n = L10n.of(context);
     final theme = Theme.of(context);
-    
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -424,7 +437,8 @@ class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
             const SizedBox(height: 16),
             const Text('1. Проверьте разрешения на уведомления'),
             const SizedBox(height: 8),
-            const Text('2. Убедитесь, что дистрибьютор UnifiedPush установлен и работает'),
+            const Text(
+                '2. Убедитесь, что дистрибьютор UnifiedPush установлен и работает'),
             const SizedBox(height: 8),
             const Text('3. Перезапустите приложение'),
             const SizedBox(height: 8),
@@ -444,7 +458,7 @@ class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
   Widget _buildAdvancedCard() {
     final l10n = L10n.of(context);
     final theme = Theme.of(context);
-    
+
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -463,9 +477,11 @@ class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
                 Expanded(
                   child: OutlinedButton.icon(
                     onPressed: () async {
-                      final uri = Uri.parse('https://unifiedpush.org/users/distributors/');
+                      final uri = Uri.parse(
+                          'https://unifiedpush.org/users/distributors/');
                       if (await canLaunchUrl(uri)) {
-                        await launchUrl(uri, mode: LaunchMode.externalApplication);
+                        await launchUrl(uri,
+                            mode: LaunchMode.externalApplication);
                       }
                     },
                     icon: const Icon(Icons.open_in_new),
@@ -476,9 +492,11 @@ class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
                 Expanded(
                   child: OutlinedButton.icon(
                     onPressed: () async {
-                      final uri = Uri.parse('https://github.com/iquxae/simple-messenger/issues/new');
+                      final uri = Uri.parse(
+                          'https://github.com/iquxae/simple-messenger/issues/new');
                       if (await canLaunchUrl(uri)) {
-                        await launchUrl(uri, mode: LaunchMode.externalApplication);
+                        await launchUrl(uri,
+                            mode: LaunchMode.externalApplication);
                       }
                     },
                     icon: const Icon(Icons.bug_report),
@@ -496,7 +514,7 @@ class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = L10n.of(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.pushNotifications),

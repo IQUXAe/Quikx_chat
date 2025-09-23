@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
-import 'package:simplemessenger/config/app_config.dart';
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/utils/matrix_sdk_extensions/matrix_locals.dart';
-import 'package:simplemessenger/utils/room_status_extension.dart';
-import 'package:simplemessenger/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
-import 'package:simplemessenger/widgets/animated_loading_indicator.dart';
-import 'package:simplemessenger/widgets/future_loading_dialog.dart';
-import 'package:simplemessenger/widgets/hover_builder.dart';
+import 'package:quikxchat/config/app_config.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/utils/matrix_sdk_extensions/matrix_locals.dart';
+import 'package:quikxchat/utils/room_status_extension.dart';
+import 'package:quikxchat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
+import 'package:quikxchat/widgets/animated_loading_indicator.dart';
+import 'package:quikxchat/widgets/future_loading_dialog.dart';
+import 'package:quikxchat/widgets/hover_builder.dart';
 import '../../config/themes.dart';
 import '../../utils/date_time_extension.dart';
 import '../../widgets/avatar.dart';
@@ -44,26 +44,6 @@ class _ChatListItemState extends State<ChatListItem> {
   @override
   void initState() {
     super.initState();
-    // Асинхронное обновление профилей чатов
-    widget.room.client.onSync.stream.listen((_) async {
-      if (mounted) {
-        // Обновляем профили участников
-        try {
-          await widget.room.requestParticipants();
-        } catch (_) {}
-        if (mounted) setState(() {});
-      }
-    });
-    
-    // Немедленное обновление
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (mounted) {
-        try {
-          await widget.room.requestParticipants();
-          if (mounted) setState(() {});
-        } catch (_) {}
-      }
-    });
   }
 
   @override
@@ -112,8 +92,8 @@ class _ChatListItemState extends State<ChatListItem> {
               onLongPress: () => widget.onLongPress?.call(context),
               leading: HoverBuilder(
                 builder: (context, hovered) => AnimatedScale(
-                  duration: SimpleMessengerThemes.animationDuration,
-                  curve: SimpleMessengerThemes.animationCurve,
+                  duration: QuikxChatThemes.animationDuration,
+                  curve: QuikxChatThemes.animationCurve,
                   scale: hovered ? 1.1 : 1.0,
                   child: SizedBox(
                     width: Avatar.defaultSize,
@@ -177,8 +157,8 @@ class _ChatListItemState extends State<ChatListItem> {
                           child: GestureDetector(
                             onTap: () => widget.onLongPress?.call(context),
                             child: AnimatedScale(
-                              duration: SimpleMessengerThemes.animationDuration,
-                              curve: SimpleMessengerThemes.animationCurve,
+                              duration: QuikxChatThemes.animationDuration,
+                              curve: QuikxChatThemes.animationCurve,
                               scale: listTileHovered ? 1.0 : 0.0,
                               child: Material(
                                 color: backgroundColor,
@@ -259,8 +239,8 @@ class _ChatListItemState extends State<ChatListItem> {
                     width: typingText.isEmpty ? 0 : 18,
                     clipBehavior: Clip.hardEdge,
                     decoration: const BoxDecoration(),
-                    duration: SimpleMessengerThemes.animationDuration,
-                    curve: SimpleMessengerThemes.animationCurve,
+                    duration: QuikxChatThemes.animationDuration,
+                    curve: QuikxChatThemes.animationCurve,
                     padding: const EdgeInsets.only(right: 4),
                     child: Icon(
                       Icons.edit_outlined,
@@ -324,8 +304,8 @@ class _ChatListItemState extends State<ChatListItem> {
                   ),
                   const SizedBox(width: 8),
                   AnimatedContainer(
-                    duration: SimpleMessengerThemes.animationDuration,
-                    curve: SimpleMessengerThemes.animationCurve,
+                    duration: QuikxChatThemes.animationDuration,
+                    curve: QuikxChatThemes.animationCurve,
                     alignment: Alignment.center,
                     padding: const EdgeInsets.symmetric(horizontal: 7),
                     height: unreadBubbleSize,

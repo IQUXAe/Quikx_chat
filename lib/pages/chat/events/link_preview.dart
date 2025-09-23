@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as html_parser;
-import 'package:simplemessenger/utils/url_launcher.dart';
+import 'package:quikxchat/utils/url_launcher.dart';
 
 // Simple cache for link previews
 final Map<String, LinkPreviewData?> _previewCache = <String, LinkPreviewData?>{};

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
-import 'package:simplemessenger/utils/string_color.dart';
-import 'package:simplemessenger/widgets/mxc_image.dart';
-import 'package:simplemessenger/widgets/presence_builder.dart';
+import 'package:quikxchat/utils/string_color.dart';
+import 'package:quikxchat/widgets/mxc_image.dart';
+import 'package:quikxchat/widgets/presence_builder.dart';
 
 class Avatar extends StatefulWidget {
   final Uri? mxContent;

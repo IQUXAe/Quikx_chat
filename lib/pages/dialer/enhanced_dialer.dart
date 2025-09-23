@@ -12,11 +12,11 @@ import 'package:flutter_webrtc/flutter_webrtc.dart' hide VideoRenderer;
 import 'package:matrix/matrix.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/utils/matrix_sdk_extensions/matrix_locals.dart';
-import 'package:simplemessenger/utils/platform_infos.dart';
-import 'package:simplemessenger/utils/voip/video_renderer.dart';
-import 'package:simplemessenger/widgets/avatar.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/utils/matrix_sdk_extensions/matrix_locals.dart';
+import 'package:quikxchat/utils/platform_infos.dart';
+import 'package:quikxchat/utils/voip/video_renderer.dart';
+import 'package:quikxchat/widgets/avatar.dart';
 import 'pip/pip_view.dart';
 
 class EnhancedCalling extends StatefulWidget {

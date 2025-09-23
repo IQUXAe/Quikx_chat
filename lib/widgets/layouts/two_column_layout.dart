@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:simplemessenger/config/themes.dart';
+import 'package:quikxchat/config/themes.dart';
 
 class TwoColumnLayout extends StatelessWidget {
   final Widget mainView;
@@ -22,7 +22,7 @@ class TwoColumnLayout extends StatelessWidget {
             Container(
               clipBehavior: Clip.antiAlias,
               decoration: const BoxDecoration(),
-              width: SimpleMessengerThemes.columnWidth + SimpleMessengerThemes.navRailWidth,
+              width: QuikxChatThemes.columnWidth + QuikxChatThemes.navRailWidth,
               child: mainView,
             ),
             Container(

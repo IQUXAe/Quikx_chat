@@ -5,12 +5,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
-import 'package:simplemessenger/widgets/future_loading_dialog.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
+import 'package:quikxchat/widgets/future_loading_dialog.dart';
 import 'matrix.dart';
 
-enum ChatPopupMenuActions { details, mute, unmute, leave, search, translateToggle, translateAll, clearTranslations }
+enum ChatPopupMenuActions { details, mute, unmute, leave, search, translateToggle, clearTranslations }
 
 class ChatSettingsPopupMenu extends StatefulWidget {
   final Room room;
@@ -99,9 +99,7 @@ class ChatSettingsPopupMenuState extends State<ChatSettingsPopupMenu> {
               case ChatPopupMenuActions.translateToggle:
                 widget.translateController?.translateAllVisibleMessages();
                 break;
-              case ChatPopupMenuActions.translateAll:
-                widget.translateController?.translateAllMessagesInChat();
-                break;
+
               case ChatPopupMenuActions.clearTranslations:
                 widget.translateController?.clearTranslations();
                 break;
@@ -198,16 +196,7 @@ class ChatSettingsPopupMenuState extends State<ChatSettingsPopupMenu> {
           ],
         ),
       ),
-      PopupMenuItem<ChatPopupMenuActions>(
-        value: ChatPopupMenuActions.translateAll,
-        child: Row(
-          children: [
-            const Icon(Icons.translate_outlined),
-            const SizedBox(width: 12),
-            Text(L10n.of(context).translateAllMessages),
-          ],
-        ),
-      ),
+
       PopupMenuItem<ChatPopupMenuActions>(
         value: ChatPopupMenuActions.clearTranslations,
         child: Row(

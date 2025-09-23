@@ -2,5 +2,5 @@
 Type=Application
 Name=Simple Messenger
 Exec=simple_messenger
-Icon=simplemessenger
+Icon=quikxchat
 Categories=Network;InstantMessaging;

@@ -21,7 +21,7 @@ abstract class SettingKeys {
   static const String unifiedPushEndpoint = 'chat.fluffy.unifiedpush.endpoint';
   static const String ownStatusMessage = 'chat.fluffy.status_msg';
   static const String dontAskForBootstrapKey =
-      'chat.simplemessenger.dont_ask_bootstrap';
+      'chat.quikxchat.dont_ask_bootstrap';
   static const String autoplayImages = 'chat.fluffy.autoplay_images';
   static const String sendTypingNotifications =
       'chat.fluffy.send_typing_notifications';
@@ -35,6 +35,7 @@ abstract class SettingKeys {
   static const String displayNavigationRail =
       'chat.fluffy.display_navigation_rail';
   static const String showLinkPreviews = 'chat.fluffy.show_link_previews';
+  static const String forceDesktopMode = 'chat.fluffy.force_desktop_mode';
 }
 
 enum AppSettings<T> {

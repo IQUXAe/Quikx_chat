@@ -23,7 +23,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace "com.iquxae.privacymessenger"
+    namespace "com.iquxae.quikxchat"
     compileSdk 36
     ndkVersion "27.0.12077973"
 
@@ -57,7 +57,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.iquxae.privacymessenger"
+        applicationId "com.iquxae.quikxchat"
         minSdkVersion flutter.minSdkVersion
         targetSdkVersion 36
         versionCode flutterVersionCode.toInteger()

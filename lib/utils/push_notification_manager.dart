@@ -8,12 +8,12 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:simplemessenger/config/app_config.dart';
-import 'package:simplemessenger/config/setting_keys.dart';
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/utils/unified_push_helper.dart';
-import 'package:simplemessenger/widgets/matrix.dart';
-import 'package:simplemessenger/widgets/simple_messenger_app.dart';
+import 'package:quikxchat/config/app_config.dart';
+import 'package:quikxchat/config/setting_keys.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/utils/unified_push_helper.dart';
+import 'package:quikxchat/widgets/matrix.dart';
+import 'package:quikxchat/widgets/quikx_chat_app.dart';
 
 enum PushNotificationStatus {
   enabled,
@@ -106,7 +106,7 @@ class PushNotificationManager {
   
   void _navigateToRoom(String roomId) {
     try {
-      SimpleMessengerApp.router.go('/rooms/$roomId');
+      QuikxChatApp.router.go('/rooms/$roomId');
       Logs().i('[PushNotificationManager] Navigated to room: $roomId');
     } catch (e) {
       Logs().e('[PushNotificationManager] Failed to navigate to room', e);

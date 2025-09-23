@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import 'package:simplemessenger/config/app_config.dart';
-import 'package:simplemessenger/config/themes.dart';
-import 'package:simplemessenger/pages/chat/chat.dart';
-import 'package:simplemessenger/widgets/avatar.dart';
-import 'package:simplemessenger/widgets/matrix.dart';
+import 'package:quikxchat/config/app_config.dart';
+import 'package:quikxchat/config/themes.dart';
+import 'package:quikxchat/pages/chat/chat.dart';
+import 'package:quikxchat/widgets/avatar.dart';
+import 'package:quikxchat/widgets/matrix.dart';
 
 class TypingIndicators extends StatelessWidget {
   final ChatController controller;
@@ -34,10 +34,10 @@ class TypingIndicators extends StatelessWidget {
           alignment: Alignment.center,
           child: AnimatedContainer(
             constraints:
-                const BoxConstraints(maxWidth: SimpleMessengerThemes.maxTimelineWidth),
+                const BoxConstraints(maxWidth: QuikxChatThemes.maxTimelineWidth),
             height: typingUsers.isEmpty ? 0 : avatarSize + 8,
-            duration: SimpleMessengerThemes.animationDuration,
-            curve: SimpleMessengerThemes.animationCurve,
+            duration: QuikxChatThemes.animationDuration,
+            curve: QuikxChatThemes.animationCurve,
             alignment: controller.timeline!.events.isNotEmpty &&
                     controller.timeline!.events.first.senderId ==
                         Matrix.of(context).client.userID
@@ -146,7 +146,7 @@ class __TypingDotsState extends State<_TypingDots> {
         for (var i = 1; i <= 3; i++)
           AnimatedContainer(
             duration: animationDuration * 1.5,
-            curve: SimpleMessengerThemes.animationCurve,
+            curve: QuikxChatThemes.animationCurve,
             width: size,
             height: _tick == i ? size * 2 : size,
             margin: EdgeInsets.symmetric(

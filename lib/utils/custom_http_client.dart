@@ -5,8 +5,8 @@ import 'package:http/http.dart' as http;
 import 'package:http/io_client.dart';
 import 'package:http/retry.dart' as retry;
 
-import 'package:simplemessenger/config/isrg_x1.dart';
-import 'package:simplemessenger/utils/platform_infos.dart';
+import 'package:quikxchat/config/isrg_x1.dart';
+import 'package:quikxchat/utils/platform_infos.dart';
 
 
 /// Custom Client to add an additional certificate. This is for the isrg X1

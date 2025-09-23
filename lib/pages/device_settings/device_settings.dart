@@ -5,12 +5,12 @@ import 'package:matrix/encryption/utils/key_verification.dart';
 import 'package:matrix/matrix.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/pages/device_settings/device_settings_view.dart';
-import 'package:simplemessenger/pages/key_verification/key_verification_dialog.dart';
-import 'package:simplemessenger/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
-import 'package:simplemessenger/widgets/adaptive_dialogs/show_text_input_dialog.dart';
-import 'package:simplemessenger/widgets/future_loading_dialog.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/pages/device_settings/device_settings_view.dart';
+import 'package:quikxchat/pages/key_verification/key_verification_dialog.dart';
+import 'package:quikxchat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
+import 'package:quikxchat/widgets/adaptive_dialogs/show_text_input_dialog.dart';
+import 'package:quikxchat/widgets/future_loading_dialog.dart';
 import '../../widgets/matrix.dart';
 
 class DevicesSettings extends StatefulWidget {

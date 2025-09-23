@@ -1012,7 +1012,7 @@
     "type": "String",
     "placeholders": {}
   },
-  "fluffychat": "Simple Messenger",
+  "fluffychat": "QuikxChat",
   "@fluffychat": {
     "type": "String",
     "placeholders": {}
@@ -1199,7 +1199,7 @@
     "type": "String",
     "placeholders": {}
   },
-  "inviteText": "{username} invited you to Simple Messenger.\n1. Download the app from https://drive.google.com/drive/folders/1Lh-bMUZU-fTK2qlSOd3ZHgHxG-jFNBb5?usp=sharing \n2. Sign up or sign in \n3. Open the invite link: \n {link}",
+  "inviteText": "{username} invited you to QuikxChat.\n1. Download the app from https://drive.google.com/drive/folders/1Lh-bMUZU-fTK2qlSOd3ZHgHxG-jFNBb5?usp=sharing \n2. Sign up or sign in \n3. Open the invite link: \n {link}",
   "@inviteText": {
     "type": "String",
     "placeholders": {
@@ -1387,7 +1387,7 @@
     "type": "String",
     "placeholders": {}
   },
-  "newMessageInFluffyChat": "💬 New message in Simple Messenger",
+  "newMessageInFluffyChat": "💬 New message in QuikxChat",
   "@newMessageInFluffyChat": {
     "type": "String",
     "placeholders": {}
@@ -1998,6 +1998,10 @@
     "type": "String",
     "placeholders": {}
   },
+  "desktopMode": "Desktop Mode",
+  "@desktopMode": {},
+  "desktopModeDescription": "Force desktop layout on mobile devices",
+  "@desktopModeDescription": {},
   "sharedTheLocation": "{username} shared their location",
   "@sharedTheLocation": {
     "type": "String",
@@ -2107,7 +2111,7 @@
     "type": "String",
     "placeholders": {}
   },
-  "title": "Simple Messenger",
+  "title": "QuikxChat",
   "@title": {
     "description": "Title for the application",
     "type": "String",
@@ -2470,7 +2474,7 @@
   "@emailOrUsername": {},
   "indexedDbErrorTitle": "Private mode issues",
   "@indexedDbErrorTitle": {},
-  "indexedDbErrorLong": "The message storage is unfortunately not enabled in private mode by default.\nPlease visit\n - about:config\n - set dom.indexedDB.privateBrowsing.enabled to true\nOtherwise, it is not possible to run Simple Messenger.",
+  "indexedDbErrorLong": "The message storage is unfortunately not enabled in private mode by default.\nPlease visit\n - about:config\n - set dom.indexedDB.privateBrowsing.enabled to true\nOtherwise, it is not possible to run QuikxChat.",
   "@indexedDbErrorLong": {},
   "switchToAccount": "Switch to account {number}",
   "@switchToAccount": {
@@ -2635,19 +2639,19 @@
   "@foregroundServiceRunning": {},
   "screenSharingTitle": "screen sharing",
   "@screenSharingTitle": {},
-  "screenSharingDetail": "You are sharing your screen in Simple Messenger",
+  "screenSharingDetail": "You are sharing your screen in QuikxChat",
   "@screenSharingDetail": {},
   "callingPermissions": "Calling permissions",
   "@callingPermissions": {},
   "callingAccount": "Calling account",
   "@callingAccount": {},
-  "callingAccountDetails": "Allows Simple Messenger to use the native android dialer app.",
+  "callingAccountDetails": "Allows QuikxChat to use the native android dialer app.",
   "@callingAccountDetails": {},
   "appearOnTop": "Appear on top",
   "@appearOnTop": {},
   "appearOnTopDetails": "Allows the app to appear on top (not needed if you already have Simple Messenger setup as a calling account)",
   "@appearOnTopDetails": {},
-  "otherCallingPermissions": "Microphone, camera and other Simple Messenger permissions",
+  "otherCallingPermissions": "Microphone, camera and other QuikxChat permissions",
   "@otherCallingPermissions": {},
   "whyIsThisMessageEncrypted": "Why is this message unreadable?",
   "@whyIsThisMessageEncrypted": {},
@@ -3155,7 +3159,7 @@
   "@noticeChatBackupDeviceVerification": {},
   "continueText": "Continue",
   "@continueText": {},
-  "welcomeText": "Hey Hey 👋 This is Simple Messenger. You can sign in to any homeserver, which is compatible with https://matrix.org. And then chat with anyone. It's a huge decentralized messaging network!",
+  "welcomeText": "Hey Hey 👋 This is QuikxChat. You can sign in to any homeserver, which is compatible with https://matrix.org. And then chat with anyone. It's a huge decentralized messaging network!",
   "@welcomeText": {},
   "blur": "Blur:",
   "@blur": {},
@@ -3216,7 +3220,7 @@
   "@open": {},
   "waitingForServer": "Waiting for server...",
   "@waitingForServer": {},
-  "appIntroduction": "Simple Messenger uses the Matrix protocol. To create an account, use app.element.io or a similar service. Learn more at https://matrix.org or just tap *Continue*.",
+  "appIntroduction": "QuikxChat uses the Matrix protocol. To create an account, use app.element.io or a similar service. Learn more at https://matrix.org or just tap *Continue*.",
   "@appIntroduction": {},
   "newChatRequest": "📩 New chat request",
   "@newChatRequest": {},
@@ -3543,8 +3547,7 @@
   "@enableAutoTranslate": {},
   "disableAutoTranslate": "Disable auto-translate",
   "@disableAutoTranslate": {},
-  "translateAllMessages": "Translate all messages",
-  "@translateAllMessages": {},
+
   "clearTranslations": "Clear translations",
   "@clearTranslations": {},
   "targetLanguage": "Target language",

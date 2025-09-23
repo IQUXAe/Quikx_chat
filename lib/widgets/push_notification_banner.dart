@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/utils/push_notification_manager.dart';
-import 'package:simplemessenger/widgets/matrix.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/utils/push_notification_manager.dart';
+import 'package:quikxchat/widgets/matrix.dart';
 
 class PushNotificationBanner extends StatefulWidget {
   const PushNotificationBanner({super.key});

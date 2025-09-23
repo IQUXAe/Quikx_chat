@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/widgets/adaptive_dialogs/show_text_input_dialog.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/widgets/adaptive_dialogs/show_text_input_dialog.dart';
 
 Widget markdownContextBuilder(
   BuildContext context,

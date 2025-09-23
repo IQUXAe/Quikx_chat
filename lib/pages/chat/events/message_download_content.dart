@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:simplemessenger/config/app_config.dart';
-import 'package:simplemessenger/utils/file_description.dart';
-import 'package:simplemessenger/utils/matrix_sdk_extensions/event_extension.dart';
-import 'package:simplemessenger/utils/url_launcher.dart';
+import 'package:quikxchat/config/app_config.dart';
+import 'package:quikxchat/utils/file_description.dart';
+import 'package:quikxchat/utils/matrix_sdk_extensions/event_extension.dart';
+import 'package:quikxchat/utils/url_launcher.dart';
 
 class MessageDownloadContent extends StatelessWidget {
   final Event event;

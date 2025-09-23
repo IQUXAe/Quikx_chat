@@ -17,28 +17,28 @@ import 'package:scroll_to_index/scroll_to_index.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:universal_html/html.dart' as html;
 
-import 'package:simplemessenger/config/app_config.dart';
-import 'package:simplemessenger/config/setting_keys.dart';
-import 'package:simplemessenger/config/themes.dart';
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/pages/chat/chat_view.dart';
-import 'package:simplemessenger/pages/chat/event_info_dialog.dart';
-import 'package:simplemessenger/pages/chat/recording_dialog.dart';
-import 'package:simplemessenger/pages/chat_details/chat_details.dart';
-import 'package:simplemessenger/utils/error_reporter.dart';
-import 'package:simplemessenger/utils/file_selector.dart';
-import 'package:simplemessenger/utils/matrix_sdk_extensions/event_extension.dart';
-import 'package:simplemessenger/utils/matrix_sdk_extensions/filtered_timeline_extension.dart';
-import 'package:simplemessenger/utils/matrix_sdk_extensions/matrix_locals.dart';
-import 'package:simplemessenger/utils/other_party_can_receive.dart';
-import 'package:simplemessenger/utils/platform_infos.dart';
-import 'package:simplemessenger/utils/show_scaffold_dialog.dart';
-import 'package:simplemessenger/widgets/adaptive_dialogs/show_modal_action_popup.dart';
-import 'package:simplemessenger/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
-import 'package:simplemessenger/widgets/adaptive_dialogs/show_text_input_dialog.dart';
-import 'package:simplemessenger/widgets/future_loading_dialog.dart';
-import 'package:simplemessenger/widgets/matrix.dart';
-import 'package:simplemessenger/widgets/share_scaffold_dialog.dart';
+import 'package:quikxchat/config/app_config.dart';
+import 'package:quikxchat/config/setting_keys.dart';
+import 'package:quikxchat/config/themes.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/pages/chat/chat_view.dart';
+import 'package:quikxchat/pages/chat/event_info_dialog.dart';
+import 'package:quikxchat/pages/chat/recording_dialog.dart';
+import 'package:quikxchat/pages/chat_details/chat_details.dart';
+import 'package:quikxchat/utils/error_reporter.dart';
+import 'package:quikxchat/utils/file_selector.dart';
+import 'package:quikxchat/utils/matrix_sdk_extensions/event_extension.dart';
+import 'package:quikxchat/utils/matrix_sdk_extensions/filtered_timeline_extension.dart';
+import 'package:quikxchat/utils/matrix_sdk_extensions/matrix_locals.dart';
+import 'package:quikxchat/utils/other_party_can_receive.dart';
+import 'package:quikxchat/utils/platform_infos.dart';
+import 'package:quikxchat/utils/show_scaffold_dialog.dart';
+import 'package:quikxchat/widgets/adaptive_dialogs/show_modal_action_popup.dart';
+import 'package:quikxchat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
+import 'package:quikxchat/widgets/adaptive_dialogs/show_text_input_dialog.dart';
+import 'package:quikxchat/widgets/future_loading_dialog.dart';
+import 'package:quikxchat/widgets/matrix.dart';
+import 'package:quikxchat/widgets/share_scaffold_dialog.dart';
 import '../../utils/account_bundles.dart';
 import '../../utils/localized_exception_extension.dart';
 import 'send_file_dialog.dart';
@@ -1249,7 +1249,7 @@ class ChatController extends State<ChatPageWithRoom>
     }
     await scrollController.scrollToIndex(
       eventIndex + 1,
-      duration: SimpleMessengerThemes.animationDuration,
+      duration: QuikxChatThemes.animationDuration,
       preferPosition: AutoScrollPosition.middle,
     );
     _updateScrollController();
@@ -1649,31 +1649,7 @@ class ChatController extends State<ChatPageWithRoom>
     }
   }
   
-  void translateAllMessagesInChat() async {
-    final timeline = this.timeline;
-    if (timeline == null) return;
-    
-    // Принудительно переводим ВСЕ текстовые сообщения в чате
-    final allTextEvents = timeline.events
-        .where((event) => 
-            event.type == EventTypes.Message && 
-            event.messageType == MessageTypes.Text &&
-            event.body.trim().isNotEmpty,)
-        .toList();
-    
-    if (allTextEvents.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Нет сообщений для перевода')),
-      );
-      return;
-    }
-    
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Переводим ${allTextEvents.length} сообщений...')),
-    );
-    
-    Future.microtask(() => _translateMessagesBatch(allTextEvents));
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -1686,7 +1662,7 @@ class ChatController extends State<ChatPageWithRoom>
         ValueListenableBuilder(
           valueListenable: _displayChatDetailsColumn,
           builder: (context, displayChatDetailsColumn, _) =>
-              !SimpleMessengerThemes.isThreeColumnMode(context) ||
+              !QuikxChatThemes.isThreeColumnMode(context) ||
                       room.membership != Membership.join ||
                       !displayChatDetailsColumn
                   ? const SizedBox(
@@ -1694,7 +1670,7 @@ class ChatController extends State<ChatPageWithRoom>
                       width: 0,
                     )
                   : Container(
-                      width: SimpleMessengerThemes.columnWidth,
+                      width: QuikxChatThemes.columnWidth,
                       clipBehavior: Clip.hardEdge,
                       decoration: BoxDecoration(
                         border: Border(

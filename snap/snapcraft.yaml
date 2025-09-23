@@ -1,11 +1,11 @@
-name: simplemessenger
-title: Simple Messenger
+name: quikxchat
+title: QuikxChat
 base: core24
 version: 0.2.3
 license: AGPL-3.0
 summary: Simple and secure messaging app
 description: |
-  Simple Messenger is an open source, secure matrix messenger app. The app is easy to use, secure and decentralized.
+  QuikxChat is an open source, secure matrix messenger app. The app is easy to use, secure and decentralized.
 
 
   ## Features
@@ -29,13 +29,13 @@ description: |
   - And much more...
 
 
-  ## Simple Messenger - Privacy-focused messaging
+  ## QuikxChat - Privacy-focused messaging
 
   A secure, decentralized messaging app that puts your privacy first.
 
   No tracking, no ads, just simple and secure communication.
 
-  Website: https://github.com/iquxae/simple-messenger
+  Website: https://github.com/iquxae/quikx-chat
 
 grade: stable
 confinement: strict
@@ -70,7 +70,7 @@ parts:
       - zip
     override-prime: ''
 
-  simplemessenger:
+  quikxchat:
     after: [flutter-git]
     plugin: nil
     source: .
@@ -98,11 +98,11 @@ slots:
   dbus-svc:
     interface: dbus
     bus: session
-    name: com.iquxae.privacymessenger
+    name: com.iquxae.quikxchat
 
 apps:
-  simplemessenger:
-    command: bin/simplemessenger
+  quikxchat:
+    command: bin/quikxchat
     extensions: [ gnome ]
     plugs:
       - audio-playback

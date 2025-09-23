@@ -686,7 +686,7 @@ class L10nRu extends L10n {
   String get fileName => 'Имя файла';
 
   @override
-  String get fluffychat => 'Simple Messenger';
+  String get fluffychat => 'QuikxChat';
 
   @override
   String get fontSize => 'Размер шрифта';
@@ -830,7 +830,7 @@ class L10nRu extends L10n {
 
   @override
   String inviteText(String username, String link) {
-    return '$username пригласил(а) вас в Simple Messenger. \n1. Скачайте приложение с https://drive.google.com/drive/folders/1Lh-bMUZU-fTK2qlSOd3ZHgHxG-jFNBb5?usp=sharing \n2. Зарегистрируйтесь или войдите \n3. Откройте ссылку приглашения: \n $link';
+    return '$username пригласил(а) вас в QuikxChat. \n1. Скачайте приложение с https://drive.google.com/drive/folders/1Lh-bMUZU-fTK2qlSOd3ZHgHxG-jFNBb5?usp=sharing \n2. Зарегистрируйтесь или войдите \n3. Откройте ссылку приглашения: \n $link';
   }
 
   @override
@@ -954,7 +954,7 @@ class L10nRu extends L10n {
   String get newChat => 'Новый чат';
 
   @override
-  String get newMessageInFluffyChat => '💬 Новое сообщение во Simple Messenger';
+  String get newMessageInFluffyChat => '💬 Новое сообщение в QuikxChat';
 
   @override
   String get newVerificationRequest => 'Новый запрос на подтверждение!';
@@ -1364,6 +1364,12 @@ class L10nRu extends L10n {
   String get share => 'Поделиться';
 
   @override
+  String get desktopMode => 'Desktop Mode';
+
+  @override
+  String get desktopModeDescription => 'Force desktop layout on mobile devices';
+
+  @override
   String sharedTheLocation(String username) {
     return '$username поделился(ась) местоположением';
   }
@@ -1431,7 +1437,7 @@ class L10nRu extends L10n {
   String get theyMatch => 'Они совпадают';
 
   @override
-  String get title => 'Simple Messenger';
+  String get title => 'QuikxChat';
 
   @override
   String get toggleFavorite => 'Переключить избранное';
@@ -1700,7 +1706,7 @@ class L10nRu extends L10n {
 
   @override
   String get indexedDbErrorLong =>
-      'К сожалению, по умолчанию хранилище сообщений не включено в приватном режиме.\nПожалуйста, посетите\n- about:config\n- установите для dom.indexedDB.privateBrowsing.enabled значение true\nВ противном случае запуск Simple Messenger будет невозможен.';
+      'К сожалению, по умолчанию хранилище сообщений не включено в приватном режиме.\nПожалуйста, посетите\n- about:config\n- установите для dom.indexedDB.privateBrowsing.enabled значение true\nВ противном случае запуск QuikxChat будет невозможен.';
 
   @override
   String switchToAccount(String number) {
@@ -1859,7 +1865,7 @@ class L10nRu extends L10n {
   String get screenSharingTitle => 'общий доступ к экрану';
 
   @override
-  String get screenSharingDetail => 'Вы делитесь своим экраном в FuffyChat';
+  String get screenSharingDetail => 'Вы делитесь своим экраном в QuikxChat';
 
   @override
   String get callingPermissions => 'Разрешения на звонки';
@@ -1869,7 +1875,7 @@ class L10nRu extends L10n {
 
   @override
   String get callingAccountDetails =>
-      'Позволяет Simple Messenger использовать родное android приложение для звонков.';
+      'Позволяет QuikxChat использовать родное android приложение для звонков.';
 
   @override
   String get appearOnTop => 'Появляться сверху';
@@ -1880,7 +1886,7 @@ class L10nRu extends L10n {
 
   @override
   String get otherCallingPermissions =>
-      'Микрофон, камера и другие разрешения Simple Messenger';
+      'Микрофон, камера и другие разрешения QuikxChat';
 
   @override
   String get whyIsThisMessageEncrypted => 'Почему это сообщение нечитаемо?';
@@ -2419,7 +2425,7 @@ class L10nRu extends L10n {
 
   @override
   String get welcomeText =>
-      'Привет. Это Simple Messenger. Вы можете подписаться на любой сервер, который совместим с https://matrix.org. А потом поболтать с кем нибудь. Это огромная децентрализованная сеть обмена сообщениями!';
+      'Привет. Это QuikxChat. Вы можете подписаться на любой сервер, который совместим с https://matrix.org. А потом поболтать с кем нибудь. Это огромная децентрализованная сеть обмена сообщениями!';
 
   @override
   String get blur => 'Размытие:';
@@ -2507,7 +2513,7 @@ class L10nRu extends L10n {
 
   @override
   String get appIntroduction =>
-      'Simple Messenger использует протокол Matrix. Чтобы создать аккаунт воспользуйтесь app.element.io или подобным сервисом. Узнайте больше на https://matrix.org или просто нажмите *Продолжить*.';
+      'QuikxChat использует протокол Matrix. Чтобы создать аккаунт воспользуйтесь app.element.io или подобным сервисом. Узнайте больше на https://matrix.org или просто нажмите *Продолжить*.';
 
   @override
   String get newChatRequest => '📩 Запрос нового чата';
@@ -3005,9 +3011,6 @@ class L10nRu extends L10n {
 
   @override
   String get disableAutoTranslate => 'Отключить автоперевод';
-
-  @override
-  String get translateAllMessages => 'Перевести все сообщения';
 
   @override
   String get clearTranslations => 'Очистить переводы';

@@ -4,8 +4,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:matrix/matrix.dart';
 import 'package:provider/provider.dart';
 
-import 'package:simplemessenger/config/setting_keys.dart';
-import 'package:simplemessenger/widgets/lock_screen.dart';
+import 'package:quikxchat/config/setting_keys.dart';
+import 'package:quikxchat/widgets/lock_screen.dart';
 
 class AppLockWidget extends StatefulWidget {
   const AppLockWidget({

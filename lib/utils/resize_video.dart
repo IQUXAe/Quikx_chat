@@ -2,7 +2,7 @@ import 'package:cross_file/cross_file.dart';
 import 'package:matrix/matrix.dart';
 import 'package:video_compress/video_compress.dart';
 
-import 'package:simplemessenger/utils/platform_infos.dart';
+import 'package:quikxchat/utils/platform_infos.dart';
 
 extension ResizeImage on XFile {
   static const int max = 1200;

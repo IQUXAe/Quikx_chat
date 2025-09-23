@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:async/async.dart' as async;
 import 'package:matrix/matrix.dart';
 
-import 'package:simplemessenger/utils/size_string.dart';
-import 'package:simplemessenger/widgets/future_loading_dialog.dart';
+import 'package:quikxchat/utils/size_string.dart';
+import 'package:quikxchat/widgets/future_loading_dialog.dart';
 import 'matrix_file_extension.dart';
 
 extension LocalizedBody on Event {

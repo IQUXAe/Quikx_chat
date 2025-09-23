@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'package:url_launcher/url_launcher_string.dart';
 
-import 'package:simplemessenger/config/app_config.dart';
-import 'package:simplemessenger/config/themes.dart';
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/utils/platform_infos.dart';
+import 'package:quikxchat/config/app_config.dart';
+import 'package:quikxchat/config/themes.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/utils/platform_infos.dart';
 
 class LoginScaffold extends StatelessWidget {
   final Widget body;
@@ -24,7 +24,7 @@ class LoginScaffold extends StatelessWidget {
     final theme = Theme.of(context);
 
     final isMobileMode =
-        enforceMobileMode || !SimpleMessengerThemes.isColumnMode(context);
+        enforceMobileMode || !QuikxChatThemes.isColumnMode(context);
     if (isMobileMode) {
       return Scaffold(
         key: const Key('LoginScaffold'),

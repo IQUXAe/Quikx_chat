@@ -3,7 +3,7 @@ import 'dart:ui';
 import 'package:matrix/matrix.dart';
 
 abstract class AppConfig {
-  static String _applicationName = 'Simple Messenger';
+  static String _applicationName = 'QuikxChat';
 
   static String get applicationName => _applicationName;
   static String? _applicationWelcomeMessage;
@@ -21,30 +21,31 @@ abstract class AppConfig {
   static const Color primaryColor = Color(0xFF3B82F6);
   static const Color primaryColorLight = Color(0xFFDBEAFE);
   static const Color secondaryColor = Color(0xFF06B6D4);
-  static String _privacyUrl = 'https://github.com/iquxae/simple-messenger/blob/main/PRIVACY.md';
+  static String _privacyUrl = 'https://github.com/iquxae/quikx-chat/blob/main/PRIVACY.md';
 
   static const Set<String> defaultReactions = {'👍', '❤️', '😂', '😮', '😢'};
 
   static String get privacyUrl => _privacyUrl;
-  static const String website = 'https://github.com/iquxae/simple-messenger';
+  static const String website = 'https://github.com/iquxae/quikx-chat';
   static const String enablePushTutorial = 'https://unifiedpush.org/users/distributors/';
-  static const String encryptionTutorial = 'https://github.com/iquxae/simple-messenger/wiki/Encryption';
-  static const String startChatTutorial = 'https://github.com/iquxae/simple-messenger/wiki/Getting-Started';
-  static const String appId = 'com.iquxae.privacymessenger';
-  static const String appOpenUrlScheme = 'com.iquxae.privacymessenger';
+  static const String encryptionTutorial = 'https://github.com/iquxae/quikx-chat/wiki/Encryption';
+  static const String startChatTutorial = 'https://github.com/iquxae/quikx-chat/wiki/Getting-Started';
+  static const String appId = 'com.iquxae.quikxchat';
+  static const String appOpenUrlScheme = 'com.iquxae.quikxchat';
   static String _webBaseUrl = '';
 
   static String get webBaseUrl => _webBaseUrl;
   static const String sourceCodeUrl =
-      'https://github.com/iquxae/simple-messenger';
+      'https://github.com/iquxae/quikx-chat';
   static const String supportUrl =
-      'https://github.com/iquxae/simple-messenger/issues';
+      'https://github.com/iquxae/quikx-chat/issues';
   static const String changelogUrl =
-      'https://github.com/iquxae/simple-messenger/blob/main/CHANGELOG.md';
+      'https://github.com/iquxae/quikx-chat/blob/main/CHANGELOG.md';
+
   static final Uri newIssueUrl = Uri(
     scheme: 'https',
     host: 'github.com',
-    path: '/iquxae/simple-messenger/issues/new',
+    path: '/iquxae/quikx-chat/issues/new',
   );
   static bool renderHtml = true;
   static bool hideRedactedEvents = false;
@@ -59,12 +60,13 @@ abstract class AppConfig {
   static bool displayNavigationRail = false;
   static bool experimentalVoip = true; // Audio calls enabled by default, video calls remain experimental
   static bool showLinkPreviews = true;
+  static bool forceDesktopMode = false;
   static const bool hideTypingUsernames = false;
   static const String inviteLinkPrefix = 'https://matrix.to/#/';
-  static const String deepLinkPrefix = 'com.iquxae.privacymessenger://chat/';
+  static const String deepLinkPrefix = 'com.iquxae.quikxchat://chat/';
   static const String schemePrefix = 'matrix:';
-  static const String pushNotificationsChannelId = 'simplemessenger_push';
-  static const String pushNotificationsAppId = 'com.iquxae.privacymessenger';
+  static const String pushNotificationsChannelId = 'quikxchat_push';
+  static const String pushNotificationsAppId = 'com.iquxae.quikxchat';
   static const double borderRadius = 16.0;
   static const double columnWidth = 360.0;
   

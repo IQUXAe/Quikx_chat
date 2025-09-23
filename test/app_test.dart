@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:simplemessenger/main.dart' as app;
+import 'package:quikxchat/main.dart' as app;
 
 /// Полный тест приложения для ручного тестирования
 /// Запуск: flutter run test/app_test.dart -d linux

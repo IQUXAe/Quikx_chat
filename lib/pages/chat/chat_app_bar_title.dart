@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:simplemessenger/config/themes.dart';
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/pages/chat/chat.dart';
-import 'package:simplemessenger/utils/date_time_extension.dart';
-import 'package:simplemessenger/utils/matrix_sdk_extensions/matrix_locals.dart';
-import 'package:simplemessenger/utils/sync_status_localization.dart';
-import 'package:simplemessenger/widgets/avatar.dart';
-import 'package:simplemessenger/widgets/presence_builder.dart';
-import 'package:simplemessenger/widgets/matrix.dart';
+import 'package:quikxchat/config/themes.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/pages/chat/chat.dart';
+import 'package:quikxchat/utils/date_time_extension.dart';
+import 'package:quikxchat/utils/matrix_sdk_extensions/matrix_locals.dart';
+import 'package:quikxchat/utils/sync_status_localization.dart';
+import 'package:quikxchat/widgets/avatar.dart';
+import 'package:quikxchat/widgets/presence_builder.dart';
+import 'package:quikxchat/widgets/matrix.dart';
 
 class ChatAppBarTitle extends StatelessWidget {
   final ChatController controller;
@@ -34,7 +34,7 @@ class ChatAppBarTitle extends StatelessWidget {
       highlightColor: Colors.transparent,
       onTap: controller.isArchived
           ? null
-          : () => SimpleMessengerThemes.isThreeColumnMode(context)
+          : () => QuikxChatThemes.isThreeColumnMode(context)
               ? controller.toggleDisplayChatDetailsColumn()
               : context.go('/rooms/${room.id}/details'),
       child: Row(
@@ -67,12 +67,12 @@ class ChatAppBarTitle extends StatelessWidget {
                   builder: (context, snapshot) {
                     final status = room.client.onSyncStatus.value ??
                         const SyncStatusUpdate(SyncStatus.waitingForResponse);
-                    final hide = SimpleMessengerThemes.isColumnMode(context) ||
+                    final hide = QuikxChatThemes.isColumnMode(context) ||
                         (room.client.onSync.value != null &&
                             status.status != SyncStatus.error &&
                             room.client.prevBatch != null);
                     return AnimatedSize(
-                      duration: SimpleMessengerThemes.animationDuration,
+                      duration: QuikxChatThemes.animationDuration,
                       child: hide
                           ? PresenceBuilder(
                               userId: room.directChatMatrixID,

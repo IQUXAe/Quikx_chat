@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/pages/archive/archive.dart';
-import 'package:simplemessenger/pages/chat_list/chat_list_item.dart';
-import 'package:simplemessenger/widgets/layouts/max_width_body.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/pages/archive/archive.dart';
+import 'package:quikxchat/pages/chat_list/chat_list_item.dart';
+import 'package:quikxchat/widgets/layouts/max_width_body.dart';
 
 class ArchiveView extends StatelessWidget {
   final ArchiveController controller;

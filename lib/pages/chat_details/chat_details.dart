@@ -5,16 +5,16 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/pages/chat_details/chat_details_view.dart';
-import 'package:simplemessenger/pages/settings/settings.dart';
-import 'package:simplemessenger/utils/file_selector.dart';
-import 'package:simplemessenger/utils/matrix_sdk_extensions/matrix_locals.dart';
-import 'package:simplemessenger/utils/platform_infos.dart';
-import 'package:simplemessenger/widgets/adaptive_dialogs/show_modal_action_popup.dart';
-import 'package:simplemessenger/widgets/adaptive_dialogs/show_text_input_dialog.dart';
-import 'package:simplemessenger/widgets/future_loading_dialog.dart';
-import 'package:simplemessenger/widgets/matrix.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/pages/chat_details/chat_details_view.dart';
+import 'package:quikxchat/pages/settings/settings.dart';
+import 'package:quikxchat/utils/file_selector.dart';
+import 'package:quikxchat/utils/matrix_sdk_extensions/matrix_locals.dart';
+import 'package:quikxchat/utils/platform_infos.dart';
+import 'package:quikxchat/widgets/adaptive_dialogs/show_modal_action_popup.dart';
+import 'package:quikxchat/widgets/adaptive_dialogs/show_text_input_dialog.dart';
+import 'package:quikxchat/widgets/future_loading_dialog.dart';
+import 'package:quikxchat/widgets/matrix.dart';
 
 enum AliasActions { copy, delete, setCanonical }
 

@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
 
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/pages/settings_password/settings_password.dart';
-import 'package:simplemessenger/widgets/layouts/max_width_body.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/pages/settings_password/settings_password.dart';
+import 'package:quikxchat/widgets/layouts/max_width_body.dart';
 
 class SettingsPasswordView extends StatelessWidget {
   final SettingsPasswordController controller;

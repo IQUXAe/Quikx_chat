@@ -8,12 +8,12 @@ import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' hide Client;
 import 'package:matrix/matrix.dart';
 
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/utils/client_manager.dart';
-import 'package:simplemessenger/utils/file_selector.dart';
-import 'package:simplemessenger/utils/matrix_sdk_extensions/matrix_file_extension.dart';
-import 'package:simplemessenger/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
-import 'package:simplemessenger/widgets/future_loading_dialog.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/utils/client_manager.dart';
+import 'package:quikxchat/utils/file_selector.dart';
+import 'package:quikxchat/utils/matrix_sdk_extensions/matrix_file_extension.dart';
+import 'package:quikxchat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
+import 'package:quikxchat/widgets/future_loading_dialog.dart';
 import '../../widgets/matrix.dart';
 import 'import_archive_dialog.dart';
 import 'settings_emotes_view.dart';

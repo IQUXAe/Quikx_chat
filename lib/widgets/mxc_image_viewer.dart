@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:simplemessenger/l10n/l10n.dart';
+import 'package:quikxchat/l10n/l10n.dart';
 import 'mxc_image.dart';
 
 class MxcImageViewer extends StatelessWidget {

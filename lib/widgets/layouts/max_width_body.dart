@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:simplemessenger/config/app_config.dart';
-import 'package:simplemessenger/config/themes.dart';
+import 'package:quikxchat/config/app_config.dart';
+import 'package:quikxchat/config/themes.dart';
 
 class MaxWidthBody extends StatelessWidget {
   final Widget child;
@@ -23,7 +23,7 @@ class MaxWidthBody extends StatelessWidget {
         builder: (context, constraints) {
           final theme = Theme.of(context);
 
-          const desiredWidth = SimpleMessengerThemes.columnWidth * 1.5;
+          const desiredWidth = QuikxChatThemes.columnWidth * 1.5;
           final body = constraints.maxWidth <= desiredWidth
               ? child
               : Container(
@@ -31,7 +31,7 @@ class MaxWidthBody extends StatelessWidget {
                   padding: const EdgeInsets.all(32),
                   child: ConstrainedBox(
                     constraints: const BoxConstraints(
-                      maxWidth: SimpleMessengerThemes.columnWidth * 1.5,
+                      maxWidth: QuikxChatThemes.columnWidth * 1.5,
                     ),
                     child: Material(
                       shape: RoundedRectangleBorder(

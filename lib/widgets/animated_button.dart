@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:simplemessenger/config/themes.dart';
+import 'package:quikxchat/config/themes.dart';
 
 class AnimatedButton extends StatefulWidget {
   final Widget child;
@@ -37,12 +37,12 @@ class _AnimatedButtonState extends State<AnimatedButton>
     super.initState();
     
     _scaleController = AnimationController(
-      duration: SimpleMessengerThemes.fastAnimationDuration,
+      duration: QuikxChatThemes.fastAnimationDuration,
       vsync: this,
     );
     
     _rippleController = AnimationController(
-      duration: SimpleMessengerThemes.animationDuration,
+      duration: QuikxChatThemes.animationDuration,
       vsync: this,
     );
 
@@ -51,7 +51,7 @@ class _AnimatedButtonState extends State<AnimatedButton>
       end: 0.95,
     ).animate(CurvedAnimation(
       parent: _scaleController,
-      curve: SimpleMessengerThemes.fastAnimationCurve,
+      curve: QuikxChatThemes.fastAnimationCurve,
     ),);
 
     _rippleAnimation = Tween<double>(

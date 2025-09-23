@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/utils/matrix_sdk_extensions/matrix_locals.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/utils/matrix_sdk_extensions/matrix_locals.dart';
 import '../../config/themes.dart';
 import 'chat.dart';
 import 'events/reply_content.dart';
@@ -17,8 +17,8 @@ class ReplyDisplay extends StatelessWidget {
     final theme = Theme.of(context);
 
     return AnimatedContainer(
-      duration: SimpleMessengerThemes.animationDuration,
-      curve: SimpleMessengerThemes.animationCurve,
+      duration: QuikxChatThemes.animationDuration,
+      curve: QuikxChatThemes.animationCurve,
       height: controller.editEvent != null || controller.replyEvent != null
           ? 56
           : 0,

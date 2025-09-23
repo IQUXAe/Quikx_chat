@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
-import 'package:simplemessenger/config/app_config.dart';
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/utils/other_party_can_receive.dart';
-import 'package:simplemessenger/utils/platform_infos.dart';
-import 'package:simplemessenger/widgets/avatar.dart';
-import 'package:simplemessenger/widgets/matrix.dart';
-import 'package:simplemessenger/widgets/message_send_animation.dart';
+import 'package:quikxchat/config/app_config.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/utils/other_party_can_receive.dart';
+import 'package:quikxchat/utils/platform_infos.dart';
+import 'package:quikxchat/widgets/avatar.dart';
+import 'package:quikxchat/widgets/matrix.dart';
+import 'package:quikxchat/widgets/message_send_animation.dart';
 import '../../config/themes.dart';
 import 'chat.dart';
 import 'input_bar.dart';
@@ -31,7 +31,7 @@ class _ChatInputRowState extends State<ChatInputRow> with TickerProviderStateMix
   void initState() {
     super.initState();
     _buttonScaleController = AnimationController(
-      duration: SimpleMessengerThemes.fastAnimationDuration,
+      duration: QuikxChatThemes.fastAnimationDuration,
       vsync: this,
     );
     _buttonScaleAnimation = Tween<double>(
@@ -39,7 +39,7 @@ class _ChatInputRowState extends State<ChatInputRow> with TickerProviderStateMix
       end: 0.9,
     ).animate(CurvedAnimation(
       parent: _buttonScaleController,
-      curve: SimpleMessengerThemes.fastAnimationCurve,
+      curve: QuikxChatThemes.fastAnimationCurve,
     ),);
   }
 
@@ -168,8 +168,8 @@ class _ChatInputRowState extends State<ChatInputRow> with TickerProviderStateMix
           : <Widget>[
               const SizedBox(width: 4),
               AnimatedContainer(
-                duration: SimpleMessengerThemes.animationDuration,
-                curve: SimpleMessengerThemes.animationCurve,
+                duration: QuikxChatThemes.animationDuration,
+                curve: QuikxChatThemes.animationCurve,
                 width: controller.sendController.text.isNotEmpty ? 0 : height,
                 height: height,
                 alignment: Alignment.center,
@@ -237,8 +237,8 @@ class _ChatInputRowState extends State<ChatInputRow> with TickerProviderStateMix
               ),
               if (PlatformInfos.isMobile)
                 AnimatedContainer(
-                  duration: SimpleMessengerThemes.animationDuration,
-                  curve: SimpleMessengerThemes.animationCurve,
+                  duration: QuikxChatThemes.animationDuration,
+                  curve: QuikxChatThemes.animationCurve,
                   width: controller.sendController.text.isNotEmpty ? 0 : height,
                   height: height,
                   alignment: Alignment.center,
@@ -287,7 +287,7 @@ class _ChatInputRowState extends State<ChatInputRow> with TickerProviderStateMix
                   tooltip: L10n.of(context).emojis,
                   color: theme.colorScheme.onPrimaryContainer,
                   icon: AnimatedSwitcher(
-                    duration: SimpleMessengerThemes.fastAnimationDuration,
+                    duration: QuikxChatThemes.fastAnimationDuration,
                     transitionBuilder: (child, animation) {
                       return RotationTransition(
                         turns: animation,

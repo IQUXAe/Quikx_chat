@@ -6,19 +6,19 @@ import 'package:flutter_vodozemac/flutter_vodozemac.dart' as vod;
 import 'package:matrix/matrix.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:simplemessenger/config/app_config.dart';
-import 'package:simplemessenger/utils/client_manager.dart';
-import 'package:simplemessenger/utils/optimized_http_client.dart';
-import 'package:simplemessenger/utils/platform_infos.dart';
-import 'package:simplemessenger/utils/push_notification_manager.dart';
-import 'package:simplemessenger/utils/file_logger.dart';
-import 'package:simplemessenger/utils/memory_manager.dart';
-import 'package:simplemessenger/utils/optimized_message_translator.dart';
+import 'package:quikxchat/config/app_config.dart';
+import 'package:quikxchat/utils/client_manager.dart';
+import 'package:quikxchat/utils/optimized_http_client.dart';
+import 'package:quikxchat/utils/platform_infos.dart';
+import 'package:quikxchat/utils/push_notification_manager.dart';
+import 'package:quikxchat/utils/file_logger.dart';
+import 'package:quikxchat/utils/memory_manager.dart';
+import 'package:quikxchat/utils/optimized_message_translator.dart';
 
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'config/setting_keys.dart';
 import 'utils/background_push.dart';
-import 'widgets/simple_messenger_app.dart';
+import 'widgets/quikx_chat_app.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 @pragma('vm:entry-point')
@@ -55,7 +55,7 @@ void onNotificationResponse(NotificationResponse response) {
         // Открываем комнату через роутер
         WidgetsBinding.instance.addPostFrameCallback((_) {
           try {
-            SimpleMessengerApp.router.go('/rooms/$roomId');
+            QuikxChatApp.router.go('/rooms/$roomId');
           } catch (e) {
             print('[Main] Failed to navigate to room: $e');
           }
@@ -198,7 +198,7 @@ Future<void> startGui(List<Client> clients, SharedPreferences store) async {
     Logs().w('Failed to initialize push notification manager', e, s);
   }
 
-  runApp(SimpleMessengerApp(clients: clients, pincode: pin, store: store));
+  runApp(QuikxChatApp(clients: clients, pincode: pin, store: store));
 }
 
 /// Обрабатывает отложенные действия уведомлений

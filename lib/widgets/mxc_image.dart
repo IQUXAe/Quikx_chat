@@ -6,11 +6,11 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
-import 'package:simplemessenger/config/themes.dart';
-import 'package:simplemessenger/utils/client_download_content_extension.dart';
-import 'package:simplemessenger/utils/matrix_sdk_extensions/matrix_file_extension.dart';
-import 'package:simplemessenger/utils/global_cache.dart';
-import 'package:simplemessenger/widgets/matrix.dart';
+import 'package:quikxchat/config/themes.dart';
+import 'package:quikxchat/utils/client_download_content_extension.dart';
+import 'package:quikxchat/utils/matrix_sdk_extensions/matrix_file_extension.dart';
+import 'package:quikxchat/utils/global_cache.dart';
+import 'package:quikxchat/widgets/matrix.dart';
 
 class MxcImage extends StatefulWidget {
   final Uri? uri;
@@ -39,9 +39,9 @@ class MxcImage extends StatefulWidget {
     this.placeholder,
     this.isThumbnail = true,
     this.animated = false,
-    this.animationDuration = SimpleMessengerThemes.animationDuration,
+    this.animationDuration = QuikxChatThemes.animationDuration,
     this.retryDuration = const Duration(seconds: 2),
-    this.animationCurve = SimpleMessengerThemes.animationCurve,
+    this.animationCurve = QuikxChatThemes.animationCurve,
     this.thumbnailMethod = ThumbnailMethod.scale,
     this.cacheKey,
     this.client,

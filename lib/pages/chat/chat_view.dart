@@ -6,22 +6,22 @@ import 'package:badges/badges.dart';
 import 'package:desktop_drop/desktop_drop.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:simplemessenger/config/themes.dart';
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/pages/chat/chat.dart';
-import 'package:simplemessenger/pages/chat/chat_app_bar_list_tile.dart';
-import 'package:simplemessenger/pages/chat/chat_app_bar_title.dart';
-import 'package:simplemessenger/pages/chat/chat_event_list.dart';
-import 'package:simplemessenger/pages/chat/encryption_button.dart';
-import 'package:simplemessenger/pages/chat/pinned_events.dart';
-import 'package:simplemessenger/pages/chat/reply_display.dart';
-import 'package:simplemessenger/utils/account_config.dart';
-import 'package:simplemessenger/utils/localized_exception_extension.dart';
-import 'package:simplemessenger/widgets/chat_settings_popup_menu.dart';
-import 'package:simplemessenger/widgets/future_loading_dialog.dart';
-import 'package:simplemessenger/widgets/matrix.dart';
-import 'package:simplemessenger/widgets/mxc_image.dart';
-import 'package:simplemessenger/widgets/unread_rooms_badge.dart';
+import 'package:quikxchat/config/themes.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/pages/chat/chat.dart';
+import 'package:quikxchat/pages/chat/chat_app_bar_list_tile.dart';
+import 'package:quikxchat/pages/chat/chat_app_bar_title.dart';
+import 'package:quikxchat/pages/chat/chat_event_list.dart';
+import 'package:quikxchat/pages/chat/encryption_button.dart';
+import 'package:quikxchat/pages/chat/pinned_events.dart';
+import 'package:quikxchat/pages/chat/reply_display.dart';
+import 'package:quikxchat/utils/account_config.dart';
+import 'package:quikxchat/utils/localized_exception_extension.dart';
+import 'package:quikxchat/widgets/chat_settings_popup_menu.dart';
+import 'package:quikxchat/widgets/future_loading_dialog.dart';
+import 'package:quikxchat/widgets/matrix.dart';
+import 'package:quikxchat/widgets/mxc_image.dart';
+import 'package:quikxchat/widgets/unread_rooms_badge.dart';
 import '../../utils/stream_extension.dart';
 
 import 'chat_emoji_picker.dart';
@@ -136,7 +136,7 @@ class ChatView extends StatelessWidget {
         exceptionContext: ExceptionContext.joinRoom,
       );
     }
-    final bottomSheetPadding = SimpleMessengerThemes.isColumnMode(context) ? 16.0 : 8.0;
+    final bottomSheetPadding = QuikxChatThemes.isColumnMode(context) ? 16.0 : 8.0;
     final scrollUpBannerEventId = controller.scrollUpBannerEventId;
 
     final accountConfig = Matrix.of(context).client.applicationAccountConfig;
@@ -183,7 +183,7 @@ class ChatView extends StatelessWidget {
                         tooltip: L10n.of(context).close,
                         color: theme.colorScheme.onTertiaryContainer,
                       )
-                    : SimpleMessengerThemes.isColumnMode(context)
+                    : QuikxChatThemes.isColumnMode(context)
                         ? null
                         : StreamBuilder<Object>(
                             stream:
@@ -197,7 +197,7 @@ class ChatView extends StatelessWidget {
                               child: const Center(child: BackButton()),
                             ),
                           ),
-                titleSpacing: SimpleMessengerThemes.isColumnMode(context) ? 24 : 0,
+                titleSpacing: QuikxChatThemes.isColumnMode(context) ? 24 : 0,
                 title: ChatAppBarTitle(controller),
                 actions: _appBarActions(context),
                 bottom: PreferredSize(
@@ -302,7 +302,7 @@ class ChatView extends StatelessWidget {
                             Container(
                               margin: EdgeInsets.all(bottomSheetPadding),
                               constraints: const BoxConstraints(
-                                maxWidth: SimpleMessengerThemes.maxTimelineWidth,
+                                maxWidth: QuikxChatThemes.maxTimelineWidth,
                               ),
                               alignment: Alignment.center,
                               child: Material(

@@ -5,8 +5,8 @@ import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
 import '../../config/themes.dart';
 import '../../utils/url_launcher.dart';
 import '../avatar.dart';
@@ -137,8 +137,8 @@ class PublicRoomDialog extends StatelessWidget {
                                           const EdgeInsets.only(right: 4.0),
                                       child: AnimatedScale(
                                         duration:
-                                            SimpleMessengerThemes.animationDuration,
-                                        curve: SimpleMessengerThemes.animationCurve,
+                                            QuikxChatThemes.animationDuration,
+                                        curve: QuikxChatThemes.animationCurve,
                                         scale: hovered
                                             ? 1.33
                                             : copied

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:html/parser.dart' as html_parser;
-import 'package:simplemessenger/utils/url_launcher.dart';
+import 'package:quikxchat/utils/url_launcher.dart';
 
 class CompactLinkPreview extends StatefulWidget {
   final String url;

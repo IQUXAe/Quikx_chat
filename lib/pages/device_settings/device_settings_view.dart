@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:simplemessenger/config/themes.dart';
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/pages/device_settings/device_settings.dart';
-import 'package:simplemessenger/widgets/layouts/max_width_body.dart';
+import 'package:quikxchat/config/themes.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/pages/device_settings/device_settings.dart';
+import 'package:quikxchat/widgets/layouts/max_width_body.dart';
 import 'user_device_list_item.dart';
 
 class DevicesSettingsView extends StatelessWidget {
@@ -15,9 +15,8 @@ class DevicesSettingsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: !SimpleMessengerThemes.isColumnMode(context),
-        centerTitle: SimpleMessengerThemes.isColumnMode(context),
         title: Text(L10n.of(context).devices),
+        centerTitle: QuikxChatThemes.isColumnMode(context),
       ),
       body: MaxWidthBody(
         child: FutureBuilder<bool>(

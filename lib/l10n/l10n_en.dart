@@ -679,7 +679,7 @@ class L10nEn extends L10n {
   String get fileName => 'File name';
 
   @override
-  String get fluffychat => 'Simple Messenger';
+  String get fluffychat => 'QuikxChat';
 
   @override
   String get fontSize => 'Font size';
@@ -821,7 +821,7 @@ class L10nEn extends L10n {
 
   @override
   String inviteText(String username, String link) {
-    return '$username invited you to Simple Messenger.\n1. Download the app from https://drive.google.com/drive/folders/1Lh-bMUZU-fTK2qlSOd3ZHgHxG-jFNBb5?usp=sharing \n2. Sign up or sign in \n3. Open the invite link: \n $link';
+    return '$username invited you to QuikxChat.\n1. Download the app from https://drive.google.com/drive/folders/1Lh-bMUZU-fTK2qlSOd3ZHgHxG-jFNBb5?usp=sharing \n2. Sign up or sign in \n3. Open the invite link: \n $link';
   }
 
   @override
@@ -945,7 +945,7 @@ class L10nEn extends L10n {
   String get newChat => 'New chat';
 
   @override
-  String get newMessageInFluffyChat => '💬 New message in Simple Messenger';
+  String get newMessageInFluffyChat => '💬 New message in QuikxChat';
 
   @override
   String get newVerificationRequest => 'New verification request!';
@@ -1352,6 +1352,12 @@ class L10nEn extends L10n {
   String get share => 'Share';
 
   @override
+  String get desktopMode => 'Desktop Mode';
+
+  @override
+  String get desktopModeDescription => 'Force desktop layout on mobile devices';
+
+  @override
   String sharedTheLocation(String username) {
     return '$username shared their location';
   }
@@ -1418,7 +1424,7 @@ class L10nEn extends L10n {
   String get theyMatch => 'They Match';
 
   @override
-  String get title => 'Simple Messenger';
+  String get title => 'QuikxChat';
 
   @override
   String get toggleFavorite => 'Toggle Favorite';
@@ -1687,7 +1693,7 @@ class L10nEn extends L10n {
 
   @override
   String get indexedDbErrorLong =>
-      'The message storage is unfortunately not enabled in private mode by default.\nPlease visit\n - about:config\n - set dom.indexedDB.privateBrowsing.enabled to true\nOtherwise, it is not possible to run Simple Messenger.';
+      'The message storage is unfortunately not enabled in private mode by default.\nPlease visit\n - about:config\n - set dom.indexedDB.privateBrowsing.enabled to true\nOtherwise, it is not possible to run QuikxChat.';
 
   @override
   String switchToAccount(String number) {
@@ -1846,8 +1852,7 @@ class L10nEn extends L10n {
   String get screenSharingTitle => 'screen sharing';
 
   @override
-  String get screenSharingDetail =>
-      'You are sharing your screen in Simple Messenger';
+  String get screenSharingDetail => 'You are sharing your screen in QuikxChat';
 
   @override
   String get callingPermissions => 'Calling permissions';
@@ -1857,7 +1862,7 @@ class L10nEn extends L10n {
 
   @override
   String get callingAccountDetails =>
-      'Allows Simple Messenger to use the native android dialer app.';
+      'Allows QuikxChat to use the native android dialer app.';
 
   @override
   String get appearOnTop => 'Appear on top';
@@ -1868,7 +1873,7 @@ class L10nEn extends L10n {
 
   @override
   String get otherCallingPermissions =>
-      'Microphone, camera and other Simple Messenger permissions';
+      'Microphone, camera and other QuikxChat permissions';
 
   @override
   String get whyIsThisMessageEncrypted => 'Why is this message unreadable?';
@@ -2405,7 +2410,7 @@ class L10nEn extends L10n {
 
   @override
   String get welcomeText =>
-      'Hey Hey 👋 This is Simple Messenger. You can sign in to any homeserver, which is compatible with https://matrix.org. And then chat with anyone. It\'s a huge decentralized messaging network!';
+      'Hey Hey 👋 This is QuikxChat. You can sign in to any homeserver, which is compatible with https://matrix.org. And then chat with anyone. It\'s a huge decentralized messaging network!';
 
   @override
   String get blur => 'Blur:';
@@ -2493,7 +2498,7 @@ class L10nEn extends L10n {
 
   @override
   String get appIntroduction =>
-      'Simple Messenger uses the Matrix protocol. To create an account, use app.element.io or a similar service. Learn more at https://matrix.org or just tap *Continue*.';
+      'QuikxChat uses the Matrix protocol. To create an account, use app.element.io or a similar service. Learn more at https://matrix.org or just tap *Continue*.';
 
   @override
   String get newChatRequest => '📩 New chat request';
@@ -2981,9 +2986,6 @@ class L10nEn extends L10n {
 
   @override
   String get disableAutoTranslate => 'Disable auto-translate';
-
-  @override
-  String get translateAllMessages => 'Translate all messages';
 
   @override
   String get clearTranslations => 'Clear translations';

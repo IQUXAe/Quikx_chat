@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:simplemessenger/utils/error_reporter.dart';
+import 'package:quikxchat/utils/error_reporter.dart';
 
 class FluffyChatErrorWidget extends StatefulWidget {
   final FlutterErrorDetails details;

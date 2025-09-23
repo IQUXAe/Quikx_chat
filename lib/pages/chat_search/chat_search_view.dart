@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
-import 'package:simplemessenger/config/themes.dart';
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/pages/chat_search/chat_search_files_tab.dart';
-import 'package:simplemessenger/pages/chat_search/chat_search_images_tab.dart';
-import 'package:simplemessenger/pages/chat_search/chat_search_message_tab.dart';
-import 'package:simplemessenger/pages/chat_search/chat_search_page.dart';
-import 'package:simplemessenger/utils/matrix_sdk_extensions/matrix_locals.dart';
-import 'package:simplemessenger/widgets/layouts/max_width_body.dart';
+import 'package:quikxchat/config/themes.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/pages/chat_search/chat_search_files_tab.dart';
+import 'package:quikxchat/pages/chat_search/chat_search_images_tab.dart';
+import 'package:quikxchat/pages/chat_search/chat_search_message_tab.dart';
+import 'package:quikxchat/pages/chat_search/chat_search_page.dart';
+import 'package:quikxchat/utils/matrix_sdk_extensions/matrix_locals.dart';
+import 'package:quikxchat/widgets/layouts/max_width_body.dart';
 
 class ChatSearchView extends StatelessWidget {
   final ChatSearchController controller;
@@ -45,7 +45,7 @@ class ChatSearchView extends StatelessWidget {
         withScrolling: false,
         child: Column(
           children: [
-            if (SimpleMessengerThemes.isThreeColumnMode(context))
+            if (QuikxChatThemes.isThreeColumnMode(context))
               const SizedBox(height: 16),
             Padding(
               padding: const EdgeInsets.symmetric(

@@ -1,4 +1,4 @@
-package com.iquxae.privacymessenger
+package com.iquxae.quikxchat
 
 import io.flutter.app.FlutterApplication
 

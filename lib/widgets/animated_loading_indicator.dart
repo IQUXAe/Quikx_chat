@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:simplemessenger/config/themes.dart';
+import 'package:quikxchat/config/themes.dart';
 
 class AnimatedLoadingIndicator extends StatefulWidget {
   final double size;
@@ -31,7 +31,7 @@ class _AnimatedLoadingIndicatorState extends State<AnimatedLoadingIndicator>
     )..repeat();
 
     _scaleController = AnimationController(
-      duration: SimpleMessengerThemes.animationDuration,
+      duration: QuikxChatThemes.animationDuration,
       vsync: this,
     );
 
@@ -40,7 +40,7 @@ class _AnimatedLoadingIndicatorState extends State<AnimatedLoadingIndicator>
       end: 1.0,
     ).animate(CurvedAnimation(
       parent: _scaleController,
-      curve: SimpleMessengerThemes.bounceAnimationCurve,
+      curve: QuikxChatThemes.bounceAnimationCurve,
     ),);
 
     _scaleController.forward();

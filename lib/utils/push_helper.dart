@@ -10,15 +10,15 @@ import 'package:flutter_shortcuts_new/flutter_shortcuts_new.dart';
 import 'package:matrix/matrix.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:simplemessenger/config/app_config.dart';
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/utils/client_download_content_extension.dart';
-import 'package:simplemessenger/utils/client_manager.dart';
-import 'package:simplemessenger/utils/error_reporter.dart';
-import 'package:simplemessenger/utils/matrix_sdk_extensions/matrix_locals.dart';
-import 'package:simplemessenger/utils/platform_infos.dart';
-import 'package:simplemessenger/utils/network_error_handler.dart';
-import 'package:simplemessenger/utils/push_monitoring.dart';
+import 'package:quikxchat/config/app_config.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/utils/client_download_content_extension.dart';
+import 'package:quikxchat/utils/client_manager.dart';
+import 'package:quikxchat/utils/error_reporter.dart';
+import 'package:quikxchat/utils/matrix_sdk_extensions/matrix_locals.dart';
+import 'package:quikxchat/utils/platform_infos.dart';
+import 'package:quikxchat/utils/network_error_handler.dart';
+import 'package:quikxchat/utils/push_monitoring.dart';
 
 const notificationAvatarDimension = 256;
 

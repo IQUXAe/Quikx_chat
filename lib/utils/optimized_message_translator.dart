@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:flutter/foundation.dart';
-import 'package:simplemessenger/utils/message_translator.dart';
+import 'package:quikxchat/utils/message_translator.dart';
 
 class OptimizedMessageTranslator {
   static final Map<String, String> _translationCache = {};

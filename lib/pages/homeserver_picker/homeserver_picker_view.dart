@@ -4,11 +4,11 @@ import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-import 'package:simplemessenger/config/app_config.dart';
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/widgets/adaptive_dialogs/adaptive_dialog_action.dart';
-import 'package:simplemessenger/widgets/layouts/login_scaffold.dart';
-import 'package:simplemessenger/widgets/matrix.dart';
+import 'package:quikxchat/config/app_config.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/widgets/adaptive_dialogs/adaptive_dialog_action.dart';
+import 'package:quikxchat/widgets/layouts/login_scaffold.dart';
+import 'package:quikxchat/widgets/matrix.dart';
 import '../../config/themes.dart';
 import 'homeserver_picker.dart';
 
@@ -89,8 +89,8 @@ class HomeserverPickerView extends StatelessWidget {
                     // usually forced to logout as TOR browser is non-persistent
                     AnimatedContainer(
                       height: controller.isTorBrowser ? 64 : 0,
-                      duration: SimpleMessengerThemes.animationDuration,
-                      curve: SimpleMessengerThemes.animationCurve,
+                      duration: QuikxChatThemes.animationDuration,
+                      curve: QuikxChatThemes.animationCurve,
                       clipBehavior: Clip.hardEdge,
                       decoration: const BoxDecoration(),
                       child: Material(

@@ -8,9 +8,9 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:universal_html/html.dart' as html;
 
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/utils/client_manager.dart';
-import 'package:simplemessenger/utils/platform_infos.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/utils/client_manager.dart';
+import 'package:quikxchat/utils/platform_infos.dart';
 import 'cipher.dart';
 
 import 'sqlcipher_stub.dart'

@@ -8,11 +8,12 @@ import 'package:flutter_webrtc/flutter_webrtc.dart' as webrtc_impl;
 import 'package:matrix/matrix.dart';
 import 'package:webrtc_interface/webrtc_interface.dart' hide Navigator;
 
-import 'package:simplemessenger/pages/dialer/enhanced_dialer.dart';
-import 'package:simplemessenger/utils/platform_infos.dart';
+import 'package:quikxchat/pages/dialer/enhanced_dialer.dart';
+import 'package:quikxchat/utils/platform_infos.dart';
 import '../../utils/voip/user_media_manager.dart';
 import '../widgets/matrix.dart';
-import '../widgets/simple_messenger_app.dart';
+import '../widgets/quikx_chat_app.dart';
+import '../l10n/l10n.dart';
 
 class VoipPlugin with WidgetsBindingObserver implements WebRTCDelegate {
   final MatrixState matrix;
@@ -38,7 +39,9 @@ class VoipPlugin with WidgetsBindingObserver implements WebRTCDelegate {
   }
 
   void addCallingOverlay(String callId, CallSession call) {
-    final navigatorContext = SimpleMessengerApp.router.routerDelegate.navigatorKey.currentContext ?? context;
+    final navigatorContext =
+        QuikxChatApp.router.routerDelegate.navigatorKey.currentContext ??
+            context;
 
     showDialog(
       context: navigatorContext,
@@ -91,7 +94,7 @@ class VoipPlugin with WidgetsBindingObserver implements WebRTCDelegate {
     try {
       // Register listeners first
       await registerListeners(call);
-      
+
       if (PlatformInfos.isAndroid) {
         try {
           final wasForeground = await FlutterForegroundTask.isAppOnForeground;
@@ -107,17 +110,18 @@ class VoipPlugin with WidgetsBindingObserver implements WebRTCDelegate {
           Logs().e('VOIP foreground failed $e');
         }
       }
-      
+
       // Add calling overlay
       addCallingOverlay(call.callId, call);
-      
     } catch (e) {
       Logs().e('Failed to handle new call: $e');
       // Show error to user
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Что-то пошло не так при инициации звонка: ${e.toString()}'),
+            content: Text(
+              '${L10n.of(context).oopsSomethingWentWrong}: ${e.toString()}',
+            ),
             backgroundColor: Colors.red,
             duration: const Duration(seconds: 5),
           ),
@@ -169,7 +173,7 @@ class VoipPlugin with WidgetsBindingObserver implements WebRTCDelegate {
     session.onCallStateChanged.stream.listen((state) {
       Logs().d('Call state changed: $state');
     });
-    
+
     session.onCallEventChanged.stream.listen((event) {
       Logs().d('Call event changed: $event');
     });

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:simplemessenger/config/themes.dart';
+import 'package:quikxchat/config/themes.dart';
 
 class StaggeredAnimation extends StatefulWidget {
   final List<Widget> children;
@@ -29,7 +29,7 @@ class _StaggeredAnimationState extends State<StaggeredAnimation>
     _controllers = List.generate(
       widget.children.length,
       (index) => AnimationController(
-        duration: SimpleMessengerThemes.animationDuration,
+        duration: QuikxChatThemes.animationDuration,
         vsync: this,
       ),
     );
@@ -38,7 +38,7 @@ class _StaggeredAnimationState extends State<StaggeredAnimation>
       Tween<double>(begin: 0.0, end: 1.0).animate(
         CurvedAnimation(
           parent: controller,
-          curve: SimpleMessengerThemes.bounceAnimationCurve,
+          curve: QuikxChatThemes.bounceAnimationCurve,
         ),
       ),
     ).toList();

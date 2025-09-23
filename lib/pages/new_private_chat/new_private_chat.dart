@@ -6,14 +6,14 @@ import 'package:flutter/services.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/pages/new_private_chat/new_private_chat_view.dart';
-import 'package:simplemessenger/pages/new_private_chat/qr_scanner_modal.dart';
-import 'package:simplemessenger/utils/adaptive_bottom_sheet.dart';
-import 'package:simplemessenger/utils/fluffy_share.dart';
-import 'package:simplemessenger/utils/platform_infos.dart';
-import 'package:simplemessenger/utils/url_launcher.dart';
-import 'package:simplemessenger/widgets/matrix.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/pages/new_private_chat/new_private_chat_view.dart';
+import 'package:quikxchat/pages/new_private_chat/qr_scanner_modal.dart';
+import 'package:quikxchat/utils/adaptive_bottom_sheet.dart';
+import 'package:quikxchat/utils/fluffy_share.dart';
+import 'package:quikxchat/utils/platform_infos.dart';
+import 'package:quikxchat/utils/url_launcher.dart';
+import 'package:quikxchat/widgets/matrix.dart';
 import '../../widgets/adaptive_dialogs/user_dialog.dart';
 
 class NewPrivateChat extends StatefulWidget {

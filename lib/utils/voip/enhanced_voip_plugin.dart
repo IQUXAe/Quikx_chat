@@ -14,10 +14,10 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:webrtc_interface/webrtc_interface.dart' hide Navigator;
 
-import 'package:simplemessenger/pages/dialer/enhanced_dialer.dart';
+import 'package:quikxchat/pages/dialer/enhanced_dialer.dart';
 
 import '../../widgets/matrix.dart';
-import '../../widgets/simple_messenger_app.dart';
+import '../../widgets/quikx_chat_app.dart';
 
 class EnhancedVoipPlugin with WidgetsBindingObserver implements WebRTCDelegate {
   final MatrixState matrix;
@@ -101,7 +101,7 @@ class EnhancedVoipPlugin with WidgetsBindingObserver implements WebRTCDelegate {
   }
 
   void addCallingOverlay(String callId, CallSession call) {
-    final navigatorContext = SimpleMessengerApp.router.routerDelegate
+    final navigatorContext = QuikxChatApp.router.routerDelegate
         .navigatorKey.currentContext ?? context;
 
     showDialog(

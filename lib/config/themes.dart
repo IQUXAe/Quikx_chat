@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 
 import 'app_config.dart';
 
-abstract class SimpleMessengerThemes {
+abstract class QuikxChatThemes {
   static const double columnWidth = 380.0;
 
   static const double maxTimelineWidth = columnWidth * 2;
@@ -13,10 +13,11 @@ abstract class SimpleMessengerThemes {
   static bool isColumnModeByWidth(double width) =>
       width > columnWidth * 2 + navRailWidth;
 
-  static bool isColumnMode(BuildContext context) => false;
+  static bool isColumnMode(BuildContext context) =>
+      isColumnModeByWidth(MediaQuery.sizeOf(context).width);
 
   static bool isThreeColumnMode(BuildContext context) =>
-      MediaQuery.sizeOf(context).width > SimpleMessengerThemes.columnWidth * 3.5;
+      MediaQuery.sizeOf(context).width > QuikxChatThemes.columnWidth * 3.5;
 
   static LinearGradient backgroundGradient(
     BuildContext context,
@@ -51,7 +52,7 @@ abstract class SimpleMessengerThemes {
       brightness: brightness,
       seedColor: seed ?? AppConfig.colorSchemeSeed ?? AppConfig.primaryColor,
     );
-    final isColumnMode = SimpleMessengerThemes.isColumnMode(context);
+    final isColumnMode = QuikxChatThemes.isColumnMode(context);
     return ThemeData(
       visualDensity: VisualDensity.comfortable,
       useMaterial3: true,
@@ -121,7 +122,7 @@ abstract class SimpleMessengerThemes {
       snackBarTheme: isColumnMode
           ? const SnackBarThemeData(
               behavior: SnackBarBehavior.floating,
-              width: SimpleMessengerThemes.columnWidth * 1.5,
+              width: QuikxChatThemes.columnWidth * 1.5,
             )
           : const SnackBarThemeData(behavior: SnackBarBehavior.floating),
       elevatedButtonTheme: ElevatedButtonThemeData(

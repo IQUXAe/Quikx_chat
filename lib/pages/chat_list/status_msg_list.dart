@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
-import 'package:simplemessenger/config/app_config.dart';
-import 'package:simplemessenger/config/themes.dart';
-import 'package:simplemessenger/utils/stream_extension.dart';
-import 'package:simplemessenger/widgets/avatar.dart';
-import 'package:simplemessenger/widgets/hover_builder.dart';
-import 'package:simplemessenger/widgets/matrix.dart';
+import 'package:quikxchat/config/app_config.dart';
+import 'package:quikxchat/config/themes.dart';
+import 'package:quikxchat/utils/stream_extension.dart';
+import 'package:quikxchat/widgets/avatar.dart';
+import 'package:quikxchat/widgets/hover_builder.dart';
+import 'package:quikxchat/widgets/matrix.dart';
 import '../../widgets/adaptive_dialogs/user_dialog.dart';
 
 class StatusMessageList extends StatelessWidget {
@@ -40,7 +40,7 @@ class StatusMessageList extends StatelessWidget {
       stream: client.onSync.stream.rateLimit(const Duration(seconds: 3)),
       builder: (context, snapshot) {
         return AnimatedSize(
-          duration: SimpleMessengerThemes.animationDuration,
+          duration: QuikxChatThemes.animationDuration,
           curve: Curves.easeInOut,
           child: FutureBuilder(
             initialData: interestingPresences
@@ -134,8 +134,8 @@ class PresenceAvatar extends StatelessWidget {
                   builder: (context, hovered) {
                     return AnimatedScale(
                       scale: hovered ? 1.15 : 1.0,
-                      duration: SimpleMessengerThemes.animationDuration,
-                      curve: SimpleMessengerThemes.animationCurve,
+                      duration: QuikxChatThemes.animationDuration,
+                      curve: QuikxChatThemes.animationCurve,
                       child: InkWell(
                         borderRadius: BorderRadius.circular(avatarSize),
                         onTap: profile == null ? null : () => onTap(profile),

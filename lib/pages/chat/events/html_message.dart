@@ -9,10 +9,10 @@ import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as parser;
 import 'package:matrix/matrix.dart';
 
-import 'package:simplemessenger/utils/event_checkbox_extension.dart';
-import 'package:simplemessenger/widgets/avatar.dart';
-import 'package:simplemessenger/widgets/future_loading_dialog.dart';
-import 'package:simplemessenger/widgets/mxc_image.dart';
+import 'package:quikxchat/utils/event_checkbox_extension.dart';
+import 'package:quikxchat/widgets/avatar.dart';
+import 'package:quikxchat/widgets/future_loading_dialog.dart';
+import 'package:quikxchat/widgets/mxc_image.dart';
 import '../../../utils/url_launcher.dart';
 import '../../../utils/link_extractor.dart';
 import '../../../config/app_config.dart';
@@ -533,13 +533,13 @@ class HtmlMessage extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        textWidget,
         ...links.take(5).map((link) => LinkPreview(
           key: ValueKey(link),
           url: link,
           textColor: textColor,
           linkColor: linkStyle.color ?? textColor,
         )),
-        textWidget,
       ],
     );
   }

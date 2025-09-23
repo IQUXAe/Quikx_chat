@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-import 'package:simplemessenger/config/themes.dart';
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/pages/new_group/new_group.dart';
-import 'package:simplemessenger/utils/localized_exception_extension.dart';
-import 'package:simplemessenger/widgets/avatar.dart';
-import 'package:simplemessenger/widgets/layouts/max_width_body.dart';
+import 'package:quikxchat/config/themes.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/pages/new_group/new_group.dart';
+import 'package:quikxchat/utils/localized_exception_extension.dart';
+import 'package:quikxchat/widgets/avatar.dart';
+import 'package:quikxchat/widgets/layouts/max_width_body.dart';
 
 class NewGroupView extends StatelessWidget {
   final NewGroupController controller;
@@ -100,8 +100,8 @@ class NewGroupView extends StatelessWidget {
               onChanged: controller.loading ? null : controller.setPublicGroup,
             ),
             AnimatedSize(
-              duration: SimpleMessengerThemes.animationDuration,
-              curve: SimpleMessengerThemes.animationCurve,
+              duration: QuikxChatThemes.animationDuration,
+              curve: QuikxChatThemes.animationCurve,
               child: controller.publicGroup
                   ? SwitchListTile.adaptive(
                       contentPadding:
@@ -116,8 +116,8 @@ class NewGroupView extends StatelessWidget {
                   : const SizedBox.shrink(),
             ),
             AnimatedSize(
-              duration: SimpleMessengerThemes.animationDuration,
-              curve: SimpleMessengerThemes.animationCurve,
+              duration: QuikxChatThemes.animationDuration,
+              curve: QuikxChatThemes.animationCurve,
               child: controller.createGroupType == CreateGroupType.space
                   ? const SizedBox.shrink()
                   : SwitchListTile.adaptive(
@@ -138,8 +138,8 @@ class NewGroupView extends StatelessWidget {
                     ),
             ),
             AnimatedSize(
-              duration: SimpleMessengerThemes.animationDuration,
-              curve: SimpleMessengerThemes.animationCurve,
+              duration: QuikxChatThemes.animationDuration,
+              curve: QuikxChatThemes.animationCurve,
               child: controller.createGroupType == CreateGroupType.space
                   ? ListTile(
                       contentPadding:
@@ -170,8 +170,8 @@ class NewGroupView extends StatelessWidget {
               ),
             ),
             AnimatedSize(
-              duration: SimpleMessengerThemes.animationDuration,
-              curve: SimpleMessengerThemes.animationCurve,
+              duration: QuikxChatThemes.animationDuration,
+              curve: QuikxChatThemes.animationCurve,
               child: error == null
                   ? const SizedBox.shrink()
                   : ListTile(

@@ -1,1 +1,0 @@
-Simple Messenger 2.2.0 brings major performance optimizations, memory leak fixes, improved user profile caching, centralized version management, and critical security vulnerability patches.

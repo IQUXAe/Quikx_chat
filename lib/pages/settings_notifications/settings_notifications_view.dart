@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
-import 'package:simplemessenger/config/themes.dart';
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/pages/settings_notifications/push_rule_extensions.dart';
-import 'package:simplemessenger/widgets/layouts/max_width_body.dart';
+import 'package:quikxchat/config/themes.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/pages/settings_notifications/push_rule_extensions.dart';
+import 'package:quikxchat/widgets/layouts/max_width_body.dart';
 import '../../utils/localized_exception_extension.dart';
 import '../../utils/push_notification_manager.dart';
 import '../../widgets/matrix.dart';
@@ -31,8 +31,7 @@ class SettingsNotificationsView extends StatelessWidget {
     ];
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: !SimpleMessengerThemes.isColumnMode(context),
-        centerTitle: SimpleMessengerThemes.isColumnMode(context),
+        centerTitle: QuikxChatThemes.isColumnMode(context),
         title: Text(L10n.of(context).notifications),
       ),
       body: MaxWidthBody(

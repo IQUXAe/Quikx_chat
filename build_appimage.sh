@@ -14,7 +14,7 @@ mkdir -p SimpleMessenger.AppDir/usr/bin
 cp -r build/linux/x64/release/bundle/* SimpleMessenger.AppDir/usr/bin/
 
 # Rename executable file
-mv SimpleMessenger.AppDir/usr/bin/simple_messenger SimpleMessenger.AppDir/usr/bin/simplemessenger
+mv QuikxChat.AppDir/usr/bin/simple_messenger QuikxChat.AppDir/usr/bin/quikxchat
 
 # Build AppImage
 if [ -f "./appimagetool" ]; then

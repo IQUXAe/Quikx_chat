@@ -1,9 +1,9 @@
 {
-  "application_name": "Simple Messenger",
+  "application_name": "QuikxChat",
   "application_welcome_message": null,
   "default_homeserver": "matrix.org",
   "web_base_url": "https://example.com/web",
-  "privacy_url": "https://github.com/iquxae/simple-messenger/blob/main/PRIVACY.md",
+  "privacy_url": "https://github.com/iquxae/quikx-chat/blob/main/PRIVACY.md",
   "render_html": false,
   "hide_redacted_events": false,
   "hide_unknown_events": false

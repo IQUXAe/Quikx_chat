@@ -5,16 +5,16 @@ import 'package:flutter/material.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:simplemessenger/config/setting_keys.dart';
-import 'package:simplemessenger/config/themes.dart';
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/pages/chat/events/state_message.dart';
-import 'package:simplemessenger/utils/account_config.dart';
-import 'package:simplemessenger/utils/color_value.dart';
-import 'package:simplemessenger/widgets/avatar.dart';
-import 'package:simplemessenger/widgets/layouts/max_width_body.dart';
-import 'package:simplemessenger/widgets/matrix.dart';
-import 'package:simplemessenger/widgets/mxc_image.dart';
+import 'package:quikxchat/config/setting_keys.dart';
+import 'package:quikxchat/config/themes.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/pages/chat/events/state_message.dart';
+import 'package:quikxchat/utils/account_config.dart';
+import 'package:quikxchat/utils/color_value.dart';
+import 'package:quikxchat/widgets/avatar.dart';
+import 'package:quikxchat/widgets/layouts/max_width_body.dart';
+import 'package:quikxchat/widgets/matrix.dart';
+import 'package:quikxchat/widgets/mxc_image.dart';
 import '../../config/app_config.dart';
 import '../../widgets/settings_switch_list_tile.dart';
 import 'settings_style.dart';
@@ -32,8 +32,7 @@ class SettingsStyleView extends StatelessWidget {
     final client = Matrix.of(context).client;
     return Scaffold(
       appBar: AppBar(
-        automaticallyImplyLeading: !SimpleMessengerThemes.isColumnMode(context),
-        centerTitle: SimpleMessengerThemes.isColumnMode(context),
+        centerTitle: QuikxChatThemes.isColumnMode(context),
         title: Text(L10n.of(context).changeTheme),
       ),
       backgroundColor: theme.colorScheme.surface,
@@ -163,8 +162,8 @@ class SettingsStyleView extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     AnimatedContainer(
-                      duration: SimpleMessengerThemes.animationDuration,
-                      curve: SimpleMessengerThemes.animationCurve,
+                      duration: QuikxChatThemes.animationDuration,
+                      curve: QuikxChatThemes.animationCurve,
                       decoration: const BoxDecoration(),
                       clipBehavior: Clip.hardEdge,
                       child: Stack(
@@ -183,7 +182,7 @@ class SettingsStyleView extends StatelessWidget {
                                   uri: accountConfig.wallpaperUrl,
                                   fit: BoxFit.cover,
                                   isThumbnail: true,
-                                  width: SimpleMessengerThemes.columnWidth * 2,
+                                  width: QuikxChatThemes.columnWidth * 2,
                                   height: 212,
                                 ),
                               ),
@@ -362,13 +361,12 @@ class SettingsStyleView extends StatelessWidget {
               storeKey: SettingKeys.separateChatTypes,
               defaultValue: AppConfig.separateChatTypes,
             ),
-            // Navigation rail setting hidden but kept in code
-            // SettingsSwitchListTile.adaptive(
-            //   title: L10n.of(context).displayNavigationRail,
-            //   onChanged: (b) => AppConfig.displayNavigationRail = b,
-            //   storeKey: SettingKeys.displayNavigationRail,
-            //   defaultValue: AppConfig.displayNavigationRail,
-            // ),
+            SettingsSwitchListTile.adaptive(
+              title: L10n.of(context).displayNavigationRail,
+              onChanged: (b) => AppConfig.displayNavigationRail = b,
+              storeKey: SettingKeys.displayNavigationRail,
+              defaultValue: AppConfig.displayNavigationRail,
+            ),
           ],
         ),
       ),

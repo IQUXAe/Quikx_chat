@@ -63,7 +63,7 @@
             tools:overrideLibrary="io.wazo.callkeep, net.touchcapture.qr.flutterqr, com.cloudwebrtc.webrtc, org.webrtc, com.it_nomads.fluttersecurestorage, com.pichillilorenzo.flutter_inappwebview, com.example.video_compress, com.otaliastudios.transcoder, com.otaliastudios.opengl, com.kineapps.flutter_file_dialog, com.llfbandit.record, com.pravera.flutter_foreground_task"/>
     <application
         android:name=".Application"
-        android:label="Simple Messenger"
+        android:label="QuikxChat"
         android:icon="@mipmap/ic_launcher"
         android:requestLegacyExternalStorage="true"
         android:allowBackup="false"
@@ -116,7 +116,7 @@
                <action android:name="android.intent.action.VIEW" />
                <category android:name="android.intent.category.DEFAULT" />
                <category android:name="android.intent.category.BROWSABLE" />
-               <data android:scheme="com.iquxae.privacymessenger" android:host="chat" />
+               <data android:scheme="com.iquxae.quikxchat" android:host="chat" />
             </intent-filter>
 
             <!-- App can receive shared text -->
@@ -160,7 +160,7 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="com.iquxae.privacymessenger" android:host="login"/>
+                <data android:scheme="com.iquxae.quikxchat" android:host="login"/>
             </intent-filter>
         </activity>
 

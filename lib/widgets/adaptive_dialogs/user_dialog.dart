@@ -5,12 +5,12 @@ import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:simplemessenger/config/themes.dart';
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/utils/date_time_extension.dart';
-import 'package:simplemessenger/widgets/adaptive_dialogs/adaptive_dialog_action.dart';
-import 'package:simplemessenger/widgets/avatar.dart';
-import 'package:simplemessenger/widgets/presence_builder.dart';
+import 'package:quikxchat/config/themes.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/utils/date_time_extension.dart';
+import 'package:quikxchat/widgets/adaptive_dialogs/adaptive_dialog_action.dart';
+import 'package:quikxchat/widgets/avatar.dart';
+import 'package:quikxchat/widgets/presence_builder.dart';
 import '../../utils/url_launcher.dart';
 import '../future_loading_dialog.dart';
 import '../hover_builder.dart';
@@ -94,8 +94,8 @@ class UserDialog extends StatelessWidget {
                                   child: Padding(
                                     padding: const EdgeInsets.only(right: 4.0),
                                     child: AnimatedScale(
-                                      duration: SimpleMessengerThemes.animationDuration,
-                                      curve: SimpleMessengerThemes.animationCurve,
+                                      duration: QuikxChatThemes.animationDuration,
+                                      curve: QuikxChatThemes.animationCurve,
                                       scale: hovered
                                           ? 1.33
                                           : copied

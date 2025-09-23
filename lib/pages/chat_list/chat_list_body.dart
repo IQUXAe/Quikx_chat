@@ -3,17 +3,17 @@ import 'package:flutter/material.dart';
 
 import 'package:matrix/matrix.dart';
 
-import 'package:simplemessenger/config/app_config.dart';
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/pages/chat_list/chat_list.dart';
-import 'package:simplemessenger/pages/chat_list/chat_list_item.dart';
-import 'package:simplemessenger/pages/chat_list/dummy_chat_list_item.dart';
-import 'package:simplemessenger/pages/chat_list/search_title.dart';
-import 'package:simplemessenger/pages/chat_list/space_view.dart';
-import 'package:simplemessenger/pages/chat_list/status_msg_list.dart';
-import 'package:simplemessenger/utils/stream_extension.dart';
-import 'package:simplemessenger/widgets/adaptive_dialogs/public_room_dialog.dart';
-import 'package:simplemessenger/widgets/avatar.dart';
+import 'package:quikxchat/config/app_config.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/pages/chat_list/chat_list.dart';
+import 'package:quikxchat/pages/chat_list/chat_list_item.dart';
+import 'package:quikxchat/pages/chat_list/dummy_chat_list_item.dart';
+import 'package:quikxchat/pages/chat_list/search_title.dart';
+import 'package:quikxchat/pages/chat_list/space_view.dart';
+import 'package:quikxchat/pages/chat_list/status_msg_list.dart';
+import 'package:quikxchat/utils/stream_extension.dart';
+import 'package:quikxchat/widgets/adaptive_dialogs/public_room_dialog.dart';
+import 'package:quikxchat/widgets/avatar.dart';
 import '../../config/themes.dart';
 import '../../widgets/adaptive_dialogs/user_dialog.dart';
 import '../../widgets/matrix.dart';
@@ -101,8 +101,8 @@ class ChatListViewBody extends StatelessWidget {
                                 userSearchResult.results.isEmpty
                             ? 0
                             : 106,
-                        duration: SimpleMessengerThemes.animationDuration,
-                        curve: SimpleMessengerThemes.animationCurve,
+                        duration: QuikxChatThemes.animationDuration,
+                        curve: QuikxChatThemes.animationCurve,
                         child: userSearchResult == null
                             ? null
                             : ListView.builder(
@@ -132,8 +132,8 @@ class ChatListViewBody extends StatelessWidget {
                       ),
                     AnimatedContainer(
                       height: controller.isTorBrowser ? 64 : 0,
-                      duration: SimpleMessengerThemes.animationDuration,
-                      curve: SimpleMessengerThemes.animationCurve,
+                      duration: QuikxChatThemes.animationDuration,
+                      curve: QuikxChatThemes.animationCurve,
                       clipBehavior: Clip.hardEdge,
                       decoration: const BoxDecoration(),
                       child: Material(
@@ -166,7 +166,7 @@ class ChatListViewBody extends StatelessWidget {
                             ActiveFilter.unread,
                             if (spaceDelegateCandidates.isNotEmpty &&
                                 !AppConfig.displayNavigationRail &&
-                                !SimpleMessengerThemes.isColumnMode(context))
+                                !QuikxChatThemes.isColumnMode(context))
                               ActiveFilter.spaces,
                           ]
                               .map(
@@ -294,8 +294,8 @@ class PublicRoomsHorizontalList extends StatelessWidget {
       clipBehavior: Clip.hardEdge,
       decoration: const BoxDecoration(),
       height: publicRooms == null || publicRooms.isEmpty ? 0 : 106,
-      duration: SimpleMessengerThemes.animationDuration,
-      curve: SimpleMessengerThemes.animationCurve,
+      duration: QuikxChatThemes.animationDuration,
+      curve: QuikxChatThemes.animationCurve,
       child: publicRooms == null
           ? null
           : ListView.builder(

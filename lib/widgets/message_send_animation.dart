@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:simplemessenger/config/themes.dart';
+import 'package:quikxchat/config/themes.dart';
 
 class MessageSendAnimation extends StatefulWidget {
   final Widget child;
@@ -143,7 +143,7 @@ class _MessageBubbleAnimationState extends State<MessageBubbleAnimation>
     super.initState();
     
     _controller = AnimationController(
-      duration: SimpleMessengerThemes.animationDuration,
+      duration: QuikxChatThemes.animationDuration,
       vsync: this,
     );
 

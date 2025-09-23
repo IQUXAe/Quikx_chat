@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:simplemessenger/config/themes.dart';
+import 'package:quikxchat/config/themes.dart';
 
 class AnimatedMessageBubble extends StatefulWidget {
   final Widget child;
@@ -37,7 +37,7 @@ class _AnimatedMessageBubbleState extends State<AnimatedMessageBubble>
     );
 
     _scaleController = AnimationController(
-      duration: SimpleMessengerThemes.fastAnimationDuration,
+      duration: QuikxChatThemes.fastAnimationDuration,
       vsync: this,
     );
 
@@ -46,7 +46,7 @@ class _AnimatedMessageBubbleState extends State<AnimatedMessageBubble>
       end: Offset.zero,
     ).animate(CurvedAnimation(
       parent: _slideController,
-      curve: SimpleMessengerThemes.bounceAnimationCurve,
+      curve: QuikxChatThemes.bounceAnimationCurve,
     ),);
 
     _scaleAnimation = Tween<double>(
@@ -54,7 +54,7 @@ class _AnimatedMessageBubbleState extends State<AnimatedMessageBubble>
       end: 1.0,
     ).animate(CurvedAnimation(
       parent: _slideController,
-      curve: SimpleMessengerThemes.bounceAnimationCurve,
+      curve: QuikxChatThemes.bounceAnimationCurve,
     ),);
 
     _fadeAnimation = Tween<double>(

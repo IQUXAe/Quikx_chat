@@ -2,8 +2,8 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
-import 'package:simplemessenger/config/app_config.dart';
-import 'package:simplemessenger/config/themes.dart';
+import 'package:quikxchat/config/app_config.dart';
+import 'package:quikxchat/config/themes.dart';
 
 Future<T?> showAdaptiveBottomSheet<T>({
   required BuildContext context,
@@ -12,7 +12,7 @@ Future<T?> showAdaptiveBottomSheet<T>({
   bool isScrollControlled = true,
   bool useRootNavigator = true,
 }) {
-  if (SimpleMessengerThemes.isColumnMode(context)) {
+  if (QuikxChatThemes.isColumnMode(context)) {
     return showDialog<T>(
       context: context,
       useRootNavigator: useRootNavigator,
@@ -55,7 +55,7 @@ Future<T?> showAdaptiveBottomSheet<T>({
     isScrollControlled: isScrollControlled,
     constraints: BoxConstraints(
       maxHeight: min(MediaQuery.sizeOf(context).height - 32, 600),
-      maxWidth: SimpleMessengerThemes.columnWidth * 1.25,
+      maxWidth: QuikxChatThemes.columnWidth * 1.25,
     ),
     backgroundColor: Colors.transparent,
     clipBehavior: Clip.hardEdge,

@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:simplemessenger/config/app_config.dart';
-import 'package:simplemessenger/pages/image_viewer/image_viewer.dart';
-import 'package:simplemessenger/utils/file_description.dart';
-import 'package:simplemessenger/utils/url_launcher.dart';
-import 'package:simplemessenger/widgets/mxc_image.dart';
+import 'package:quikxchat/config/app_config.dart';
+import 'package:quikxchat/pages/image_viewer/image_viewer.dart';
+import 'package:quikxchat/utils/file_description.dart';
+import 'package:quikxchat/utils/url_launcher.dart';
+import 'package:quikxchat/widgets/mxc_image.dart';
 import '../../../widgets/blur_hash.dart';
 
 class ImageBubble extends StatelessWidget {

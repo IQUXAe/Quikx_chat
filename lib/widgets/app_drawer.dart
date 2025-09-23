@@ -3,12 +3,12 @@ import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import 'package:simplemessenger/config/app_config.dart';
-import 'package:simplemessenger/config/app_version.dart';
-import 'package:simplemessenger/l10n/l10n.dart';
-import 'package:simplemessenger/utils/optimized_http_client.dart';
-import 'package:simplemessenger/widgets/avatar.dart';
-import 'package:simplemessenger/widgets/matrix.dart';
+import 'package:quikxchat/config/app_config.dart';
+import 'package:quikxchat/config/app_version.dart';
+import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/utils/optimized_http_client.dart';
+import 'package:quikxchat/widgets/avatar.dart';
+import 'package:quikxchat/widgets/matrix.dart';
 
 class AppDrawer extends StatefulWidget {
   const AppDrawer({super.key});
@@ -112,14 +112,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                     closeDrawer: false,
                     animationIndex: 7,
                   ),
-                  _buildDrawerItem(
-                    context,
-                    icon: Icons.history_outlined,
-                    iconColor: Colors.indigo,
-                    title: L10n.of(context).changelog,
-                    onTap: () => _showChangelog(context),
-                    animationIndex: 8,
-                  ),
+
                   _buildDrawerItem(
                     context,
                     icon: Icons.info_outlined,
@@ -531,103 +524,9 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
     ).then((_) => Navigator.of(context).pop());
   }
 
-  void _showChangelog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(L10n.of(context).changelog),
-        content: SizedBox(
-          width: double.maxFinite,
-          height: 400,
-          child: ListView(
-            children: [
-              _buildChangelogItem('0.2.3', L10n.of(context).currentVersion, [
-                // TODO: Add localization keys for 0.2.3 changes
-                'Placeholder for 0.2.3 changes',
-              ]),
-              _buildChangelogItem('0.2.2', '', [
-                L10n.of(context).performanceOptimizationAndMemoryLeakFixes,
-                L10n.of(context).improvedUserProfileCaching,
-                L10n.of(context).centralizedVersionManagement,
-                L10n.of(context).criticalSecurityIssuesFixed,
-              ]),
-              _buildChangelogItem('0.2.1', '', [
-                L10n.of(context).pushNotificationsBeta,
-                L10n.of(context).enhancedSecurityStability,
-                L10n.of(context).completeLocalizationSupport,
-              ]),
-              _buildChangelogItem('0.2.0', '', [
-                L10n.of(context).transitionToMatrix,
-                L10n.of(context).endToEndEncryptionSupport,
-                L10n.of(context).improvedUserInterface,
-              ]),
-              _buildChangelogItem('0.1.1', '', [
-                L10n.of(context).bugFixesImprovements,
-                L10n.of(context).performanceOptimizations,
-              ]),
-              _buildChangelogItem('0.1.0', '', [
-                L10n.of(context).initialTestRelease,
-                L10n.of(context).basicMessagingFunctionality,
-              ]),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(L10n.of(context).close),
-          ),
-        ],
-      ),
-    ).then((_) => Navigator.of(context).pop());
-  }
 
-  Widget _buildChangelogItem(String version, String label, List<String> changes) {
-    return Card(
-      margin: const EdgeInsets.only(bottom: 16),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Text(
-                  'v$version',
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                ),
-                if (label.isNotEmpty) ...[
-                  const SizedBox(width: 8),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                    decoration: BoxDecoration(
-                      color: Colors.green,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      label,
-                      style: const TextStyle(color: Colors.white, fontSize: 12),
-                    ),
-                  ),
-                ],
-              ],
-            ),
-            const SizedBox(height: 8),
-            ...changes.map((change) => Padding(
-              padding: const EdgeInsets.only(bottom: 4),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('• '),
-                  Expanded(child: Text(change)),
-                ],
-              ),
-            ),),
-          ],
-        ),
-      ),
-    );
-  }
+
+
 
   void _showAboutDialog(BuildContext context) {
     showDialog(

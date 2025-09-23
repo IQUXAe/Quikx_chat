@@ -150,31 +150,7 @@ class MessageTranslator {
     return null;
   }
   
-  static Future<void> translateAllMessages(List<Event> events, Function(String, String) onTranslated) async {
-    Logs().i('[AutoTranslator] Starting auto translation for ${events.length} events');
-    
-    if (!await isEnabled) {
-      Logs().i('[AutoTranslator] Translation disabled, skipping');
-      return;
-    }
-    
-    final validEvents = events.where((event) => 
-      event.type == EventTypes.Message && 
-      event.messageType == MessageTypes.Text &&
-      event.body.trim().isNotEmpty && 
-      !_isNumericOnly(event.body.trim()),
-    ).toList();
-    
-    Logs().i('[AutoTranslator] Found ${validEvents.length} valid events for translation');
-    
-    if (validEvents.isEmpty) return;
-    
-    // Переводим сообщения пакетами для оптимизации
-    for (final event in validEvents) {
-      Logs().i('[AutoTranslator] Queuing event ${event.eventId}: "${event.body}"');
-      _translateEventAsync(event.eventId, event.body, onTranslated);
-    }
-  }
+
   
   static Future<void> _translateEventAsync(String eventId, String text, Function(String, String) onTranslated) async {
     Logs().i('[AutoTranslator] Processing event $eventId: "$text"');
