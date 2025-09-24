@@ -1,6 +1,9 @@
 [Desktop Entry]
 Type=Application
-Name=Simple Messenger
-Exec=simple_messenger
+Version=1.0
+Name=QuikxChat
+Comment=Simple and secure messaging app
+Exec=AppRun
 Icon=quikxchat
-Categories=Network;InstantMessaging;
+Terminal=false
+Categories=Network;Chat;InstantMessaging;

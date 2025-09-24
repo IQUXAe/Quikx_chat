@@ -6,4 +6,4 @@ Comment=Simple and secure messaging app
 Exec=AppRun
 Icon=quikxchat
 Terminal=false
-Categories=Network;Chat;InstantMessaging;X-Matrix;
+Categories=Network;Chat;InstantMessaging;
