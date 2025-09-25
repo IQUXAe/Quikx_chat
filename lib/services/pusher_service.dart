@@ -107,7 +107,7 @@ class PusherService {
           throw Exception('Invalid token length: ${token.length}');
         }
 
-        final pusherFormat = AppSettings.pushNotificationsPusherFormat.getItem(_client.store);
+        final pusherFormat = 'event_id_only'; // Используем значение по умолчанию
         final actualFormat = pusherFormat ?? 'event_id_only';
 
         final newPusher = Pusher(

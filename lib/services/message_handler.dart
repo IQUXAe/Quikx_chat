@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:matrix/matrix.dart';
 import 'package:unifiedpush/unifiedpush.dart';
 
@@ -14,7 +15,7 @@ import 'package:quikxchat/utils/push_helper.dart';
 class MessageHandler {
   final Client _client;
   final L10n? l10n;
-  final MatrixState? matrix;
+  final dynamic matrix;
 
   MessageHandler(this._client, {this.l10n, this.matrix});
 
@@ -113,7 +114,7 @@ class MessageHandler {
         999999,
         'UnifiedPush Test',
         'Test message received: ${message.length > 50 ? '${message.substring(0, 50)}...' : message}',
-        const NotificationDetails(
+        NotificationDetails(
           android: AndroidNotificationDetails(
             'test_notifications',
             'Test Notifications',
@@ -133,7 +134,7 @@ class MessageHandler {
         999997,
         l10n?.newMessageInFluffyChat ?? 'New Message',
         l10n?.openAppToReadMessages ?? 'Open app to read messages',
-        const NotificationDetails(
+        NotificationDetails(
           android: AndroidNotificationDetails(
             'quikxchat_push',
             'Incoming Messages',

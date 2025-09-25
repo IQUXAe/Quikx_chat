@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:quikxchat/l10n/l10n.dart';
-import 'package:quikxchat/utils/push_notification_manager.dart';
+
 import 'package:quikxchat/widgets/matrix.dart';
 
 class PushNotificationBanner extends StatefulWidget {
@@ -10,6 +10,8 @@ class PushNotificationBanner extends StatefulWidget {
   @override
   State<PushNotificationBanner> createState() => _PushNotificationBannerState();
 }
+
+enum PushNotificationStatus { enabled, disabled }
 
 class _PushNotificationBannerState extends State<PushNotificationBanner> {
   PushNotificationStatus _status = PushNotificationStatus.disabled;
@@ -23,10 +25,10 @@ class _PushNotificationBannerState extends State<PushNotificationBanner> {
   }
 
   Future<void> _checkStatus() async {
-    final status = await PushNotificationManager.instance.checkStatus();
+    // Простая заглушка - всегда возвращаем disabled
     if (mounted) {
       setState(() {
-        _status = status;
+        _status = PushNotificationStatus.disabled;
       });
     }
   }
@@ -37,14 +39,12 @@ class _PushNotificationBannerState extends State<PushNotificationBanner> {
     });
 
     try {
-      final matrix = Matrix.of(context);
-      final success = await PushNotificationManager.instance.setupAutomatically(context, matrix);
+      // Заглушка для настройки уведомлений
+      await Future.delayed(const Duration(seconds: 1));
       
-      if (success) {
-        setState(() {
-          _isDismissed = true;
-        });
-      }
+      setState(() {
+        _isDismissed = true;
+      });
     } finally {
       if (mounted) {
         setState(() {

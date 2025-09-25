@@ -738,6 +738,26 @@ class BackgroundPush {
     upAction = true;
     await _messageHandler.onUpMessage(pushMessage, i);
   }
+
+  Future<void> _showFallbackNotification(String message) async {
+    try {
+      await _flutterLocalNotificationsPlugin.show(
+        999996,
+        'Sync Error',
+        message,
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+            'sync_errors',
+            'Sync Error Notifications',
+            importance: Importance.high,
+            priority: Priority.high,
+          ),
+        ),
+      );
+    } catch (e) {
+      Logs().e('[BackgroundPush] Failed to show fallback notification', e);
+    }
+  }
 }
 
 class UPFunctions extends UnifiedPushFunctions {
