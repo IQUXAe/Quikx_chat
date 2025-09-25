@@ -10,150 +10,96 @@ import 'package:quikxchat/config/app_config.dart';
 import 'package:quikxchat/utils/client_manager.dart';
 import 'package:quikxchat/utils/optimized_http_client.dart';
 import 'package:quikxchat/utils/platform_infos.dart';
-import 'package:quikxchat/utils/push_notification_manager.dart';
 import 'package:quikxchat/utils/file_logger.dart';
 import 'package:quikxchat/utils/memory_manager.dart';
+import 'package:quikxchat/utils/notification_service.dart';
 import 'package:quikxchat/utils/optimized_message_translator.dart';
 
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'config/setting_keys.dart';
 import 'utils/background_push.dart';
 import 'widgets/quikx_chat_app.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-
-@pragma('vm:entry-point')
-void onNotificationResponse(NotificationResponse response) {
-  print('=== NOTIFICATION HANDLER CALLED ===');
-  print('[Main] actionId: ${response.actionId}, payload: ${response.payload}, input: ${response.input}');
-  
-  try {
-    if (response.actionId != null) {
-      if (response.actionId!.startsWith('reply_')) {
-        final roomId = response.actionId!.substring('reply_'.length);
-        final message = response.input;
-        print('[Main] Reply: "$message" to room: $roomId');
-        
-        // Передаем обработку в BackgroundPush
-        _handleNotificationAction('reply', roomId, message);
-        
-      } else if (response.actionId!.startsWith('mark_read_')) {
-        final roomId = response.actionId!.substring('mark_read_'.length);
-        print('[Main] Mark read room: $roomId');
-        
-        _handleNotificationAction('mark_read', roomId, null);
-      }
-    } else {
-      // Обычный клик по уведомлению
-      var roomId = response.payload;
-      if (roomId != null) {
-        // Убираем префикс 'room:' если он есть
-        if (roomId.startsWith('room:')) {
-          roomId = roomId.substring(5);
-        }
-        print('[Main] Open room: $roomId');
-        
-        // Открываем комнату через роутер
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          try {
-            QuikxChatApp.router.go('/rooms/$roomId');
-          } catch (e) {
-            print('[Main] Failed to navigate to room: $e');
-          }
-        });
-      }
-    }
-  } catch (e, s) {
-    print('[Main] Error handling notification response: $e');
-    print('[Main] Stack trace: $s');
-  }
-}
-
-/// Обрабатывает действия уведомлений через BackgroundPush
-void _handleNotificationAction(String action, String roomId, String? input) {
-  // Сохраняем действие для обработки после инициализации приложения
-  _pendingNotificationActions.add({
-    'action': action,
-    'roomId': roomId,
-    'input': input,
-    'timestamp': DateTime.now().millisecondsSinceEpoch,
-  });
-  
-  print('[Main] Queued notification action: $action for room $roomId');
-}
-
-// Очередь отложенных действий уведомлений
-final List<Map<String, dynamic>> _pendingNotificationActions = [];
 
 
 
 void main() async {
   Logs().i('Welcome to ${AppConfig.applicationName} <3');
+  await _initializeApp();
 
-  // Our background push shared isolate accesses flutter-internal things very early in the startup proccess
-  // To make sure that the parts of flutter needed are started up already, we need to ensure that the
-  // widget bindings are initialized already.
-  WidgetsFlutterBinding.ensureInitialized();
-  
-  // Инициализируем файловый логгер для отладки push-уведомлений
-  await FileLogger.init();
-  
-  // Инициализируем оптимизированный HTTP клиент
-  OptimizedHttpClient().initialize();
-  
-  // Инициализируем WebRTC для всех платформ
-  if (!PlatformInfos.isWeb) {
-    await WebRTC.initialize();
-  }
-
-  await vod.init(wasmPath: './assets/assets/vodozemac/');
-
-  Logs().nativeColors = !PlatformInfos.isIOS;
   final store = await SharedPreferences.getInstance();
   final clients = await ClientManager.getClients(store: store);
 
-  // If the app starts in detached mode, we assume that it is in
-  // background fetch mode for processing push notifications. This is
-  // currently only supported on Android.
-  if (PlatformInfos.isAndroid &&
-      AppLifecycleState.detached == WidgetsBinding.instance.lifecycleState) {
-    // Do not send online presences when app is in background fetch mode.
-    for (final client in clients) {
-      client.backgroundSync = false;
-      client.syncPresence = PresenceType.offline;
-    }
-
-    // In the background fetch mode we do not want to waste ressources with
-    // starting the Flutter engine but process incoming push notifications.
-    BackgroundPush.clientOnly(clients.first);
-    // To start the flutter engine afterwards we add an custom observer.
-    WidgetsBinding.instance.addObserver(AppStarter(clients, store));
-    Logs().i(
-      '${AppConfig.applicationName} started in background-fetch mode. No GUI will be created unless the app is no longer detached.',
-    );
-    return;
+  if (_isBackgroundFetch()) {
+    _runInBackgroundFetchMode(clients, store);
+  } else {
+    await _runInForegroundMode(clients, store);
   }
+}
 
-  // Started in foreground mode.
+Future<void> _initializeApp() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await FileLogger.init();
+  OptimizedHttpClient().initialize();
+  if (!PlatformInfos.isWeb) {
+    await WebRTC.initialize();
+  }
+  await vod.init(wasmPath: './assets/assets/vodozemac/');
+  Logs().nativeColors = !PlatformInfos.isIOS;
+}
+
+bool _isBackgroundFetch() {
+  return PlatformInfos.isAndroid &&
+      AppLifecycleState.detached == WidgetsBinding.instance.lifecycleState;
+}
+
+void _runInBackgroundFetchMode(List<Client> clients, SharedPreferences store) {
+  for (final client in clients) {
+    client.backgroundSync = false;
+    client.syncPresence = PresenceType.offline;
+  }
+  BackgroundPush.clientOnly(clients.first);
+  WidgetsBinding.instance.addObserver(AppStarter(clients, store));
+  Logs().i(
+    '${AppConfig.applicationName} started in background-fetch mode. No GUI will be created unless the app is no longer detached.',
+  );
+}
+
+Future<void> _runInForegroundMode(List<Client> clients, SharedPreferences store) async {
   Logs().i(
     '${AppConfig.applicationName} started in foreground mode. Rendering GUI...',
   );
-  await startGui(clients, store);
+  await _startGui(clients, store);
 }
 
-/// Fetch the pincode for the applock and start the flutter engine.
-Future<void> startGui(List<Client> clients, SharedPreferences store) async {
-  // Fetch the pin for the applock if existing for Android applications.
-  String? pin;
+Future<void> _startGui(List<Client> clients, SharedPreferences store) async {
+  final pin = await _getAppLockPin();
+  await _preloadFirstClient(clients);
+
+  MemoryManager().initialize();
+  OptimizedMessageTranslator.initialize();
+
+  try {
+    await NotificationService.instance.initialize();
+    NotificationService.instance.processPendingActions(clients.firstOrNull);
+  } catch (e, s) {
+    Logs().w('Failed to initialize push notification manager', e, s);
+  }
+
+  runApp(QuikxChatApp(clients: clients, pincode: pin, store: store));
+}
+
+Future<String?> _getAppLockPin() async {
   if (PlatformInfos.isAndroid) {
     try {
-      pin =
-          await const FlutterSecureStorage().read(key: SettingKeys.appLockKey);
+      return await const FlutterSecureStorage().read(key: SettingKeys.appLockKey);
     } catch (e, s) {
       Logs().d('Unable to read PIN from Secure storage', e, s);
     }
   }
+  return null;
+}
 
-  // Preload first client - параллельная загрузка
+Future<void> _preloadFirstClient(List<Client> clients) async {
   final firstClient = clients.firstOrNull;
   if (firstClient != null) {
     final futures = <Future>[];
@@ -167,82 +113,6 @@ Future<void> startGui(List<Client> clients, SharedPreferences store) async {
       await Future.wait(futures);
     }
   }
-
-  // Инициализируем менеджер памяти и оптимизированный переводчик
-  MemoryManager().initialize();
-  OptimizedMessageTranslator.initialize();
-  
-  // Инициализируем менеджер push-уведомлений с глобальным обработчиком
-  try {
-    await PushNotificationManager.instance.initialize();
-    
-    // Устанавливаем обработчик уведомлений
-    final initialized = await PushNotificationManager.instance.localNotifications.initialize(
-      InitializationSettings(
-        android: const AndroidInitializationSettings('notifications_icon'),
-        linux: PlatformInfos.isLinux ? const LinuxInitializationSettings(
-          defaultActionName: 'Open notification',
-        ) : null,
-      ),
-      onDidReceiveNotificationResponse: onNotificationResponse,
-      onDidReceiveBackgroundNotificationResponse: onNotificationResponse,
-    );
-    
-    print('[Main] Notification initialization result: $initialized');
-    Logs().i('Push notification manager initialized: $initialized');
-    
-    // Обрабатываем отложенные действия уведомлений
-    _processPendingNotificationActions(clients.firstOrNull);
-    
-  } catch (e, s) {
-    Logs().w('Failed to initialize push notification manager', e, s);
-  }
-
-  runApp(QuikxChatApp(clients: clients, pincode: pin, store: store));
-}
-
-/// Обрабатывает отложенные действия уведомлений
-void _processPendingNotificationActions(Client? client) {
-  if (client == null || _pendingNotificationActions.isEmpty) {
-    return;
-  }
-  
-  print('[Main] Processing ${_pendingNotificationActions.length} pending notification actions');
-  
-  // Обрабатываем только недавние действия (менее 5 минут)
-  final now = DateTime.now().millisecondsSinceEpoch;
-  final validActions = _pendingNotificationActions.where((action) {
-    final timestamp = action['timestamp'] as int;
-    return (now - timestamp) < 300000; // 5 минут
-  }).toList();
-  
-  for (final action in validActions) {
-    final actionType = action['action'] as String;
-    final roomId = action['roomId'] as String;
-    final input = action['input'] as String?;
-    
-    print('[Main] Processing action: $actionType for room $roomId');
-    
-    // Отложенная обработка через BackgroundPush
-    WidgetsBinding.instance.addPostFrameCallback((_) async {
-      try {
-        // Получаем BackgroundPush из первого клиента
-        final backgroundPush = BackgroundPush.clientOnly(client);
-        
-        if (actionType == 'reply' && input != null) {
-          await backgroundPush.handleReplyAction(roomId, input);
-        } else if (actionType == 'mark_read') {
-          await backgroundPush.handleMarkAsReadAction(roomId);
-        }
-      } catch (e) {
-        print('[Main] Failed to process pending action: $e');
-      }
-    });
-  }
-  
-  // Очищаем очередь
-  _pendingNotificationActions.clear();
-  print('[Main] Processed and cleared pending notification actions');
 }
 
 /// Watches the lifecycle changes to start the application when it
@@ -250,25 +120,24 @@ void _processPendingNotificationActions(Client? client) {
 class AppStarter with WidgetsBindingObserver {
   final List<Client> clients;
   final SharedPreferences store;
-  bool guiStarted = false;
+  bool _guiStarted = false;
 
   AppStarter(this.clients, this.store);
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (guiStarted) return;
-    if (state == AppLifecycleState.detached) return;
+    if (_guiStarted || state == AppLifecycleState.detached) return;
 
     Logs().i(
-      '${AppConfig.applicationName} switches from the detached background-fetch mode to ${state.name} mode. Rendering GUI...',
+      '${AppConfig.applicationName} switches from detached to ${state.name} mode. Rendering GUI...',
     );
-    // Switching to foreground mode needs to reenable send online sync presence.
+
     for (final client in clients) {
       client.backgroundSync = true;
       client.syncPresence = PresenceType.online;
     }
-    startGui(clients, store);
-    // We must make sure that the GUI is only started once.
-    guiStarted = true;
+
+    _startGui(clients, store);
+    _guiStarted = true;
   }
 }
