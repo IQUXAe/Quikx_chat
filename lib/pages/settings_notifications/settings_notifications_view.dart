@@ -7,7 +7,7 @@ import 'package:quikxchat/l10n/l10n.dart';
 import 'package:quikxchat/pages/settings_notifications/push_rule_extensions.dart';
 import 'package:quikxchat/widgets/layouts/max_width_body.dart';
 import '../../utils/localized_exception_extension.dart';
-import '../../utils/push_notification_manager.dart';
+import '../../utils/notification_service.dart';
 import '../../widgets/matrix.dart';
 import 'settings_notifications.dart';
 
@@ -111,10 +111,10 @@ class SettingsNotificationsView extends StatelessWidget {
 
 
                   FutureBuilder<PushNotificationStatus>(
-                    future: PushNotificationManager.instance.checkStatus(),
+                    future: NotificationService.instance.checkStatus(),
                     builder: (context, snapshot) {
                       final status = snapshot.data ?? PushNotificationStatus.disabled;
-                      String statusText;
+                      String statusText = L10n.of(context).pushNotificationError;
                       Color? statusColor;
                       
                       switch (status) {

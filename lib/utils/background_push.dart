@@ -32,7 +32,7 @@ import 'package:unifiedpush_ui/unifiedpush_ui.dart';
 
 import 'package:quikxchat/l10n/l10n.dart';
 import 'package:quikxchat/utils/push_helper.dart';
-import 'package:quikxchat/utils/push_notification_manager.dart';
+import 'package:quikxchat/utils/notification_service.dart';
 import 'package:quikxchat/utils/file_logger.dart';
 import 'package:quikxchat/utils/network_error_handler.dart';
 import 'package:quikxchat/widgets/quikx_chat_app.dart';
@@ -145,7 +145,7 @@ class BackgroundPush {
 
   Future<void> cancelNotification(String roomId) async {
     Logs().v('Cancel notification for room', roomId);
-    await PushNotificationManager.instance.localNotifications.cancel(roomId.hashCode);
+    await NotificationService.instance.localNotifications.cancel(roomId.hashCode);
   }
 
   Future<void> setupPusher({
@@ -375,7 +375,7 @@ class BackgroundPush {
     
     // Проверяем статус уведомлений
     try {
-      final status = await PushNotificationManager.instance.checkStatus();
+      final status = await NotificationService.instance.checkStatus();
       Logs().i('[BackgroundPush] Current push notification status: ${status.name}');
       
       // Автоматически настраиваем, если нужно
@@ -1029,7 +1029,7 @@ class BackgroundPush {
       client: client,
       l10n: l10n,
       activeRoomId: activeRoomId,
-      flutterLocalNotificationsPlugin: PushNotificationManager.instance.localNotifications,
+      flutterLocalNotificationsPlugin: NotificationService.instance.localNotifications,
     );
   }
   

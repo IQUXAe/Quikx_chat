@@ -9,7 +9,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:quikxchat/l10n/l10n.dart';
-import 'package:quikxchat/utils/push_notification_manager.dart';
+import 'package:quikxchat/utils/notification_service.dart';
 import 'package:quikxchat/utils/unified_push_helper.dart';
 import 'package:quikxchat/widgets/layouts/max_width_body.dart';
 import 'package:quikxchat/widgets/matrix.dart';
@@ -35,7 +35,7 @@ class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
   }
 
   Future<void> _checkStatus() async {
-    final status = await PushNotificationManager.instance.checkStatus();
+    final status = await NotificationService.instance.checkStatus();
     if (mounted) {
       setState(() {
         _status = status;
@@ -45,7 +45,7 @@ class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
 
   Future<void> _loadDiagnostics() async {
     final diagnostics =
-        await PushNotificationManager.instance.getDiagnosticInfo();
+        await NotificationService.instance.getDiagnosticInfo();
     if (mounted) {
       setState(() {
         _diagnostics = diagnostics;
@@ -60,7 +60,7 @@ class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
 
     try {
       final matrix = Matrix.of(context);
-      final success = await PushNotificationManager.instance
+      final success = await NotificationService.instance
           .setupAutomatically(context, matrix);
 
       if (success) {
@@ -78,7 +78,7 @@ class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
 
   Future<void> _showSetupDialog() async {
     final matrix = Matrix.of(context);
-    await PushNotificationManager.instance.showSetupDialog(context, matrix);
+    await NotificationService.instance.showSetupDialog(context, matrix);
     await _checkStatus();
     await _loadDiagnostics();
   }
@@ -101,10 +101,10 @@ class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
     final l10n = L10n.of(context);
     final theme = Theme.of(context);
 
-    IconData icon;
-    Color color;
-    String title;
-    String subtitle;
+    IconData icon = Icons.help;
+    Color color = Colors.grey;
+    String title = l10n.pushNotifications;
+    String subtitle = l10n.configurePushNotifications;
 
     switch (_status) {
       case PushNotificationStatus.enabled:
@@ -217,7 +217,7 @@ class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
   Future<void> _testNotifications() async {
     try {
       // Отправляем тестовое уведомление
-      await PushNotificationManager.instance.localNotifications.show(
+      await NotificationService.instance.localNotifications.show(
         999,
         L10n.of(context).testPushNotifications,
         L10n.of(context)
