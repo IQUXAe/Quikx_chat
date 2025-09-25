@@ -31,10 +31,8 @@ import 'package:unifiedpush/unifiedpush.dart';
 import 'package:unifiedpush_ui/unifiedpush_ui.dart';
 
 import 'package:quikxchat/l10n/l10n.dart';
-import 'package:quikxchat/services/message_handler.dart';
-import 'package:quikxchat/services/pusher_service.dart';
-import 'package:quikxchat/utils/push_helper.dart';
 import 'package:quikxchat/utils/notification_service.dart';
+import 'package:quikxchat/utils/push_helper.dart';
 import 'package:quikxchat/utils/file_logger.dart';
 import 'package:quikxchat/utils/network_error_handler.dart';
 import 'package:quikxchat/widgets/quikx_chat_app.dart';
@@ -76,12 +74,7 @@ class BackgroundPush {
 
   bool upAction = false;
 
-  late final PusherService _pusherService;
-  late final MessageHandler _messageHandler;
-
   void _init() async {
-    _pusherService = PusherService(client);
-    _messageHandler = MessageHandler(client, l10n: l10n, matrix: matrix);
     try {
       // Запрашиваем разрешения на уведомления сразу при инициализации
       if (Platform.isAndroid) {
@@ -153,6 +146,204 @@ class BackgroundPush {
   Future<void> cancelNotification(String roomId) async {
     Logs().v('Cancel notification for room', roomId);
     await NotificationService.instance.localNotifications.cancel(roomId.hashCode);
+  }
+
+  Future<void> setupPusher({
+    String? gatewayUrl,
+    String? token,
+    Set<String?>? oldTokens,
+    bool useDeviceSpecificAppId = false,
+  }) async {
+    if (kDebugMode) {
+      Logs().i('[Push] === STARTING PUSHER SETUP ===');
+      Logs().i('[Push] Gateway: ${gatewayUrl != null ? '${gatewayUrl.substring(0, 50)}...' : 'null'}');
+      Logs().i('[Push] Token: ${token != null ? '${token.substring(0, 20)}...' : 'null'}');
+      Logs().i('[Push] UseDeviceSpecificAppId: $useDeviceSpecificAppId');
+    }
+
+    if (!client.isLogged()) {
+      Logs().w('[Push] Client not logged in, skipping pusher setup');
+      return;
+    }
+
+    // Проверяем состояние сети перед настройкой
+    if (!await NetworkErrorHandler.isNetworkAvailable()) {
+      Logs().w('[Push] Network not available, waiting for connection');
+      try {
+        await NetworkErrorHandler.waitForNetwork(timeout: const Duration(minutes: 1));
+      } catch (e) {
+        Logs().e('[Push] Network timeout during pusher setup: $e');
+        throw Exception('Network not available for pusher setup');
+      }
+    }
+
+    final clientName = PlatformInfos.clientName;
+    oldTokens ??= <String>{};
+
+    // Получаем список текущих pusher'ов
+    List<Pusher> pushers;
+    try {
+      pushers = await client.getPushers() ?? [];
+      Logs().i('[Push] Current pushers count: ${pushers.length}');
+    } catch (e, s) {
+      Logs().w('[Push] Unable to request pushers', e, s);
+      pushers = [];
+    }
+
+    // Настраиваем app ID с валидацией
+    const appId = AppConfig.pushNotificationsAppId;
+    if (appId.isEmpty) {
+      throw Exception('Push notifications app ID is not configured');
+    }
+
+    var deviceAppId = '$appId.${client.deviceID}';
+
+    // Ограничиваем длину согласно спецификации Matrix (64 символа)
+    if (deviceAppId.length > 64) {
+      // Сохраняем префикс и сокращаем device ID
+      const maxDeviceIdLength = 64 - appId.length - 1; // -1 для точки
+      if (maxDeviceIdLength > 0) {
+        final truncatedDeviceId = client.deviceID!.substring(0, maxDeviceIdLength);
+        deviceAppId = '$appId.$truncatedDeviceId';
+      } else {
+        deviceAppId = appId; // Падбэк к базовому ID
+      }
+    }
+
+    final thisAppId = useDeviceSpecificAppId ? deviceAppId : appId;
+
+    if (kDebugMode) {
+      Logs().i('[Push] useDeviceSpecificAppId: $useDeviceSpecificAppId');
+      Logs().i('[Push] Original appId: $appId');
+      Logs().i('[Push] Device appId: $deviceAppId');
+      Logs().i('[Push] Final appId: $thisAppId');
+    }
+
+    // Удаляем старые pusher'ы с retry логикой
+    final pushersToRemove = <Pusher>[];
+
+    for (final pusher in pushers) {
+      final shouldRemove = oldTokens.contains(pusher.pushkey) ||
+          (token != null && pusher.pushkey != token && pusher.appId.startsWith(AppConfig.pushNotificationsAppId)) ||
+          // Удаляем все pusher'ы с нашим app ID для перенастройки
+          pusher.appId.startsWith(AppConfig.pushNotificationsAppId);
+
+      if (shouldRemove) {
+        pushersToRemove.add(pusher);
+      }
+    }
+
+    Logs().i('[Push] Found ${pushersToRemove.length} pushers to remove');
+
+    // Удаляем pusher'ы с retry логикой
+    for (final pusher in pushersToRemove) {
+      try {
+        Logs().i('[Push] Removing pusher: ${pusher.pushkey.length > 20 ? '${pusher.pushkey.substring(0, 20)}...' : pusher.pushkey} (${pusher.appId})');
+
+        await NetworkErrorHandler.retryOnNetworkError(
+          () => client.deletePusher(pusher),
+          maxRetries: 2,
+          initialDelay: const Duration(milliseconds: 800),
+        );
+
+        Logs().i('[Push] Successfully removed pusher');
+      } catch (e, s) {
+        Logs().w('[Push] Failed to remove pusher after retries: ${NetworkErrorHandler.getErrorDescription(e)}', e, s);
+        // Продолжаем, не блокируем настройку нового pusher'а
+      }
+    }
+
+    // Устанавливаем новый pusher с валидацией и retry
+    if (gatewayUrl != null && token != null) {
+      try {
+        // Проверяем валидность URL
+        final gatewayUri = Uri.tryParse(gatewayUrl);
+        if (gatewayUri == null || !gatewayUri.hasScheme || !gatewayUri.hasAuthority) {
+          throw Exception('Invalid gateway URL: $gatewayUrl');
+        }
+
+        // Проверяем длину токена
+        if (token.length < 10 || token.length > 512) {
+          throw Exception('Invalid token length: ${token.length}');
+        }
+
+        final pusherFormat = AppSettings.pushNotificationsPusherFormat.getItem(matrix!.store);
+        final actualFormat = pusherFormat ?? 'event_id_only'; // Падбэк к стандартному формату
+
+        final newPusher = Pusher(
+          pushkey: token,
+          appId: thisAppId,
+          appDisplayName: clientName,
+          deviceDisplayName: client.deviceName ?? 'Unknown Device',
+          lang: 'en',
+          data: PusherData(
+            url: gatewayUri,
+            format: actualFormat,
+          ),
+          kind: 'http',
+        );
+
+        Logs().i('[Push] Creating new pusher with format: $actualFormat');
+
+        await NetworkErrorHandler.retryOnNetworkError(
+          () => client.postPusher(newPusher, append: false),
+          maxRetries: 3,
+          initialDelay: const Duration(seconds: 1),
+        );
+
+        Logs().i('[Push] ✅ PUSHER CREATED SUCCESSFULLY');
+
+        // Проверяем, что pusher действительно создан
+        await _verifyPusherCreation(thisAppId, token);
+
+      } catch (e, s) {
+        Logs().e('[Push] ❌ FAILED TO CREATE PUSHER: ${NetworkErrorHandler.getErrorDescription(e)}', e, s);
+        throw Exception('Failed to setup pusher: ${NetworkErrorHandler.getErrorDescription(e)}');
+      }
+    } else {
+      Logs().w('[Push] Missing required push credentials (gatewayUrl: ${gatewayUrl != null ? 'present' : 'null'}, token: ${token != null ? 'present' : 'null'})');
+      if (gatewayUrl == null && token == null) {
+        Logs().i('[Push] No credentials provided - this is expected for pusher cleanup');
+      }
+    }
+
+    Logs().i('[Push] === PUSHER SETUP COMPLETED ===');
+      }
+
+  /// Проверяет, что pusher был успешно создан
+  Future<void> _verifyPusherCreation(String appId, String token) async {
+    try {
+      await Future.delayed(const Duration(seconds: 1));
+
+      final pushers = await NetworkErrorHandler.retryOnNetworkError(
+        () => client.getPushers(),
+        maxRetries: 2,
+      );
+
+      if (pushers != null) {
+        final ourPusher = pushers.where(
+          (p) => p.appId == appId && p.pushkey == token,
+        ).firstOrNull;
+
+        if (ourPusher != null) {
+          Logs().i('[Push] ✅ Pusher verified: ${ourPusher.appId}');
+
+          // Проверяем конфигурацию pusher'а
+          final data = ourPusher.data;
+          if (data.url == null || data.format == null) {
+            Logs().w('[Push] Pusher has incomplete configuration');
+          } else {
+            Logs().i('[Push] Pusher configuration: format=${data.format}, url=${data.url}');
+          }
+        } else {
+          throw Exception('Pusher not found after creation');
+        }
+      } else {
+        throw Exception('Failed to retrieve pushers for verification');
+      }
+    } catch (e, s) {
+      Logs().w('[Push] Pusher verification failed (non-critical): ${NetworkErrorHandler.getErrorDescription(e)}', e, s);
+    }
   }
 
   static bool _wentToRoomOnStartup = false;
@@ -620,7 +811,7 @@ class BackgroundPush {
     }
     
     // Настраиваем pusher
-    await _pusherService.setupPusher(
+    await setupPusher(
       gatewayUrl: endpoint,
       token: newEndpoint,
       oldTokens: oldTokens,
@@ -655,7 +846,7 @@ class BackgroundPush {
     await matrix?.store.remove(SettingKeys.unifiedPushEndpoint);
     if (oldEndpoint?.isNotEmpty ?? false) {
       // remove the old pusher
-      await _pusherService.setupPusher(
+      await setupPusher(
         oldTokens: {oldEndpoint},
       );
     }
@@ -735,27 +926,154 @@ class BackgroundPush {
 
 
   Future<void> _onUpMessage(PushMessage pushMessage, String i) async {
+    final message = pushMessage.content;
     upAction = true;
-    await _messageHandler.onUpMessage(pushMessage, i);
+    final messageStr = utf8.decode(message);
+
+    if (kDebugMode) {
+      Logs().i('[Push] === RECEIVED UP MESSAGE ===');
+      Logs().i('[Push] Message length: ${message.length} bytes');
+    }
+    FileLogger.log('[Push] Received UP message: $messageStr');
+
+    try {
+      // Проверяем, является ли сообщение валидным JSON
+      dynamic jsonData;
+      try {
+        jsonData = json.decode(messageStr);
+      } catch (e) {
+        Logs().w('[Push] Message is not valid JSON: ${e.toString()}');
+        Logs().w('[Push] Raw message (first 200 chars): ${messageStr.length > 200 ? '${messageStr.substring(0, 200)}...' : messageStr}');
+
+        // Проверяем, не является ли это тестовым сообщением
+        if (messageStr.toLowerCase().contains('test') || messageStr.toLowerCase().contains('ping')) {
+          Logs().i('[Push] Detected test message, showing test notification');
+          await _showTestNotification(messageStr);
+        }
+        return;
+      }
+
+      // Проверяем структуру JSON
+      if (jsonData is! Map<String, dynamic>) {
+        Logs().w('[Push] JSON is not a map: ${jsonData.runtimeType}');
+        return;
+      }
+
+      if (kDebugMode) {
+        Logs().i('[Push] Parsed JSON keys: ${jsonData.keys.toList()}');
+      }
+
+      // Проверяем наличие поля notification
+      if (!jsonData.containsKey('notification')) {
+        Logs().w('[Push] JSON does not contain notification field');
+        // Проверяем альтернативные поля
+        if (jsonData.containsKey('data') || jsonData.containsKey('message')) {
+          if (kDebugMode) {
+            Logs().i('[Push] Found alternative data structure, attempting to process');
+          }
+          // Можно добавить обработку альтернативных форматов
+        }
+        return;
+      }
+
+      final data = Map<String, dynamic>.from(jsonData['notification']);
+      // UP may strip the devices list
+      data['devices'] ??= [];
+
+      if (kDebugMode) {
+        Logs().i('[Push] Processing notification data with keys: ${data.keys.toList()}');
+        Logs().i('[Push] Room ID: ${data['room_id']}, Event ID: ${data['event_id']}');
+      }
+
+      // Проверяем обязательные поля
+      if (data['room_id'] == null) {
+        Logs().w('[Push] Missing room_id in notification data');
+        return;
+      }
+
+      // Обрабатываем уведомление с улучшенной retry логикой
+      await NetworkErrorHandler.retryOnNetworkError(
+        () => _processNotificationData(data),
+        maxRetries: 3,
+        initialDelay: const Duration(seconds: 1),
+      );
+
+      // Запускаем надежную синхронизацию в фоне
+      unawaited(_performReliableSyncWithService());
+
+      // Дополнительная проверка через некоторое время
+      Timer(const Duration(seconds: 30), () async {
+        if (client.onSyncStatus.value == SyncStatus.error) {
+          Logs().w('[Push] Sync still in error state after 30s, forcing retry');
+          unawaited(_performReliableSync());
+        }
+      });
+
+      Logs().i('[Push] === NOTIFICATION PROCESSED SUCCESSFULLY ===');
+
+    } catch (e, s) {
+      Logs().e('[Push] Error processing UP message: ${NetworkErrorHandler.getErrorDescription(e)}', e, s);
+
+      // Показываем fallback уведомление при ошибке
+      await _showFallbackNotification(e);
+    }
   }
 
-  Future<void> _showFallbackNotification(String message) async {
+  /// Обрабатывает данные уведомления
+  Future<void> _processNotificationData(Map<String, dynamic> data) async {
+    // Получаем ID активной комнаты из MatrixState
+    final activeRoomId = matrix?.activeRoomId;
+
+    await pushHelper(
+      PushNotification.fromJson(data),
+      client: client,
+      l10n: l10n,
+      activeRoomId: activeRoomId,
+      flutterLocalNotificationsPlugin: NotificationService.instance.localNotifications,
+    );
+  }
+
+  /// Показывает тестовое уведомление
+  Future<void> _showTestNotification(String message) async {
     try {
       await _flutterLocalNotificationsPlugin.show(
-        999996,
-        'Sync Error',
-        message,
+        999999,
+        'UnifiedPush Test',
+        'Test message received: ${message.length > 50 ? '${message.substring(0, 50)}...' : message}',
         const NotificationDetails(
           android: AndroidNotificationDetails(
-            'sync_errors',
-            'Sync Error Notifications',
+            'test_notifications',
+            'Test Notifications',
             importance: Importance.high,
             priority: Priority.high,
           ),
         ),
       );
     } catch (e) {
-      Logs().e('[BackgroundPush] Failed to show fallback notification', e);
+      Logs().e('[Push] Failed to show test notification', e);
+    }
+  }
+
+  /// Показывает fallback уведомление при ошибке
+  Future<void> _showFallbackNotification(dynamic error) async {
+    try {
+      await loadLocale();
+
+      await _flutterLocalNotificationsPlugin.show(
+        999997,
+        l10n?.newMessageInFluffyChat ?? 'New Message',
+        l10n?.openAppToReadMessages ?? 'Open app to read messages',
+        const NotificationDetails(
+          android: AndroidNotificationDetails(
+            AppConfig.pushNotificationsChannelId,
+            'Incoming Messages',
+            importance: Importance.high,
+            priority: Priority.high,
+          ),
+        ),
+      );
+    } catch (e) {
+      Logs().e('[Push] Failed to show fallback notification', e);
     }
   }
 }

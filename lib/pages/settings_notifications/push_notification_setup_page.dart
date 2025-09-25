@@ -101,10 +101,10 @@ class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
     final l10n = L10n.of(context);
     final theme = Theme.of(context);
 
-    IconData icon = Icons.help;
-    Color color = Colors.grey;
-    String title = l10n.pushNotifications;
-    String subtitle = l10n.configurePushNotifications;
+    IconData icon;
+    Color color;
+    String title;
+    String subtitle;
 
     switch (_status) {
       case PushNotificationStatus.enabled:

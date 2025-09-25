@@ -10,7 +10,7 @@ import 'package:quikxchat/config/app_config.dart';
 import 'package:quikxchat/utils/client_manager.dart';
 import 'package:quikxchat/utils/optimized_http_client.dart';
 import 'package:quikxchat/utils/platform_infos.dart';
-
+import 'package:quikxchat/utils/push_notification_manager.dart';
 import 'package:quikxchat/utils/file_logger.dart';
 import 'package:quikxchat/utils/memory_manager.dart';
 import 'package:quikxchat/utils/optimized_message_translator.dart';
@@ -172,10 +172,12 @@ Future<void> startGui(List<Client> clients, SharedPreferences store) async {
   MemoryManager().initialize();
   OptimizedMessageTranslator.initialize();
 
-  // Инициализируем локальные уведомления
+  // Инициализируем менеджер push-уведомлений с глобальным обработчиком
   try {
-    final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
-    final initialized = await flutterLocalNotificationsPlugin.initialize(
+    await PushNotificationManager.instance.initialize();
+
+    // Устанавливаем обработчик уведомлений
+    final initialized = await PushNotificationManager.instance.localNotifications.initialize(
       InitializationSettings(
         android: const AndroidInitializationSettings('notifications_icon'),
         linux: PlatformInfos.isLinux ? const LinuxInitializationSettings(
@@ -187,13 +189,13 @@ Future<void> startGui(List<Client> clients, SharedPreferences store) async {
     );
 
     print('[Main] Notification initialization result: $initialized');
-    Logs().i('Local notifications initialized: $initialized');
+    Logs().i('Push notification manager initialized: $initialized');
 
     // Обрабатываем отложенные действия уведомлений
     _processPendingNotificationActions(clients.firstOrNull);
 
   } catch (e, s) {
-    Logs().w('Failed to initialize local notifications', e, s);
+    Logs().w('Failed to initialize push notification manager', e, s);
   }
 
   runApp(QuikxChatApp(clients: clients, pincode: pin, store: store));

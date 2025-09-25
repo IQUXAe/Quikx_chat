@@ -123,8 +123,6 @@ class NotificationService {
     }
   }
 
-
-
   Future<PushNotificationStatus> checkStatus() async {
     try {
       // Проверяем разрешения
