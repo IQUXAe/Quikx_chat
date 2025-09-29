@@ -18,7 +18,6 @@ import 'package:quikxchat/widgets/avatar.dart';
 import 'package:quikxchat/widgets/matrix.dart';
 import 'package:quikxchat/widgets/member_actions_popup_menu_button.dart';
 import '../../../config/app_config.dart';
-import 'package:quikxchat/widgets/message_status_widget.dart';
 import '../../../utils/message_translator.dart';
 import 'message_content.dart';
 import 'message_reactions.dart';
@@ -614,7 +613,7 @@ class Message extends StatelessWidget {
                                                                         ),
                                                                       ),
                                                                       const SizedBox(width: 4),
-                                                                      SimpleMessageStatusWidget(event: displayEvent, textColor: textColor, size: 14),
+                                                                      _buildMessageStatusIcon(displayEvent, textColor),
                                                                     ],
                                                                   ],
                                                                 ),
@@ -957,6 +956,24 @@ class Message extends StatelessWidget {
     );
   }
 
+  Widget _buildMessageStatusIcon(Event displayEvent, Color textColor) {
+    try {
+      if (displayEvent.status.isError) {
+        return Icon(Icons.error_outline, size: 14, color: Colors.red);
+      }
+      if (displayEvent.status.isSending) {
+        return Icon(Icons.access_time, size: 14, color: textColor.withAlpha(180));
+      }
+      final hasReceipts = displayEvent.receipts.isNotEmpty;
+      return Icon(
+        hasReceipts ? Icons.done_all : Icons.done,
+        size: 14,
+        color: hasReceipts ? Colors.blue.withAlpha(200) : textColor.withAlpha(180),
+      );
+    } catch (e) {
+      return Icon(Icons.done, size: 14, color: textColor.withAlpha(180));
+    }
+  }
 }
 
 class BubbleBackground extends StatelessWidget {

@@ -111,7 +111,7 @@ class SettingsNotificationsView extends StatelessWidget {
 
 
                   FutureBuilder<PushNotificationStatus>(
-                    future: PushNotificationManager.instance.checkStatus(),
+                    future: NotificationService.instance.checkStatus(),
                     builder: (context, snapshot) {
                       final status = snapshot.data ?? PushNotificationStatus.disabled;
                       String statusText;

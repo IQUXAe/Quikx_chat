@@ -1,139 +1,139 @@
-import 'dart:typed_data';
-import 'package:matrix/matrix.dart';
+import 'dart:collection';
+import 'dart:async';
 
-/// Глобальный кеш для оптимизации приложения
-class GlobalCache {
-  static final GlobalCache _instance = GlobalCache._internal();
-  factory GlobalCache() => _instance;
-  GlobalCache._internal();
+/// Глобальный кэш с автоматической очисткой и лимитами по размеру
+class GlobalCache<K, V> {
+  final int maxSize;
+  final Duration? expireAfter;
+  final LinkedHashMap<K, _CacheEntry<V>> _cache = LinkedHashMap();
+  Timer? _cleanupTimer;
 
-  // Кеш обоев чатов
-  final Map<String, Uint8List> _wallpaperCache = {};
-  
-  // Кеш сообщений по комнатам
-  final Map<String, List<Event>> _messageCache = {};
-  
-  // Кеш аватаров пользователей
-  final Map<String, Uint8List> _avatarCache = {};
-  
-  // Кеш изображений
-  final Map<String, Uint8List> _imageCache = {};
-  
-  // Максимальные размеры кешей
-  static const int _maxWallpaperCache = 10;
-  static const int _maxMessageCache = 50;
-  static const int _maxAvatarCache = 100;
-  static const int _maxImageCache = 200;
-
-  /// Кеш обоев
-  void cacheWallpaper(String roomId, Uint8List data) {
-    if (_wallpaperCache.length >= _maxWallpaperCache) {
-      final firstKey = _wallpaperCache.keys.first;
-      _wallpaperCache.remove(firstKey);
+  GlobalCache({
+    this.maxSize = 1000,
+    this.expireAfter,
+  }) {
+    if (expireAfter != null) {
+      _cleanupTimer = Timer.periodic(
+        const Duration(minutes: 5),
+        (_) => _cleanupExpired(),
+      );
     }
-    _wallpaperCache[roomId] = data;
   }
 
-  Uint8List? getWallpaper(String roomId) {
-    return _wallpaperCache[roomId];
-  }
+  V? get(K key) {
+    final entry = _cache[key];
+    if (entry == null) return null;
 
-  /// Кеш сообщений
-  void cacheMessages(String roomId, List<Event> events) {
-    if (_messageCache.length >= _maxMessageCache) {
-      final firstKey = _messageCache.keys.first;
-      _messageCache.remove(firstKey);
+    // Проверяем не истек ли срок
+    if (expireAfter != null && 
+        DateTime.now().difference(entry.timestamp) > expireAfter!) {
+      _cache.remove(key);
+      return null;
     }
-    _messageCache[roomId] = List.from(events);
+
+    // Перемещаем в конец для LRU
+    _cache.remove(key);
+    _cache[key] = entry;
+    
+    return entry.value;
   }
 
-  List<Event>? getMessages(String roomId) {
-    return _messageCache[roomId];
+  void put(K key, V value) {
+    // Удаляем старое значение если есть
+    _cache.remove(key);
+
+    // Добавляем новое
+    _cache[key] = _CacheEntry(value, DateTime.now());
+
+    // Проверяем лимит размера
+    while (_cache.length > maxSize) {
+      final firstKey = _cache.keys.first;
+      _cache.remove(firstKey);
+    }
   }
 
-  void addMessage(String roomId, Event event) {
-    final messages = _messageCache[roomId];
-    if (messages != null) {
-      messages.insert(0, event);
-      // Ограничиваем количество кешированных сообщений
-      if (messages.length > 100) {
-        messages.removeRange(100, messages.length);
+  void remove(K key) {
+    _cache.remove(key);
+  }
+
+  void clear() {
+    _cache.clear();
+  }
+
+  int get length => _cache.length;
+
+  void _cleanupExpired() {
+    if (expireAfter == null) return;
+
+    final now = DateTime.now();
+    final keysToRemove = <K>[];
+
+    for (final entry in _cache.entries) {
+      if (now.difference(entry.value.timestamp) > expireAfter!) {
+        keysToRemove.add(entry.key);
       }
     }
-  }
 
-  /// Кеш аватаров
-  void cacheAvatar(String userId, Uint8List data) {
-    if (_avatarCache.length >= _maxAvatarCache) {
-      final firstKey = _avatarCache.keys.first;
-      _avatarCache.remove(firstKey);
+    for (final key in keysToRemove) {
+      _cache.remove(key);
     }
-    _avatarCache[userId] = data;
   }
 
-  Uint8List? getAvatar(String userId) {
-    return _avatarCache[userId];
+  void dispose() {
+    _cleanupTimer?.cancel();
+    _cache.clear();
+  }
+}
+
+class _CacheEntry<V> {
+  final V value;
+  final DateTime timestamp;
+
+  _CacheEntry(this.value, this.timestamp);
+}
+
+/// Кэши для различных типов данных
+class AppCaches {
+  static final profiles = GlobalCache<String, Map<String, dynamic>>(
+    maxSize: 500,
+    expireAfter: const Duration(hours: 1),
+  );
+
+  static final avatars = GlobalCache<String, String>(
+    maxSize: 200,
+    expireAfter: const Duration(hours: 2),
+  );
+
+  static final eventContents = GlobalCache<String, Map<String, dynamic>>(
+    maxSize: 1000,
+    expireAfter: const Duration(minutes: 30),
+  );
+
+  static final translations = GlobalCache<String, String>(
+    maxSize: 500,
+    expireAfter: const Duration(hours: 1),
+  );
+
+  static void disposeAll() {
+    profiles.dispose();
+    avatars.dispose();
+    eventContents.dispose();
+    translations.dispose();
   }
 
-  /// Кеш изображений
-  void cacheImage(String key, Uint8List data) {
-    if (_imageCache.length >= _maxImageCache) {
-      final firstKey = _imageCache.keys.first;
-      _imageCache.remove(firstKey);
-    }
-    _imageCache[key] = data;
+  static void clearAll() {
+    profiles.clear();
+    avatars.clear();
+    eventContents.clear();
+    translations.clear();
   }
 
-  Uint8List? getImage(String key) {
-    return _imageCache[key];
-  }
-
-  /// Очистка кеша конкретной комнаты
-  void clearRoomCache(String roomId) {
-    _wallpaperCache.remove(roomId);
-    _messageCache.remove(roomId);
-  }
-
-  /// Очистка всего кеша (при выходе из приложения)
-  void clearAll() {
-    _wallpaperCache.clear();
-    _messageCache.clear();
-    _avatarCache.clear();
-    _imageCache.clear();
-  }
-
-  /// Получение размера кеша в байтах (приблизительно)
-  int getCacheSize() {
-    var size = 0;
-    
-    for (final data in _wallpaperCache.values) {
-      size += data.length;
-    }
-    
-    for (final data in _avatarCache.values) {
-      size += data.length;
-    }
-    
-    for (final data in _imageCache.values) {
-      size += data.length;
-    }
-    
-    // Примерная оценка размера событий (1KB на событие)
-    for (final events in _messageCache.values) {
-      size += events.length * 1024;
-    }
-    
-    return size;
-  }
-
-  /// Получение статистики кеша
-  Map<String, int> getCacheStats() {
+  static Map<String, int> getStats() {
     return {
-      'wallpapers': _wallpaperCache.length,
-      'messages': _messageCache.values.fold(0, (sum, events) => sum + events.length),
-      'avatars': _avatarCache.length,
-      'images': _imageCache.length,
-      'total_size_mb': (getCacheSize() / (1024 * 1024)).round(),
+      'profiles': profiles.length,
+      'avatars': avatars.length,
+      'eventContents': eventContents.length,
+      'translations': translations.length,
     };
   }
 }

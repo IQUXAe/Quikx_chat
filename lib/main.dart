@@ -33,6 +33,9 @@ void main() async {
   // Инициализируем файловый логгер для отладки push-уведомлений
   await FileLogger.init();
 
+  // Инициализируем менеджер памяти
+  MemoryManager().initialize();
+
   // Инициализируем оптимизированный HTTP клиент
   OptimizedHttpClient().initialize();
 

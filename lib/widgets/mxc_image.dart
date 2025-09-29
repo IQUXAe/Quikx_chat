@@ -56,7 +56,7 @@ class MxcImage extends StatefulWidget {
 
 class _MxcImageState extends State<MxcImage> {
   static final Map<String, Future<Uint8List?>> _loadingCache = {};
-  final GlobalCache _globalCache = GlobalCache();
+  final GlobalCache<String, Uint8List> _globalCache = GlobalCache<String, Uint8List>();
   Uint8List? _imageDataNoCache;
   bool _isLoading = false;
 
@@ -73,13 +73,13 @@ class _MxcImageState extends State<MxcImage> {
   Uint8List? get _imageData {
     final globalKey = _globalCacheKey;
     if (globalKey != null) {
-      final cached = _globalCache.getImage(globalKey);
+      final cached = _globalCache.get(globalKey);
       if (cached != null) return cached;
     }
     
     return widget.cacheKey == null
         ? _imageDataNoCache
-        : _globalCache.getImage(widget.cacheKey!);
+        : _globalCache.get(widget.cacheKey!);
   }
 
   set _imageData(Uint8List? data) {
@@ -87,14 +87,14 @@ class _MxcImageState extends State<MxcImage> {
     
     final globalKey = _globalCacheKey;
     if (globalKey != null) {
-      _globalCache.cacheImage(globalKey, data);
+      _globalCache.put(globalKey, data);
     }
     
     final cacheKey = widget.cacheKey;
     if (cacheKey == null) {
       _imageDataNoCache = data;
     } else {
-      _globalCache.cacheImage(cacheKey, data);
+      _globalCache.put(cacheKey, data);
     }
   }
 
