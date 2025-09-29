@@ -14,13 +14,77 @@ import 'package:quikxchat/utils/notification_service.dart';
 import 'package:quikxchat/utils/file_logger.dart';
 import 'package:quikxchat/utils/memory_manager.dart';
 import 'package:quikxchat/utils/optimized_message_translator.dart';
-import 'package:quikxchat/utils/notification_handler.dart';
 
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'config/setting_keys.dart';
 import 'utils/background_push.dart';
 import 'widgets/quikx_chat_app.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+
+@pragma('vm:entry-point')
+void onNotificationResponse(NotificationResponse response) {
+  print('=== NOTIFICATION HANDLER CALLED ===');
+  print('[Main] actionId: ${response.actionId}, payload: ${response.payload}, input: ${response.input}');
+
+  try {
+    if (response.actionId != null) {
+      if (response.actionId!.startsWith('reply_')) {
+        final roomId = response.actionId!.substring('reply_'.length);
+        final message = response.input;
+        print('[Main] Reply: "$message" to room: $roomId');
+
+        // Передаем обработку в BackgroundPush
+        _handleNotificationAction('reply', roomId, message);
+
+      } else if (response.actionId!.startsWith('mark_read_')) {
+        final roomId = response.actionId!.substring('mark_read_'.length);
+        print('[Main] Mark read room: $roomId');
+
+        _handleNotificationAction('mark_read', roomId, null);
+      }
+    } else {
+      // Обычный клик по уведомлению
+      var roomId = response.payload;
+      if (roomId != null) {
+        // Убираем префикс 'room:' если он есть
+        if (roomId.startsWith('room:')) {
+          roomId = roomId.substring(5);
+        }
+        print('[Main] Open room: $roomId');
+
+        // Открываем комнату через роутер
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          try {
+            QuikxChatApp.router.go('/rooms/$roomId');
+          } catch (e) {
+            print('[Main] Failed to navigate to room: $e');
+          }
+        });
+      }
+    }
+  } catch (e, s) {
+    print('[Main] Error handling notification response: $e');
+    print('[Main] Stack trace: $s');
+  }
+}
+
+/// Обрабатывает действия уведомлений через BackgroundPush
+void _handleNotificationAction(String action, String roomId, String? input) {
+  // Сохраняем действие для обработки после инициализации приложения
+  _pendingNotificationActions.add({
+    'action': action,
+    'roomId': roomId,
+    'input': input,
+    'timestamp': DateTime.now().millisecondsSinceEpoch,
+  });
+
+  print('[Main] Queued notification action: $action for room $roomId');
+}
+
+// Очередь отложенных действий уведомлений
+final List<Map<String, dynamic>> _pendingNotificationActions = [];
+
+
 
 void main() async {
   Logs().i('Welcome to ${AppConfig.applicationName} <3');
@@ -120,21 +184,65 @@ Future<void> startGui(List<Client> clients, SharedPreferences store) async {
           defaultActionName: 'Open notification',
         ) : null,
       ),
-      onDidReceiveNotificationResponse: NotificationHandler.onNotificationResponse,
-      onDidReceiveBackgroundNotificationResponse: NotificationHandler.onNotificationResponse,
+      onDidReceiveNotificationResponse: onNotificationResponse,
+      onDidReceiveBackgroundNotificationResponse: onNotificationResponse,
     );
 
-    Logs().d('[Main] Notification initialization result: $initialized');
+    print('[Main] Notification initialization result: $initialized');
     Logs().i('Push notification manager initialized: $initialized');
 
     // Обрабатываем отложенные действия уведомлений
-    NotificationHandler.processPendingNotificationActions(clients.firstOrNull);
+    _processPendingNotificationActions(clients.firstOrNull);
 
   } catch (e, s) {
     Logs().w('Failed to initialize push notification manager', e, s);
   }
 
   runApp(QuikxChatApp(clients: clients, pincode: pin, store: store));
+}
+
+/// Обрабатывает отложенные действия уведомлений
+void _processPendingNotificationActions(Client? client) {
+  if (client == null || _pendingNotificationActions.isEmpty) {
+    return;
+  }
+
+  print('[Main] Processing ${_pendingNotificationActions.length} pending notification actions');
+
+  // Обрабатываем только недавние действия (менее 5 минут)
+  final now = DateTime.now().millisecondsSinceEpoch;
+  final validActions = _pendingNotificationActions.where((action) {
+    final timestamp = action['timestamp'] as int;
+    return (now - timestamp) < 300000; // 5 минут
+  }).toList();
+
+  for (final action in validActions) {
+    final actionType = action['action'] as String;
+    final roomId = action['roomId'] as String;
+    final input = action['input'] as String?;
+
+    print('[Main] Processing action: $actionType for room $roomId');
+
+    // Отложенная обработка через BackgroundPush
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      try {
+        // Получаем BackgroundPush из первого клиента
+        final backgroundPush = BackgroundPush.clientOnly(client);
+
+        if (actionType == 'reply' && input != null) {
+          await backgroundPush.handleReplyAction(roomId, input);
+        } else if (actionType == 'mark_read') {
+          await backgroundPush.handleMarkAsReadAction(roomId);
+        }
+      } catch (e) {
+        print('[Main] Failed to process pending action: $e');
+      }
+    });
+  }
+
+  // Очищаем очередь
+  _pendingNotificationActions.clear();
+  print('[Main] Processed and cleared pending notification actions');
 }
 
 /// Watches the lifecycle changes to start the application when it

@@ -127,9 +127,6 @@ class ChatController extends State<ChatPageWithRoom>
     }
   }
   
-  void _scheduleUpdate() {
-    // Полностью убираем debouncing - просто ничего не делаем
-  }
   
   static const int _maxTranslations = 100;
   void clearTranslations() {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:quikxchat/l10n/l10n.dart';
-import 'package:quikxchat/utils/push_notification_manager.dart';
+import 'package:quikxchat/utils/notification_service.dart';
 import 'package:quikxchat/widgets/matrix.dart';
 
 class PushNotificationBanner extends StatefulWidget {
@@ -23,7 +23,7 @@ class _PushNotificationBannerState extends State<PushNotificationBanner> {
   }
 
   Future<void> _checkStatus() async {
-    final status = await PushNotificationManager.instance.checkStatus();
+    final status = await NotificationService.instance.checkStatus();
     if (mounted) {
       setState(() {
         _status = status;
@@ -38,7 +38,7 @@ class _PushNotificationBannerState extends State<PushNotificationBanner> {
 
     try {
       final matrix = Matrix.of(context);
-      final success = await PushNotificationManager.instance.setupAutomatically(context, matrix);
+      final success = await NotificationService.instance.setupAutomatically(context, matrix);
       
       if (success) {
         setState(() {

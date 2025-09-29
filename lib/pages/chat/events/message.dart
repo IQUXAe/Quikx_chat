@@ -13,7 +13,6 @@ import 'package:quikxchat/pages/chat/events/room_creation_state_event.dart';
 import 'package:quikxchat/utils/adaptive_bottom_sheet.dart';
 import 'package:quikxchat/utils/date_time_extension.dart';
 import 'package:quikxchat/utils/file_description.dart';
-import 'package:quikxchat/utils/matrix_sdk_extensions/matrix_locals.dart';
 import 'package:quikxchat/utils/string_color.dart';
 import 'package:quikxchat/widgets/avatar.dart';
 import 'package:quikxchat/widgets/matrix.dart';

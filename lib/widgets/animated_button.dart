@@ -30,7 +30,6 @@ class _AnimatedButtonState extends State<AnimatedButton>
   late Animation<double> _scaleAnimation;
   late Animation<double> _rippleAnimation;
   
-  bool _isPressed = false;
 
   @override
   void initState() {
@@ -71,19 +70,19 @@ class _AnimatedButtonState extends State<AnimatedButton>
   }
 
   void _onTapDown(TapDownDetails details) {
-    setState(() => _isPressed = true);
+    
     _scaleController.forward();
     _rippleController.forward();
   }
 
   void _onTapUp(TapUpDetails details) {
-    setState(() => _isPressed = false);
+    
     _scaleController.reverse();
     _rippleController.reverse();
   }
 
   void _onTapCancel() {
-    setState(() => _isPressed = false);
+    
     _scaleController.reverse();
     _rippleController.reverse();
   }
@@ -110,7 +109,7 @@ class _AnimatedButtonState extends State<AnimatedButton>
                 boxShadow: [
                   BoxShadow(
                     color: (widget.backgroundColor ?? theme.colorScheme.primary)
-                        .withOpacity(0.3 * _rippleAnimation.value),
+                        .withValues(alpha: 0.3 * _rippleAnimation.value),
                     blurRadius: 8 * _rippleAnimation.value,
                     spreadRadius: 2 * _rippleAnimation.value,
                   ),
