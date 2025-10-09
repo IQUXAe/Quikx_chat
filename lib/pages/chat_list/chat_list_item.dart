@@ -44,6 +44,67 @@ class _ChatListItemState extends State<ChatListItem> {
   @override
   void initState() {
     super.initState();
+    // Асинхронная предзагрузка профилей и аватаров
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _preloadProfiles();
+    });
+  }
+  
+  Future<void> _preloadProfiles() async {
+    if (!mounted) return;
+    
+    try {
+      final room = widget.room;
+      final client = room.client;
+      
+      // Предзагружаем аватар комнаты
+      if (room.avatar != null) {
+        precacheImage(
+          NetworkImage(room.avatar!.getThumbnail(
+            client,
+            width: 44,
+            height: 44,
+          ).toString()),
+          context,
+        ).catchError((_) {});
+      }
+      
+      // Предзагружаем профиль для прямых чатов
+      final directChatMatrixId = room.directChatMatrixID;
+      if (directChatMatrixId != null) {
+        try {
+          final profile = await client.getProfileFromUserId(directChatMatrixId);
+          if (profile.avatarUrl != null && mounted) {
+            precacheImage(
+              NetworkImage(profile.avatarUrl!.getThumbnail(
+                client,
+                width: 44,
+                height: 44,
+              ).toString()),
+              context,
+            ).catchError((_) {});
+          }
+          if (mounted) setState(() {}); // Обновляем UI с новыми данными
+        } catch (e) {
+          // Игнорируем ошибки загрузки профиля
+        }
+      }
+      
+      // Предзагружаем аватар пространства если есть
+      final space = widget.space;
+      if (space?.avatar != null && mounted) {
+        precacheImage(
+          NetworkImage(space!.avatar!.getThumbnail(
+            client,
+            width: 33,
+            height: 33,
+          ).toString()),
+          context,
+        ).catchError((_) {});
+      }
+    } catch (e) {
+      // Игнорируем ошибки предзагрузки
+    }
   }
 
   @override
@@ -117,6 +178,7 @@ class _ChatListItemState extends State<ChatListItem> {
                               mxContent: space.avatar,
                               size: Avatar.defaultSize * 0.75,
                               name: space.getLocalizedDisplayname(),
+                              client: widget.room.client,
                               onTap: () => widget.onLongPress?.call(context),
                             ),
                           ),
@@ -146,6 +208,7 @@ class _ChatListItemState extends State<ChatListItem> {
                                 ? Avatar.defaultSize * 0.75
                                 : Avatar.defaultSize,
                             name: displayname,
+                            client: widget.room.client,
                             presenceUserId: directChatMatrixId,
                             presenceBackgroundColor: backgroundColor,
                             onTap: () => widget.onLongPress?.call(context),

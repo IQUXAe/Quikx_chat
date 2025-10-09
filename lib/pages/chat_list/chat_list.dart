@@ -452,6 +452,9 @@ class ChatListController extends State<ChatList>
             Logs().w('Failed to restore presence', e);
           }
         }
+        
+        // Предзагружаем профили всех пользователей
+        _preloadAllProfiles();
       }
 
       // Workaround for system UI overlay style not applied on app start
@@ -1015,6 +1018,59 @@ class ChatListController extends State<ChatList>
   }
 
   Future<void> dehydrate() => Matrix.of(context).dehydrateAction(context);
+  
+  Future<void> _preloadAllProfiles() async {
+    if (!mounted) return;
+    
+    try {
+      final client = Matrix.of(context).client;
+      final rooms = client.rooms.take(20); // Ограничиваем количество для производительности
+      
+      for (final room in rooms) {
+        if (!mounted) break;
+        
+        // Предзагружаем аватары комнат
+        if (room.avatar != null) {
+          precacheImage(
+            NetworkImage(room.avatar!.getThumbnail(
+              client,
+              width: 44,
+              height: 44,
+            ).toString()),
+            context,
+          ).catchError((_) {});
+        }
+        
+        // Предзагружаем профили для прямых чатов
+        final directChatMatrixId = room.directChatMatrixID;
+        if (directChatMatrixId != null) {
+          try {
+            final profile = await client.getProfileFromUserId(directChatMatrixId);
+            if (profile.avatarUrl != null && mounted) {
+              precacheImage(
+                NetworkImage(profile.avatarUrl!.getThumbnail(
+                  client,
+                  width: 44,
+                  height: 44,
+                ).toString()),
+                context,
+              ).catchError((_) {});
+            }
+          } catch (e) {
+            // Игнорируем ошибки загрузки профиля
+          }
+        }
+        
+        // Небольшая задержка между запросами
+        await Future.delayed(const Duration(milliseconds: 50));
+      }
+      
+      // Обновляем UI после предзагрузки
+      if (mounted) setState(() {});
+    } catch (e) {
+      // Игнорируем ошибки предзагрузки
+    }
+  }
 }
 
 class _StatusDialog extends StatefulWidget {
