@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:flutter_linkify/flutter_linkify.dart';
+import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -222,6 +223,19 @@ class HomeserverPickerView extends StatelessWidget {
                             child: controller.isLoading
                                 ? const LinearProgressIndicator()
                                 : Text(L10n.of(context).continueText),
+                          ),
+                          const SizedBox(height: 8),
+                          OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: theme.colorScheme.primary,
+                              side: BorderSide(color: theme.colorScheme.primary),
+                            ),
+                            onPressed: controller.isLoading
+                                ? null
+                                : () async {
+                                    await launchUrlString('https://develop.element.io/#/welcome');
+                                  },
+                            child: Text(L10n.of(context).register),
                           ),
                           TextButton(
                             style: TextButton.styleFrom(

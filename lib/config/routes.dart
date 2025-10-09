@@ -87,6 +87,7 @@ abstract class AppRoutes {
           ),
           redirect: loggedInRedirect,
         ),
+
       ],
     ),
     GoRoute(
