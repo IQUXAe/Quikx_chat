@@ -402,53 +402,9 @@ class ChatController extends State<ChatPageWithRoom>
     }
   }
   
-  Future<void> _preloadParticipantAvatars() async {
-    try {
-      final participants = room.getParticipants().take(10);
-      final futures = participants.map((user) async {
-        if (user.avatarUrl != null) {
-          try {
-            await precacheImage(
-              NetworkImage(user.avatarUrl!.getThumbnail(
-                room.client,
-                width: 56,
-                height: 56,
-              ).toString(),),
-              context,
-            );
-          } catch (e) {
-            // Ignore 404 and other avatar loading errors
-          }
-        }
-      });
-      await Future.wait(futures, eagerError: false);
-    } catch (e) {
-      Logs().v('Failed to preload avatars: $e');
-    }
-  }
+
   
-  Future<void> _preloadRoomSettings() async {
-    try {
-      await room.postLoad();
-      
-      if (room.avatar != null) {
-        try {
-          await precacheImage(
-            NetworkImage(room.avatar!.getThumbnail(
-              room.client,
-              width: 64,
-              height: 64,
-            ).toString(),),
-            context,
-          );
-        } catch (e) {
-          // Ignore 404 and other avatar loading errors
-        }
-      }
-    } catch (e) {
-      Logs().v('Failed to preload room settings: $e');
-    }
-  }
+
 
   final Set<String> expandedEventIds = {};
 
@@ -593,38 +549,9 @@ class ChatController extends State<ChatPageWithRoom>
     }
   }
   
-  static Future<List<Map<String, dynamic>>> _translateBatchInIsolate(Map<String, dynamic> data) async {
-    final events = data['events'] as List<Map<String, dynamic>>;
-    final results = <Map<String, dynamic>>[];
-    
-    for (final event in events) {
-      try {
-        final translation = await MessageTranslator.translateMessage(event['body'], data['targetLang']);
-        results.add({
-          'id': event['id'],
-          'translation': translation,
-        });
-      } catch (e) {
-        results.add({'id': event['id'], 'translation': null});
-      }
-    }
-    
-    return results;
-  }
+
   
-  Future<void> _translateSingleMessage(Event event) async {
-    if (!mounted) return;
-    
-    try {
-      final translation = await MessageTranslator.translateMessage(event.body, 'auto');
-      if (translation != null && mounted) {
-        messageTranslations[event.eventId] = translation;
-        notifyTranslationChanged();
-      }
-    } catch (e) {
-      Logs().w('Failed to translate message ${event.eventId}: $e');
-    }
-  }
+
 
   Future<void>? loadTimelineFuture;
 

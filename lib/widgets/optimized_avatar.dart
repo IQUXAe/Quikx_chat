@@ -67,8 +67,7 @@ class OptimizedAvatar extends StatelessWidget {
         width: size,
         height: size,
         fit: BoxFit.cover,
-        placeholder: (context, url) => _buildPlaceholder(theme),
-        errorWidget: (context, url, error) => _buildPlaceholder(theme),
+        placeholder: (_) => _buildPlaceholder(theme),
       );
       
       // Кэшируем успешную загрузку

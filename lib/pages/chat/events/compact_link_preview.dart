@@ -46,9 +46,9 @@ class _CompactLinkPreviewState extends State<CompactLinkPreview> {
 
       final document = html_parser.parse(response.body);
       final title = document.querySelector('meta[property="og:title"]')?.attributes['content']?.trim() ??
-                   document.querySelector('title')?.text?.trim();
+                   document.querySelector('title')?.text.trim();
       
-      String? imageUrl = document.querySelector('meta[property="og:image"]')?.attributes['content']?.trim();
+      var imageUrl = document.querySelector('meta[property="og:image"]')?.attributes['content']?.trim();
       if (imageUrl != null && imageUrl.isNotEmpty && !imageUrl.startsWith('http')) {
         if (imageUrl.startsWith('//')) {
           imageUrl = '${uri.scheme}:$imageUrl';
@@ -81,7 +81,7 @@ class _CompactLinkPreviewState extends State<CompactLinkPreview> {
         height: 60,
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: widget.textColor.withOpacity(0.05),
+          color: widget.textColor.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
@@ -91,7 +91,7 @@ class _CompactLinkPreviewState extends State<CompactLinkPreview> {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: widget.textColor.withOpacity(0.1),
+                color: widget.textColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(4),
               ),
               child: Center(
@@ -100,7 +100,7 @@ class _CompactLinkPreviewState extends State<CompactLinkPreview> {
                   height: 16,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: widget.textColor.withOpacity(0.4),
+                    color: widget.textColor.withValues(alpha: 0.4),
                   ),
                 ),
               ),
@@ -109,7 +109,7 @@ class _CompactLinkPreviewState extends State<CompactLinkPreview> {
             Text(
               'Loading preview...',
               style: TextStyle(
-                color: widget.textColor.withOpacity(0.6),
+                color: widget.textColor.withValues(alpha: 0.6),
                 fontSize: 13,
               ),
             ),
@@ -122,7 +122,7 @@ class _CompactLinkPreviewState extends State<CompactLinkPreview> {
       height: 60,
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: widget.textColor.withOpacity(0.05),
+        color: widget.textColor.withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(8),
       ),
       child: InkWell(
@@ -135,7 +135,7 @@ class _CompactLinkPreviewState extends State<CompactLinkPreview> {
               width: 40,
               height: 40,
               decoration: BoxDecoration(
-                color: widget.textColor.withOpacity(0.1),
+                color: widget.textColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(4),
               ),
               child: _imageUrl != null
