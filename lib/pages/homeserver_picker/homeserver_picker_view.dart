@@ -232,8 +232,8 @@ class HomeserverPickerView extends StatelessWidget {
                             ),
                             onPressed: controller.isLoading
                                 ? null
-                                : () async {
-                                    await launchUrlString('https://develop.element.io/#/welcome');
+                                : () {
+                                    context.push('/server-selection');
                                   },
                             child: Text(L10n.of(context).register),
                           ),

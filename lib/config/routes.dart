@@ -33,6 +33,7 @@ import 'package:quikxchat/pages/settings_password/settings_password.dart';
 import 'package:quikxchat/pages/settings_security/settings_security.dart';
 import 'package:quikxchat/pages/settings_style/settings_style.dart';
 import 'package:quikxchat/pages/settings_voip/settings_voip.dart';
+import 'package:quikxchat/pages/server_selection/server_selection.dart';
 
 import 'package:quikxchat/widgets/config_viewer.dart';
 import 'package:quikxchat/widgets/layouts/empty_page.dart';
@@ -87,8 +88,16 @@ abstract class AppRoutes {
           ),
           redirect: loggedInRedirect,
         ),
-
       ],
+    ),
+    GoRoute(
+      path: '/server-selection',
+      pageBuilder: (context, state) => defaultPageBuilder(
+        context,
+        state,
+        const ServerSelection(),
+      ),
+      redirect: loggedInRedirect,
     ),
     GoRoute(
       path: '/logs',
