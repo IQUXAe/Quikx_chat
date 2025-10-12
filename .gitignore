@@ -72,6 +72,8 @@ app.*.map.json
 **/ios/Runner/GeneratedPluginRegistrant.*
 
 # Web related
+build/web/
+web/
 
 # Windows related
 **/windows/flutter/generated_plugin_registrant.cc

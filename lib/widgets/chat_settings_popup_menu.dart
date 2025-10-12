@@ -8,6 +8,7 @@ import 'package:matrix/matrix.dart';
 import 'package:quikxchat/l10n/l10n.dart';
 import 'package:quikxchat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
 import 'package:quikxchat/widgets/future_loading_dialog.dart';
+import '../utils/translation_providers.dart';
 import 'matrix.dart';
 
 enum ChatPopupMenuActions { details, mute, unmute, leave, search, translateToggle, clearTranslations }
@@ -25,6 +26,22 @@ class ChatSettingsPopupMenu extends StatefulWidget {
 
 class ChatSettingsPopupMenuState extends State<ChatSettingsPopupMenu> {
   StreamSubscription? notificationChangeSub;
+  TranslationProvider? _currentProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTranslationProvider();
+  }
+
+  void _loadTranslationProvider() async {
+    final provider = await TranslationProviders.getCurrentProvider();
+    if (mounted) {
+      setState(() {
+        _currentProvider = provider;
+      });
+    }
+  }
 
   @override
   void dispose() {
@@ -105,63 +122,9 @@ class ChatSettingsPopupMenuState extends State<ChatSettingsPopupMenu> {
                 break;
             }
           },
-          itemBuilder: (BuildContext context) => [
-            if (widget.displayChatDetails)
-              PopupMenuItem<ChatPopupMenuActions>(
-                value: ChatPopupMenuActions.details,
-                child: Row(
-                  children: [
-                    const Icon(Icons.info_outline_rounded),
-                    const SizedBox(width: 12),
-                    Text(L10n.of(context).chatDetails),
-                  ],
-                ),
-              ),
-            if (widget.room.pushRuleState == PushRuleState.notify)
-              PopupMenuItem<ChatPopupMenuActions>(
-                value: ChatPopupMenuActions.mute,
-                child: Row(
-                  children: [
-                    const Icon(Icons.notifications_off_outlined),
-                    const SizedBox(width: 12),
-                    Text(L10n.of(context).muteChat),
-                  ],
-                ),
-              )
-            else
-              PopupMenuItem<ChatPopupMenuActions>(
-                value: ChatPopupMenuActions.unmute,
-                child: Row(
-                  children: [
-                    const Icon(Icons.notifications_on_outlined),
-                    const SizedBox(width: 12),
-                    Text(L10n.of(context).unmuteChat),
-                  ],
-                ),
-              ),
-            PopupMenuItem<ChatPopupMenuActions>(
-              value: ChatPopupMenuActions.search,
-              child: Row(
-                children: [
-                  const Icon(Icons.search_outlined),
-                  const SizedBox(width: 12),
-                  Text(L10n.of(context).search),
-                ],
-              ),
-            ),
-            // Translation menu items
-            if (widget.translateController != null) ..._buildTranslationMenuItems(),
-            PopupMenuItem<ChatPopupMenuActions>(
-              value: ChatPopupMenuActions.leave,
-              child: Row(
-                children: [
-                  const Icon(Icons.delete_outlined),
-                  const SizedBox(width: 12),
-                  Text(L10n.of(context).leave),
-                ],
-              ),
-            ),
-          ],
+          itemBuilder: (BuildContext context) {
+            return _buildMenuItems(context);
+          },
         ),
       ],
     );
@@ -175,7 +138,69 @@ class ChatSettingsPopupMenuState extends State<ChatSettingsPopupMenu> {
     }
   }
 
-  List<PopupMenuEntry<ChatPopupMenuActions>> _buildTranslationMenuItems() {
+  List<PopupMenuEntry<ChatPopupMenuActions>> _buildMenuItems(BuildContext context) {
+    final items = <PopupMenuEntry<ChatPopupMenuActions>>[
+      if (widget.displayChatDetails)
+        PopupMenuItem<ChatPopupMenuActions>(
+          value: ChatPopupMenuActions.details,
+          child: Row(
+            children: [
+              const Icon(Icons.info_outline_rounded),
+              const SizedBox(width: 12),
+              Text(L10n.of(context).chatDetails),
+            ],
+          ),
+        ),
+      if (widget.room.pushRuleState == PushRuleState.notify)
+        PopupMenuItem<ChatPopupMenuActions>(
+          value: ChatPopupMenuActions.mute,
+          child: Row(
+            children: [
+              const Icon(Icons.notifications_off_outlined),
+              const SizedBox(width: 12),
+              Text(L10n.of(context).muteChat),
+            ],
+          ),
+        )
+      else
+        PopupMenuItem<ChatPopupMenuActions>(
+          value: ChatPopupMenuActions.unmute,
+          child: Row(
+            children: [
+              const Icon(Icons.notifications_on_outlined),
+              const SizedBox(width: 12),
+              Text(L10n.of(context).unmuteChat),
+            ],
+          ),
+        ),
+      PopupMenuItem<ChatPopupMenuActions>(
+        value: ChatPopupMenuActions.search,
+        child: Row(
+          children: [
+            const Icon(Icons.search_outlined),
+            const SizedBox(width: 12),
+            Text(L10n.of(context).search),
+          ],
+        ),
+      ),
+      // Translation menu items
+      if (widget.translateController != null && _currentProvider != TranslationProvider.disabled) ..._buildTranslationMenuItems(context),
+      PopupMenuItem<ChatPopupMenuActions>(
+        value: ChatPopupMenuActions.leave,
+        child: Row(
+          children: [
+            const Icon(Icons.delete_outlined),
+            const SizedBox(width: 12),
+            Text(L10n.of(context).leave),
+          ],
+        ),
+      ),
+    ];
+    
+    return items;
+  }
+
+  List<PopupMenuEntry<ChatPopupMenuActions>> _buildTranslationMenuItems(BuildContext context) {
     return [
       PopupMenuItem<ChatPopupMenuActions>(
         value: ChatPopupMenuActions.translateToggle,
@@ -196,7 +221,6 @@ class ChatSettingsPopupMenuState extends State<ChatSettingsPopupMenu> {
           ],
         ),
       ),
-
       PopupMenuItem<ChatPopupMenuActions>(
         value: ChatPopupMenuActions.clearTranslations,
         child: Row(
@@ -209,4 +233,5 @@ class ChatSettingsPopupMenuState extends State<ChatSettingsPopupMenu> {
       ),
     ];
   }
+
 }

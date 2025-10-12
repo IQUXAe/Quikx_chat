@@ -11,11 +11,40 @@ import 'package:quikxchat/widgets/layouts/max_width_body.dart';
 import 'package:quikxchat/widgets/matrix.dart';
 import 'package:quikxchat/widgets/settings_switch_list_tile.dart';
 import '../../utils/message_translator.dart';
+import '../../utils/translation_providers.dart';
 import 'settings_chat.dart';
 
-class SettingsChatView extends StatelessWidget {
+class SettingsChatView extends StatefulWidget {
   final SettingsChatController controller;
   const SettingsChatView(this.controller, {super.key});
+
+  @override
+  State<SettingsChatView> createState() => _SettingsChatViewState();
+}
+
+class _SettingsChatViewState extends State<SettingsChatView> {
+  TranslationProvider? _currentProvider;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadTranslationProvider();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _loadTranslationProvider();
+  }
+
+  void _loadTranslationProvider() async {
+    final provider = await TranslationProviders.getCurrentProvider();
+    if (mounted) {
+      setState(() {
+        _currentProvider = provider;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,103 +118,39 @@ class SettingsChatView extends StatelessWidget {
                 storeKey: 'use24HourFormat',
                 defaultValue: true,
               ),
-              SettingsSwitchListTile.adaptive(
-                title: L10n.of(context).desktopMode,
-                subtitle: L10n.of(context).desktopModeDescription,
-                onChanged: (b) => AppConfig.forceDesktopMode = b,
-                storeKey: SettingKeys.forceDesktopMode,
-                defaultValue: AppConfig.forceDesktopMode,
+
+              
+              // Translation Settings
+              Builder(
+                builder: (context) {
+                  final provider = _currentProvider ?? TranslationProvider.disabled;
+                  final isEnabled = provider != TranslationProvider.disabled;
+                  
+                  return ListTile(
+                    leading: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: isEnabled ? Colors.blue.withOpacity(0.1) : Colors.grey.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(
+                        Icons.translate,
+                        color: isEnabled ? Colors.blue : Colors.grey,
+                      ),
+                    ),
+                    title: const Text('Translation Settings (Beta)'),
+                    subtitle: Text(
+                      isEnabled ? 'Translation enabled' : 'Translation disabled',
+                    ),
+                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                    onTap: () async {
+                      await context.push('/rooms/settings/chat/translation');
+                      _loadTranslationProvider(); // Обновляем после возврата
+                    },
+                  );
+                },
               ),
               
-              StatefulBuilder(
-                builder: (context, setState) {
-                  return FutureBuilder<bool>(
-                    future: MessageTranslator.isEnabled,
-                    builder: (context, snapshot) {
-                      final isEnabled = snapshot.data ?? false;
-                      return SwitchListTile.adaptive(
-                        controlAffinity: ListTileControlAffinity.trailing,
-                        value: isEnabled,
-                        secondary: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.lightBlue.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: const Icon(Icons.translate,
-                              color: Colors.lightBlue),
-                        ),
-                        title: Text(L10n.of(context).messageTranslation),
-                        subtitle: Text(
-                            L10n.of(context).messageTranslationDescription),
-                        onChanged: (value) async {
-                          await MessageTranslator.setEnabled(value);
-                          setState(() {});
-                        },
-                      );
-                    },
-                  );
-                },
-              ),
-              StatefulBuilder(
-                builder: (context, setState) {
-                  return FutureBuilder<String>(
-                    future: MessageTranslator.targetLanguage,
-                    builder: (context, snapshot) {
-                      final targetLang = snapshot.data ?? 'auto';
-                      final languages = {
-                        'auto': L10n.of(context).systemLanguage,
-                        'en': 'English',
-                        'ru': 'Русский',
-                        'es': 'Español',
-                        'fr': 'Français',
-                        'de': 'Deutsch',
-                        'it': 'Italiano',
-                        'pt': 'Português',
-                        'zh': '中文',
-                        'ja': '日本語',
-                        'ko': '한국어',
-                      };
-                      return ListTile(
-                        leading: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.green.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child:
-                              const Icon(Icons.language, color: Colors.green),
-                        ),
-                        title: Text(L10n.of(context).targetLanguage),
-                        subtitle: Text(languages[targetLang] ?? targetLang),
-                        trailing: const Icon(Icons.arrow_drop_down),
-                        onTap: () async {
-                          final selected = await showDialog<String>(
-                            context: context,
-                            builder: (context) => SimpleDialog(
-                              title:
-                                  Text(L10n.of(context).selectTargetLanguage),
-                              children: languages.entries
-                                  .map(
-                                    (entry) => SimpleDialogOption(
-                                      onPressed: () =>
-                                          Navigator.pop(context, entry.key),
-                                      child: Text(entry.value),
-                                    ),
-                                  )
-                                  .toList(),
-                            ),
-                          );
-                          if (selected != null) {
-                            await MessageTranslator.setTargetLanguage(selected);
-                            setState(() {});
-                          }
-                        },
-                      );
-                    },
-                  );
-                },
-              ),
               const SizedBox(height: 8),
               Divider(color: theme.dividerColor),
               ListTile(

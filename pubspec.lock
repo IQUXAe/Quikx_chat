@@ -1223,6 +1223,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.16.12"
+  mymemory_translate:
+    dependency: "direct main"
+    description:
+      name: mymemory_translate
+      sha256: e7a1d9e3e047b5705fd918c20a53a6600dfd79c80fcf940f3c5e025e6655661e
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0"
   native_imaging:
     dependency: "direct main"
     description:

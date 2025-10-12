@@ -13,7 +13,7 @@ class TestApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Simple Messenger Test',
+      title: 'QuikXChat Test',
       theme: ThemeData.dark(),
       home: const TestHomePage(),
     );
@@ -27,7 +27,7 @@ class TestHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Simple Messenger Test'),
+        title: const Text('QuikxChat Test'),
         backgroundColor: Colors.blue,
       ),
       body: Center(
@@ -41,12 +41,12 @@ class TestHomePage extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             const Text(
-              'Simple Messenger Test Mode',
+              'QuikxChat Test Mode',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
             const Text(
-              'Нажмите кнопку ниже для запуска полного приложения',
+              'Click on button for start test',
               style: TextStyle(fontSize: 16),
               textAlign: TextAlign.center,
             ),
@@ -60,7 +60,7 @@ class TestHomePage extends StatelessWidget {
                 );
               },
               icon: const Icon(Icons.launch),
-              label: const Text('Запустить Simple Messenger'),
+              label: const Text('Start QuikxChat'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.blue,
                 foregroundColor: Colors.white,

@@ -3,6 +3,8 @@ import 'package:http/http.dart' as http;
 import 'package:matrix/matrix.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../pages/chat/events/message.dart';
+import '../config/setting_keys.dart';
+import 'translation_providers.dart';
 
 class MessageTranslator {
   static const String _cachePrefix = 'translation_cache_';
@@ -13,8 +15,10 @@ class MessageTranslator {
   static final Set<String> _translatingEvents = <String>{};
   
   static Future<bool> get isEnabled async {
+    final provider = await TranslationProviders.getCurrentProvider();
+    final isConfigured = await TranslationProviders.isProviderConfigured(provider);
     final prefs = await SharedPreferences.getInstance();
-    return prefs.getBool(_enabledKey) ?? true;
+    return isConfigured && (prefs.getBool(_enabledKey) ?? true);
   }
   
   static Future<void> setEnabled(bool enabled) async {
@@ -120,34 +124,12 @@ class MessageTranslator {
   }
   
   static Future<String?> _translateChunk(String text, String fromLang, String toLang) async {
-    final url = 'https://api.mymemory.translated.net/get?q=${Uri.encodeComponent(text)}&langpair=$fromLang|$toLang';
-    Logs().i('[Translator] API call: $url');
-    
-    final response = await http.get(
-      Uri.parse(url),
-    ).timeout(const Duration(seconds: 10));
-
-    Logs().i('[Translator] API response status: ${response.statusCode}');
-    Logs().i('[Translator] API response body: ${response.body}');
-
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      final translation = data['responseData']?['translatedText'] as String?;
-      
-      Logs().i('[Translator] Extracted translation: "$translation"');
-      
-      if (translation == null || translation.toLowerCase() == 'null' || translation == text) {
-        Logs().i('[Translator] Invalid translation result');
-        return null;
-      }
-      return translation;
-    } else if (response.statusCode == 429) {
-      final data = json.decode(response.body);
-      final message = data['responseDetails'] ?? 'Translation limit exceeded';
-      Logs().w('[Translator] API limit exceeded: $message');
-      throw Exception('Translation limit exceeded. Try using VPN or wait for quota reset.');
+    try {
+      return await TranslationProviders.translateText(text, fromLang, toLang);
+    } catch (e) {
+      Logs().w('[Translator] Translation failed: $e');
+      return null;
     }
-    return null;
   }
   
 

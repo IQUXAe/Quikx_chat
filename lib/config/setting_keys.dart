@@ -36,6 +36,12 @@ abstract class SettingKeys {
       'chat.fluffy.display_navigation_rail';
   static const String showLinkPreviews = 'chat.fluffy.show_link_previews';
   static const String forceDesktopMode = 'chat.fluffy.force_desktop_mode';
+  static const String libreTranslateApiKey = 'chat.quikxchat.libretranslate_api_key';
+  static const String googleTranslateApiKey = 'chat.quikxchat.google_translate_api_key';
+  static const String myMemoryEmail = 'chat.quikxchat.mymemory_email';
+  static const String myMemoryApiKey = 'chat.quikxchat.mymemory_api_key';
+  static const String translationProvider = 'chat.quikxchat.translation_provider';
+  static const String libreTranslateEndpoint = 'chat.quikxchat.libretranslate_endpoint';
 }
 
 enum AppSettings<T> {

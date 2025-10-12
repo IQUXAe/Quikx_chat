@@ -32,6 +32,7 @@ import 'package:quikxchat/pages/settings_notifications/settings_notifications.da
 import 'package:quikxchat/pages/settings_password/settings_password.dart';
 import 'package:quikxchat/pages/settings_security/settings_security.dart';
 import 'package:quikxchat/pages/settings_style/settings_style.dart';
+import 'package:quikxchat/pages/settings_translation/settings_translation.dart';
 import 'package:quikxchat/pages/settings_voip/settings_voip.dart';
 import 'package:quikxchat/pages/server_selection/server_selection.dart';
 
@@ -248,6 +249,15 @@ abstract class AppRoutes {
                         state,
                         const EmotesSettings(),
                       ),
+                    ),
+                    GoRoute(
+                      path: 'translation',
+                      pageBuilder: (context, state) => defaultPageBuilder(
+                        context,
+                        state,
+                        const SettingsTranslation(),
+                      ),
+                      redirect: loggedOutRedirect,
                     ),
                   ],
                   redirect: loggedOutRedirect,
