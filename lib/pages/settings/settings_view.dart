@@ -296,22 +296,23 @@ class SettingsView extends StatelessWidget {
                     title: Text(L10n.of(context).security),
                     isActive: activeRoute.startsWith('/rooms/settings/security'),
                     onTap: controller.navigateToSecurity,
-                    position: CardPosition.middle,
-                  ),
-                  SettingsCardTile(
-                    leading: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.deepPurple.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Icon(Icons.call_outlined, color: Colors.deepPurple),
-                    ),
-                    title: const Text('Настройки VoIP'),
-                    isActive: activeRoute.startsWith('/rooms/settings/voip'),
-                    onTap: () => context.go('/rooms/settings/voip'),
                     position: CardPosition.last,
                   ),
+                  // VoIP temporarily disabled
+                  // SettingsCardTile(
+                  //   leading: Container(
+                  //     padding: const EdgeInsets.all(8),
+                  //     decoration: BoxDecoration(
+                  //       color: Colors.deepPurple.withOpacity(0.1),
+                  //       borderRadius: BorderRadius.circular(8),
+                  //     ),
+                  //     child: const Icon(Icons.call_outlined, color: Colors.deepPurple),
+                  //   ),
+                  //   title: const Text('Настройки VoIP'),
+                  //   isActive: activeRoute.startsWith('/rooms/settings/voip'),
+                  //   onTap: () => context.go('/rooms/settings/voip'),
+                  //   position: CardPosition.last,
+                  // ),
 
                   const SizedBox(height: 16),
                   

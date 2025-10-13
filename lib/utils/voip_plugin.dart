@@ -8,12 +8,11 @@ import 'package:flutter_webrtc/flutter_webrtc.dart' as webrtc_impl;
 import 'package:matrix/matrix.dart';
 import 'package:webrtc_interface/webrtc_interface.dart' hide Navigator;
 
-import 'package:quikxchat/pages/dialer/enhanced_dialer.dart';
+import 'package:quikxchat/pages/chat_list/chat_list.dart';
+import 'package:quikxchat/pages/dialer/dialer.dart';
 import 'package:quikxchat/utils/platform_infos.dart';
 import '../../utils/voip/user_media_manager.dart';
 import '../widgets/matrix.dart';
-import '../widgets/quikx_chat_app.dart';
-import '../l10n/l10n.dart';
 
 class VoipPlugin with WidgetsBindingObserver implements WebRTCDelegate {
   final MatrixState matrix;
@@ -39,21 +38,41 @@ class VoipPlugin with WidgetsBindingObserver implements WebRTCDelegate {
   }
 
   void addCallingOverlay(String callId, CallSession call) {
-    final navigatorContext =
-        QuikxChatApp.router.routerDelegate.navigatorKey.currentContext ??
-            context;
+    final context =
+        kIsWeb ? ChatList.contextForVoip! : this.context; // web is weird
 
-    showDialog(
-      context: navigatorContext,
-      barrierDismissible: false,
-      builder: (context) => EnhancedCalling(
+    if (overlayEntry != null) {
+      Logs().e('[VOIP] addCallingOverlay: The call session already exists?');
+      overlayEntry!.remove();
+    }
+    // Overlay.of(context) is broken on web
+    // falling back on a dialog
+    if (kIsWeb) {
+      showDialog(
         context: context,
-        client: client,
-        callId: callId,
-        call: call,
-        onClear: () => Navigator.of(context).pop(),
-      ),
-    );
+        builder: (context) => Calling(
+          context: context,
+          client: client,
+          callId: callId,
+          call: call,
+          onClear: () => Navigator.of(context).pop(),
+        ),
+      );
+    } else {
+      overlayEntry = OverlayEntry(
+        builder: (_) => Calling(
+          context: context,
+          client: client,
+          callId: callId,
+          call: call,
+          onClear: () {
+            overlayEntry?.remove();
+            overlayEntry = null;
+          },
+        ),
+      );
+      Overlay.of(context).insert(overlayEntry!);
+    }
   }
 
   @override
@@ -91,55 +110,39 @@ class VoipPlugin with WidgetsBindingObserver implements WebRTCDelegate {
 
   @override
   Future<void> handleNewCall(CallSession call) async {
-    try {
-      // Register listeners first
-      await registerListeners(call);
+    await registerListeners(call);
+    
+    if (PlatformInfos.isAndroid) {
+      try {
+        final wasForeground = await FlutterForegroundTask.isAppOnForeground;
 
-      if (PlatformInfos.isAndroid) {
-        try {
-          final wasForeground = await FlutterForegroundTask.isAppOnForeground;
-
-          await matrix.store.setString(
-            'wasForeground',
-            wasForeground == true ? 'true' : 'false',
-          );
-          FlutterForegroundTask.setOnLockScreenVisibility(true);
-          FlutterForegroundTask.wakeUpScreen();
-          FlutterForegroundTask.launchApp();
-        } catch (e) {
-          Logs().e('VOIP foreground failed $e');
-        }
-      }
-
-      // Add calling overlay
-      addCallingOverlay(call.callId, call);
-    } catch (e) {
-      Logs().e('Failed to handle new call: $e');
-      // Show error to user
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              '${L10n.of(context).oopsSomethingWentWrong}: ${e.toString()}',
-            ),
-            backgroundColor: Colors.red,
-            duration: const Duration(seconds: 5),
-          ),
+        await matrix.store.setString(
+          'wasForeground',
+          wasForeground == true ? 'true' : 'false',
         );
+        FlutterForegroundTask.setOnLockScreenVisibility(true);
+        FlutterForegroundTask.wakeUpScreen();
+        FlutterForegroundTask.launchApp();
+      } catch (e) {
+        Logs().e('VOIP foreground failed $e');
       }
+      // use fallback flutter call pages for outgoing and video calls.
+      addCallingOverlay(call.callId, call);
+    } else {
+      addCallingOverlay(call.callId, call);
     }
   }
 
   @override
   Future<void> handleCallEnded(CallSession session) async {
-    if (PlatformInfos.isAndroid) {
-      try {
+    if (overlayEntry != null) {
+      overlayEntry!.remove();
+      overlayEntry = null;
+      if (PlatformInfos.isAndroid) {
         FlutterForegroundTask.setOnLockScreenVisibility(false);
         FlutterForegroundTask.stopService();
         final wasForeground = matrix.store.getString('wasForeground');
-        if (wasForeground == 'false') FlutterForegroundTask.minimizeApp();
-      } catch (e) {
-        Logs().e('Failed to handle Android cleanup: $e');
+        wasForeground == 'false' ? FlutterForegroundTask.minimizeApp() : null;
       }
     }
   }
@@ -169,13 +172,10 @@ class VoipPlugin with WidgetsBindingObserver implements WebRTCDelegate {
 
   @override
   Future<void> registerListeners(CallSession session) async {
-    // Basic implementation for call listeners
-    session.onCallStateChanged.stream.listen((state) {
-      Logs().d('Call state changed: $state');
-    });
+    // Basic implementation - no exception
+  }
 
-    session.onCallEventChanged.stream.listen((event) {
-      Logs().d('Call event changed: $event');
-    });
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
   }
 }

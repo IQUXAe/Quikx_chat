@@ -25,7 +25,7 @@ import 'package:quikxchat/utils/init_with_restore.dart';
 import 'package:quikxchat/utils/matrix_sdk_extensions/matrix_file_extension.dart';
 import 'package:quikxchat/utils/platform_infos.dart';
 import 'package:quikxchat/utils/uia_request_manager.dart';
-import 'package:quikxchat/utils/voip/enhanced_voip_plugin.dart';
+import 'package:quikxchat/utils/voip_plugin.dart';
 import 'package:quikxchat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
 import 'package:quikxchat/widgets/quikx_chat_app.dart';
 import 'package:quikxchat/widgets/future_loading_dialog.dart';
@@ -82,7 +82,7 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
     return widget.clients[_activeClient];
   }
 
-  EnhancedVoipPlugin? voipPlugin;
+  VoipPlugin? voipPlugin;
 
   bool get isMultiAccount => widget.clients.length > 1;
 
@@ -97,7 +97,7 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
     if (i != -1) {
       _activeClient = i;
       // TODO: Multi-client VoiP support
-      createVoipPlugin();
+      // createVoipPlugin(); // VoIP temporarily disabled
     } else {
       Logs().w('Tried to set an unknown client ${cl!.userID} as active');
     }
@@ -381,7 +381,7 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
       );
     }
 
-    createVoipPlugin();
+    // createVoipPlugin(); // VoIP temporarily disabled
     _scheduleUpdateCheck();
   }
 
@@ -460,13 +460,14 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
   }
 
   void createVoipPlugin() async {
-    if (store.getBool(SettingKeys.experimentalVoip) == false) {
-      voipPlugin?.dispose();
-      voipPlugin = null;
-      return;
-    }
-    voipPlugin?.dispose();
-    voipPlugin = EnhancedVoipPlugin(this);
+    // VoIP temporarily disabled
+    // if (store.getBool(SettingKeys.experimentalVoip) == false) {
+    //   voipPlugin?.dispose();
+    //   voipPlugin = null;
+    //   return;
+    // }
+    // voipPlugin?.dispose();
+    // voipPlugin = VoipPlugin(this);
   }
 
   @override
@@ -551,7 +552,7 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
     _updateCheckTimer?.cancel();
 
     linuxNotifications?.close();
-    voipPlugin?.dispose();
+    // voipPlugin?.dispose(); // VoIP temporarily disabled
 
     super.dispose();
   }

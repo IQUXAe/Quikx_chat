@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:quikxchat/config/themes.dart';
 import 'dismiss_keyboard.dart';
 
 class PIPView extends StatefulWidget {
@@ -45,11 +44,11 @@ class PIPViewState extends State<PIPView> with TickerProviderStateMixin {
     super.initState();
     _corner = widget.initialCorner;
     _toggleFloatingAnimationController = AnimationController(
-      duration: QuikxChatThemes.animationDuration,
+      duration: const Duration(milliseconds: 250),
       vsync: this,
     );
     _dragAnimationController = AnimationController(
-      duration: QuikxChatThemes.animationDuration,
+      duration: const Duration(milliseconds: 250),
       vsync: this,
     );
   }
