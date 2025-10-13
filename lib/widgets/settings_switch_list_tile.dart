@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'matrix.dart';
+import 'settings_card_tile.dart';
 
 class SettingsSwitchListTile extends StatefulWidget {
   final bool defaultValue;
@@ -26,11 +27,22 @@ class SettingsSwitchListTileState extends State<SettingsSwitchListTile> {
   @override
   Widget build(BuildContext context) {
     final subtitle = widget.subtitle;
-    return SwitchListTile.adaptive(
-      value: Matrix.of(context).store.getBool(widget.storeKey) ??
-          widget.defaultValue,
+    return SettingsCardSwitch(
+      leading: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.3),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Icon(
+          Icons.toggle_on_outlined,
+          color: Theme.of(context).colorScheme.primary,
+        ),
+      ),
       title: Text(widget.title),
       subtitle: subtitle == null ? null : Text(subtitle),
+      value: Matrix.of(context).store.getBool(widget.storeKey) ??
+          widget.defaultValue,
       onChanged: (bool newValue) async {
         widget.onChanged?.call(newValue);
         await Matrix.of(context).store.setBool(widget.storeKey, newValue);

@@ -12,6 +12,7 @@ import 'package:quikxchat/utils/platform_infos.dart';
 import 'package:quikxchat/widgets/layouts/max_width_body.dart';
 import 'package:quikxchat/widgets/matrix.dart';
 import 'package:quikxchat/widgets/settings_switch_list_tile.dart';
+import 'package:quikxchat/widgets/settings_card_tile.dart';
 import 'settings_security.dart';
 
 class SettingsSecurityView extends StatelessWidget {
@@ -74,7 +75,15 @@ class SettingsSecurityView extends StatelessWidget {
                     defaultValue: AppConfig.sendPublicReadReceipts,
                   ),
 
-                  ListTile(
+                  SettingsCardTile(
+                    leading: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.red.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(Icons.block_outlined, color: Colors.red),
+                    ),
                     trailing: const Icon(Icons.chevron_right_outlined),
                     title: Text(L10n.of(context).blockedUsers),
                     subtitle: Text(
@@ -84,14 +93,25 @@ class SettingsSecurityView extends StatelessWidget {
                     ),
                     onTap: () =>
                         context.go('/rooms/settings/security/ignorelist'),
+                    position: (Matrix.of(context).client.encryption != null && PlatformInfos.isMobile) 
+                        ? CardPosition.first : CardPosition.single,
                   ),
                   if (Matrix.of(context).client.encryption != null) ...{
                     if (PlatformInfos.isMobile)
-                      ListTile(
+                      SettingsCardTile(
+                        leading: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.orange.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Icon(Icons.lock_outlined, color: Colors.orange),
+                        ),
                         trailing: const Icon(Icons.chevron_right_outlined),
                         title: Text(L10n.of(context).appLock),
                         subtitle: Text(L10n.of(context).appLockDescription),
                         onTap: controller.setAppLockAction,
+                        position: CardPosition.last,
                       ),
                   },
                   Divider(color: theme.dividerColor),
@@ -139,41 +159,74 @@ class SettingsSecurityView extends StatelessWidget {
                       ),
                     ),
                   ),
-                  ListTile(
+                  SettingsCardTile(
+                    leading: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(Icons.vpn_key_outlined, color: Colors.blue),
+                    ),
                     title: Text(L10n.of(context).yourPublicKey),
-                    leading: const Icon(Icons.vpn_key_outlined),
                     subtitle: SelectableText(
                       Matrix.of(context).client.fingerprintKey.beautified,
                       style: const TextStyle(fontFamily: 'RobotoMono'),
                     ),
+                    position: (capabilities?.mChangePassword?.enabled != false || error != null) 
+                        ? CardPosition.first : CardPosition.single,
                   ),
                   if (capabilities?.mChangePassword?.enabled != false ||
                       error != null)
-                    ListTile(
-                      leading: const Icon(Icons.password_outlined),
+                    SettingsCardTile(
+                      leading: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.green.withOpacity(0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(Icons.password_outlined, color: Colors.green),
+                      ),
                       trailing: const Icon(Icons.chevron_right_outlined),
                       title: Text(L10n.of(context).changePassword),
                       onTap: () =>
                           context.go('/rooms/settings/security/password'),
+                      position: CardPosition.last,
                     ),
-                  ListTile(
-                    iconColor: Colors.orange,
-                    leading: const Icon(Icons.delete_sweep_outlined),
+                  
+                  const SizedBox(height: 16),
+                  
+                  SettingsCardTile(
+                    leading: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(Icons.delete_sweep_outlined, color: Colors.orange),
+                    ),
                     title: Text(
                       L10n.of(context).dehydrate,
                       style: const TextStyle(color: Colors.orange),
                     ),
                     onTap: controller.dehydrateAction,
+                    position: CardPosition.first,
                   ),
-                  Divider(color: theme.dividerColor),
-                  ListTile(
-                    iconColor: Colors.red,
-                    leading: const Icon(Icons.delete_outlined),
+                  SettingsCardTile(
+                    leading: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.red.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(Icons.delete_outlined, color: Colors.red),
+                    ),
                     title: Text(
                       L10n.of(context).deleteAccount,
                       style: const TextStyle(color: Colors.red),
                     ),
                     onTap: controller.deleteAccountAction,
+                    position: CardPosition.last,
                   ),
                 ],
               );

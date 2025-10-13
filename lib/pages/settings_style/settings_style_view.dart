@@ -17,6 +17,7 @@ import 'package:quikxchat/widgets/matrix.dart';
 import 'package:quikxchat/widgets/mxc_image.dart';
 import '../../config/app_config.dart';
 import '../../widgets/settings_switch_list_tile.dart';
+import '../../widgets/settings_card_tile.dart';
 import 'settings_style.dart';
 
 class SettingsStyleView extends StatelessWidget {
@@ -65,11 +66,10 @@ class SettingsStyleView extends StatelessWidget {
                 ],
               ),
             ),
-            Divider(
-              color: theme.dividerColor,
-            ),
-            ListTile(
-              title: Text(
+            const SizedBox(height: 16),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
                 L10n.of(context).setColorTheme,
                 style: TextStyle(
                   color: theme.colorScheme.secondary,
@@ -133,11 +133,10 @@ class SettingsStyleView extends StatelessWidget {
                 );
               },
             ),
-            Divider(
-              color: theme.dividerColor,
-            ),
-            ListTile(
-              title: Text(
+            const SizedBox(height: 24),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
                 L10n.of(context).messagesStyle,
                 style: TextStyle(
                   color: theme.colorScheme.secondary,
@@ -277,20 +276,20 @@ class SettingsStyleView extends StatelessWidget {
                         ],
                       ),
                     ),
-                    Divider(
-                      color: theme.dividerColor,
-                    ),
-                    ListTile(
-                      title: TextButton.icon(
-                        style: TextButton.styleFrom(
-                          backgroundColor: theme.colorScheme.secondaryContainer,
-                          foregroundColor:
-                              theme.colorScheme.onSecondaryContainer,
+                    const SizedBox(height: 16),
+                    SettingsCardTile(
+                      leading: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.secondaryContainer,
+                          borderRadius: BorderRadius.circular(8),
                         ),
-                        onPressed: controller.setWallpaper,
-                        icon: const Icon(Icons.edit_outlined),
-                        label: Text(L10n.of(context).setWallpaper),
+                        child: Icon(
+                          Icons.wallpaper_outlined,
+                          color: theme.colorScheme.onSecondaryContainer,
+                        ),
                       ),
+                      title: Text(L10n.of(context).setWallpaper),
                       trailing: accountConfig.wallpaperUrl == null
                           ? null
                           : IconButton(
@@ -298,9 +297,17 @@ class SettingsStyleView extends StatelessWidget {
                               color: theme.colorScheme.error,
                               onPressed: controller.deleteChatWallpaper,
                             ),
+                      onTap: controller.setWallpaper,
+                      position: CardPosition.single,
                     ),
                     if (accountConfig.wallpaperUrl != null) ...[
-                      ListTile(title: Text(L10n.of(context).opacity)),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        child: Text(
+                          L10n.of(context).opacity,
+                          style: theme.textTheme.titleMedium,
+                        ),
+                      ),
                       Slider.adaptive(
                         min: 0.1,
                         max: 1.0,
@@ -310,7 +317,13 @@ class SettingsStyleView extends StatelessWidget {
                         onChanged: controller.updateWallpaperOpacity,
                         onChangeEnd: controller.saveWallpaperOpacity,
                       ),
-                      ListTile(title: Text(L10n.of(context).blur)),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                        child: Text(
+                          L10n.of(context).blur,
+                          style: theme.textTheme.titleMedium,
+                        ),
+                      ),
                       Slider.adaptive(
                         min: 0.0,
                         max: 10.0,
@@ -325,9 +338,18 @@ class SettingsStyleView extends StatelessWidget {
                 );
               },
             ),
-            ListTile(
-              title: Text(L10n.of(context).fontSize),
-              trailing: Text('× ${AppConfig.fontSizeFactor}'),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    L10n.of(context).fontSize,
+                    style: theme.textTheme.titleMedium,
+                  ),
+                  Text('× ${AppConfig.fontSizeFactor}'),
+                ],
+              ),
             ),
             Slider.adaptive(
               min: 0.5,
@@ -337,11 +359,10 @@ class SettingsStyleView extends StatelessWidget {
               semanticFormatterCallback: (d) => d.toString(),
               onChanged: controller.changeFontSizeFactor,
             ),
-            Divider(
-              color: theme.dividerColor,
-            ),
-            ListTile(
-              title: Text(
+            const SizedBox(height: 24),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Text(
                 L10n.of(context).overview,
                 style: TextStyle(
                   color: theme.colorScheme.secondary,

@@ -6,6 +6,7 @@ import 'package:quikxchat/config/themes.dart';
 import 'package:quikxchat/l10n/l10n.dart';
 import 'package:quikxchat/pages/settings_notifications/push_rule_extensions.dart';
 import 'package:quikxchat/widgets/layouts/max_width_body.dart';
+import 'package:quikxchat/widgets/settings_card_tile.dart';
 import '../../utils/localized_exception_extension.dart';
 import '../../utils/notification_service.dart';
 import '../../widgets/matrix.dart';
@@ -50,8 +51,9 @@ class SettingsNotificationsView extends StatelessWidget {
                 children: [
                   if (pushRules != null)
                     for (final category in pushCategories) ...[
-                      ListTile(
-                        title: Text(
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                        child: Text(
                           category.kind.localized(L10n.of(context)),
                           style: TextStyle(
                             color: theme.colorScheme.secondary,
@@ -60,53 +62,63 @@ class SettingsNotificationsView extends StatelessWidget {
                         ),
                       ),
                       for (final rule in category.rules)
-                        ListTile(
-                          title: Text(rule.getPushRuleName(L10n.of(context))),
-                          subtitle: Text.rich(
-                            TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: rule.getPushRuleDescription(
-                                    L10n.of(context),
-                                  ),
-                                ),
-                                const TextSpan(text: ' '),
-                                WidgetSpan(
-                                  child: InkWell(
-                                    onTap: () => controller.editPushRule(
-                                      rule,
-                                      category.kind,
+                        Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.surfaceContainerLow,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: ListTile(
+                            title: Text(rule.getPushRuleName(L10n.of(context))),
+                            subtitle: Text.rich(
+                              TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: rule.getPushRuleDescription(
+                                      L10n.of(context),
                                     ),
-                                    child: Text(
-                                      L10n.of(context).more,
-                                      style: TextStyle(
-                                        color: theme.colorScheme.primary,
-                                        decoration: TextDecoration.underline,
-                                        decorationColor:
-                                            theme.colorScheme.primary,
+                                  ),
+                                  const TextSpan(text: ' '),
+                                  WidgetSpan(
+                                    child: InkWell(
+                                      onTap: () => controller.editPushRule(
+                                        rule,
+                                        category.kind,
+                                      ),
+                                      child: Text(
+                                        L10n.of(context).more,
+                                        style: TextStyle(
+                                          color: theme.colorScheme.primary,
+                                          decoration: TextDecoration.underline,
+                                          decorationColor:
+                                              theme.colorScheme.primary,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
+                            ),
+                            trailing: Switch.adaptive(
+                              value: rule.enabled,
+                              onChanged: controller.isLoading
+                                  ? null
+                                  : rule.ruleId != '.m.rule.master' &&
+                                          Matrix.of(context)
+                                              .client
+                                              .allPushNotificationsMuted
+                                      ? null
+                                      : (_) => controller.togglePushRule(
+                                            category.kind,
+                                            rule,
+                                          ),
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
                             ),
                           ),
-                          trailing: Switch.adaptive(
-                            value: rule.enabled,
-                            onChanged: controller.isLoading
-                                ? null
-                                : rule.ruleId != '.m.rule.master' &&
-                                        Matrix.of(context)
-                                            .client
-                                            .allPushNotificationsMuted
-                                    ? null
-                                    : (_) => controller.togglePushRule(
-                                          category.kind,
-                                          rule,
-                                        ),
-                          ),
                         ),
-                      Divider(color: theme.dividerColor),
+                      const SizedBox(height: 16),
                     ],
 
 
@@ -144,38 +156,70 @@ class SettingsNotificationsView extends StatelessWidget {
                           break;
                       }
                       
-                      return ListTile(
+                      return SettingsCardTile(
+                        leading: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: statusColor?.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Icon(
+                            Icons.notifications_outlined,
+                            color: statusColor,
+                          ),
+                        ),
                         title: Text(L10n.of(context).pushNotificationStatus),
                         subtitle: Text(statusText),
-                        trailing: Icon(
-                          Icons.circle,
-                          color: statusColor,
-                          size: 12,
-                        ),
-                        dense: true,
+                        position: CardPosition.first,
                       );
                     },
                   ),
-                  ListTile(
+                  SettingsCardTile(
+                    leading: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(Icons.notifications, color: Colors.blue),
+                    ),
                     title: const Text('Test Push Notification'),
                     subtitle: const Text('Send a test notification to check if push notifications work'),
-                    trailing: const Icon(Icons.notifications),
                     onTap: controller.testPushNotification,
+                    position: CardPosition.middle,
                   ),
-                  ListTile(
+                  SettingsCardTile(
+                    leading: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.orange.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(Icons.info, color: Colors.orange),
+                    ),
                     title: const Text('Debug Pushers'),
                     subtitle: const Text('Show pusher details in logs'),
-                    trailing: const Icon(Icons.info),
                     onTap: controller.debugPushers,
+                    position: CardPosition.middle,
                   ),
-                  ListTile(
+                  SettingsCardTile(
+                    leading: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.green.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(Icons.settings, color: Colors.green),
+                    ),
                     title: const Text('Setup UnifiedPush'),
                     subtitle: const Text('Reconfigure UnifiedPush and pusher'),
-                    trailing: const Icon(Icons.settings),
                     onTap: controller.isLoading ? null : controller.recreatePusher,
+                    position: CardPosition.last,
                   ),
-                  ListTile(
-                    title: Text(
+                  const SizedBox(height: 16),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
                       L10n.of(context).devices,
                       style: TextStyle(
                         color: theme.colorScheme.secondary,
@@ -214,12 +258,26 @@ class SettingsNotificationsView extends StatelessWidget {
                         physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         itemCount: pushers.length,
-                        itemBuilder: (_, i) => ListTile(
+                        itemBuilder: (_, i) => SettingsCardTile(
+                          leading: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.primaryContainer.withOpacity(0.3),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Icon(
+                              Icons.devices_outlined,
+                              color: theme.colorScheme.primary,
+                            ),
+                          ),
                           title: Text(
                             '${pushers[i].appDisplayName} - ${pushers[i].appId}',
                           ),
                           subtitle: Text(pushers[i].data.url.toString()),
                           onTap: () => controller.onPusherTap(pushers[i]),
+                          position: pushers.length == 1 ? CardPosition.single : 
+                                   i == 0 ? CardPosition.first :
+                                   i == pushers.length - 1 ? CardPosition.last : CardPosition.middle,
                         ),
                       );
                     },

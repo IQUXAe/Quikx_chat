@@ -12,6 +12,7 @@ import 'package:quikxchat/utils/fluffy_share.dart';
 import 'package:quikxchat/widgets/avatar.dart';
 import 'package:quikxchat/widgets/matrix.dart';
 import 'package:quikxchat/widgets/navigation_rail.dart';
+import 'package:quikxchat/widgets/settings_card_tile.dart';
 import '../../widgets/mxc_image_viewer.dart';
 import 'settings.dart';
 
@@ -176,8 +177,9 @@ class SettingsView extends StatelessWidget {
                       );
                     },
                   ),
+                  // Группа аккаунта
                   if (accountManageUrl != null)
-                    ListTile(
+                    SettingsCardTile(
                       leading: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
@@ -192,10 +194,10 @@ class SettingsView extends StatelessWidget {
                         accountManageUrl,
                         mode: LaunchMode.inAppBrowserView,
                       ),
+                      position: showChatBackupBanner != null ? CardPosition.first : CardPosition.single,
                     ),
-                  Divider(color: theme.dividerColor),
                   if (showChatBackupBanner == null)
-                    ListTile(
+                    SettingsCardTile(
                       leading: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
@@ -206,12 +208,11 @@ class SettingsView extends StatelessWidget {
                       ),
                       title: Text(L10n.of(context).chatBackup),
                       trailing: const CircularProgressIndicator.adaptive(),
+                      position: accountManageUrl != null ? CardPosition.last : CardPosition.single,
                     )
                   else
-                    SwitchListTile.adaptive(
-                      controlAffinity: ListTileControlAffinity.trailing,
-                      value: controller.showChatBackupBanner == false,
-                      secondary: Container(
+                    SettingsCardSwitch(
+                      leading: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           color: Colors.amber.withOpacity(0.1),
@@ -220,12 +221,14 @@ class SettingsView extends StatelessWidget {
                         child: const Icon(Icons.backup_outlined, color: Colors.amber),
                       ),
                       title: Text(L10n.of(context).chatBackup),
+                      value: controller.showChatBackupBanner == false,
                       onChanged: controller.firstRunBootstrapAction,
+                      position: accountManageUrl != null ? CardPosition.last : CardPosition.single,
                     ),
-                  Divider(
-                    color: theme.dividerColor,
-                  ),
-                  ListTile(
+                  const SizedBox(height: 16),
+                  
+                  // Группа основных настроек
+                  SettingsCardTile(
                     leading: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
@@ -235,12 +238,11 @@ class SettingsView extends StatelessWidget {
                       child: const Icon(Icons.palette_outlined, color: Colors.purple),
                     ),
                     title: Text(L10n.of(context).changeTheme),
-                    tileColor: activeRoute.startsWith('/rooms/settings/style')
-                        ? theme.colorScheme.surfaceContainerHigh
-                        : null,
+                    isActive: activeRoute.startsWith('/rooms/settings/style'),
                     onTap: controller.navigateToStyle,
+                    position: CardPosition.first,
                   ),
-                  ListTile(
+                  SettingsCardTile(
                     leading: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
@@ -250,13 +252,11 @@ class SettingsView extends StatelessWidget {
                       child: const Icon(Icons.notifications_outlined, color: Colors.orange),
                     ),
                     title: Text(L10n.of(context).notifications),
-                    tileColor:
-                        activeRoute.startsWith('/rooms/settings/notifications')
-                            ? theme.colorScheme.surfaceContainerHigh
-                            : null,
+                    isActive: activeRoute.startsWith('/rooms/settings/notifications'),
                     onTap: controller.navigateToNotifications,
+                    position: CardPosition.middle,
                   ),
-                  ListTile(
+                  SettingsCardTile(
                     leading: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
@@ -266,12 +266,11 @@ class SettingsView extends StatelessWidget {
                       child: const Icon(Icons.devices_outlined, color: Colors.green),
                     ),
                     title: Text(L10n.of(context).devices),
+                    isActive: activeRoute.startsWith('/rooms/settings/devices'),
                     onTap: controller.navigateToDevices,
-                    tileColor: activeRoute.startsWith('/rooms/settings/devices')
-                        ? theme.colorScheme.surfaceContainerHigh
-                        : null,
+                    position: CardPosition.middle,
                   ),
-                  ListTile(
+                  SettingsCardTile(
                     leading: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
@@ -281,12 +280,11 @@ class SettingsView extends StatelessWidget {
                       child: const Icon(Icons.chat_bubble_outline, color: Colors.blue),
                     ),
                     title: Text(L10n.of(context).chat),
+                    isActive: activeRoute.startsWith('/rooms/settings/chat'),
                     onTap: controller.navigateToChat,
-                    tileColor: activeRoute.startsWith('/rooms/settings/chat')
-                        ? theme.colorScheme.surfaceContainerHigh
-                        : null,
+                    position: CardPosition.middle,
                   ),
-                  ListTile(
+                  SettingsCardTile(
                     leading: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
@@ -296,13 +294,11 @@ class SettingsView extends StatelessWidget {
                       child: const Icon(Icons.shield_outlined, color: Colors.red),
                     ),
                     title: Text(L10n.of(context).security),
+                    isActive: activeRoute.startsWith('/rooms/settings/security'),
                     onTap: controller.navigateToSecurity,
-                    tileColor:
-                        activeRoute.startsWith('/rooms/settings/security')
-                            ? theme.colorScheme.surfaceContainerHigh
-                            : null,
+                    position: CardPosition.middle,
                   ),
-                  ListTile(
+                  SettingsCardTile(
                     leading: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
@@ -312,15 +308,15 @@ class SettingsView extends StatelessWidget {
                       child: const Icon(Icons.call_outlined, color: Colors.deepPurple),
                     ),
                     title: const Text('Настройки VoIP'),
+                    isActive: activeRoute.startsWith('/rooms/settings/voip'),
                     onTap: () => context.go('/rooms/settings/voip'),
-                    tileColor:
-                        activeRoute.startsWith('/rooms/settings/voip')
-                            ? theme.colorScheme.surfaceContainerHigh
-                            : null,
+                    position: CardPosition.last,
                   ),
 
-                  Divider(color: theme.dividerColor),
-                  ListTile(
+                  const SizedBox(height: 16),
+                  
+                  // Группа информации
+                  SettingsCardTile(
                     leading: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
@@ -335,13 +331,11 @@ class SettingsView extends StatelessWidget {
                             'homeserver',
                       ),
                     ),
+                    isActive: activeRoute.startsWith('/rooms/settings/homeserver'),
                     onTap: controller.navigateToHomeserver,
-                    tileColor:
-                        activeRoute.startsWith('/rooms/settings/homeserver')
-                            ? theme.colorScheme.surfaceContainerHigh
-                            : null,
+                    position: CardPosition.first,
                   ),
-                  ListTile(
+                  SettingsCardTile(
                     leading: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
@@ -352,8 +346,9 @@ class SettingsView extends StatelessWidget {
                     ),
                     title: Text(L10n.of(context).privacy),
                     onTap: () => launchUrlString(AppConfig.privacyUrl),
+                    position: CardPosition.middle,
                   ),
-                  ListTile(
+                  SettingsCardTile(
                     leading: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
@@ -364,9 +359,13 @@ class SettingsView extends StatelessWidget {
                     ),
                     title: Text(L10n.of(context).about),
                     onTap: () => _showAboutDialog(context),
+                    position: CardPosition.last,
                   ),
-                  Divider(color: theme.dividerColor),
-                  ListTile(
+                  
+                  const SizedBox(height: 16),
+                  
+                  // Выход отдельно
+                  SettingsCardTile(
                     leading: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
@@ -377,6 +376,7 @@ class SettingsView extends StatelessWidget {
                     ),
                     title: Text(L10n.of(context).logout),
                     onTap: controller.logoutAction,
+                    position: CardPosition.single,
                   ),
                 ],
               ),

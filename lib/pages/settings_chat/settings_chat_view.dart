@@ -10,6 +10,7 @@ import 'package:quikxchat/utils/platform_infos.dart';
 import 'package:quikxchat/widgets/layouts/max_width_body.dart';
 import 'package:quikxchat/widgets/matrix.dart';
 import 'package:quikxchat/widgets/settings_switch_list_tile.dart';
+import 'package:quikxchat/widgets/settings_card_tile.dart';
 import '../../utils/message_translator.dart';
 import '../../utils/translation_providers.dart';
 import 'settings_chat.dart';
@@ -120,13 +121,15 @@ class _SettingsChatViewState extends State<SettingsChatView> {
               ),
 
               
-              // Translation Settings
+              const SizedBox(height: 16),
+              
+              // Дополнительные настройки
               Builder(
                 builder: (context) {
                   final provider = _currentProvider ?? TranslationProvider.disabled;
                   final isEnabled = provider != TranslationProvider.disabled;
                   
-                  return ListTile(
+                  return SettingsCardTile(
                     leading: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
@@ -145,15 +148,13 @@ class _SettingsChatViewState extends State<SettingsChatView> {
                     trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                     onTap: () async {
                       await context.push('/rooms/settings/chat/translation');
-                      _loadTranslationProvider(); // Обновляем после возврата
+                      _loadTranslationProvider();
                     },
+                    position: CardPosition.first,
                   );
                 },
               ),
-              
-              const SizedBox(height: 8),
-              Divider(color: theme.dividerColor),
-              ListTile(
+              SettingsCardTile(
                 leading: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
@@ -167,6 +168,7 @@ class _SettingsChatViewState extends State<SettingsChatView> {
                 subtitle: Text(L10n.of(context).personalEmojisDescription),
                 onTap: () => context.go('/rooms/settings/chat/emotes'),
                 trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                position: CardPosition.last,
               ),
             ],
           ),

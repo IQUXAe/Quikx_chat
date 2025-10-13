@@ -9,6 +9,7 @@ import 'package:quikxchat/l10n/l10n.dart';
 import 'package:quikxchat/utils/optimized_http_client.dart';
 import 'package:quikxchat/widgets/avatar.dart';
 import 'package:quikxchat/widgets/matrix.dart';
+import 'package:quikxchat/widgets/settings_card_tile.dart';
 
 class AppDrawer extends StatefulWidget {
   const AppDrawer({super.key});
@@ -33,6 +34,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
     return SlideTransition(
       position: _slideAnimation,
       child: Drawer(
+        backgroundColor: theme.colorScheme.surfaceContainerLowest,
         child: Column(
           children: [
             // Header with large profile photo
@@ -45,82 +47,98 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
               child: ListView(
                 padding: EdgeInsets.zero,
                 children: [
-                  _buildDrawerItem(
+                  const SizedBox(height: 8),
+                  // Группа настроек - НОВЫЙ ДИЗАЙН
+                  _buildGroupedDrawerItem(
                     context,
                     icon: Icons.settings_outlined,
                     iconColor: Colors.grey,
                     title: L10n.of(context).settings,
                     onTap: () => context.go('/rooms/settings'),
+                    position: CardPosition.first,
                     animationIndex: 0,
                   ),
-                  _buildDrawerItem(
+                  _buildGroupedDrawerItem(
                     context,
                     icon: Icons.security_outlined,
                     iconColor: Colors.red,
                     title: L10n.of(context).security,
                     onTap: () => context.go('/rooms/settings/security'),
+                    position: CardPosition.middle,
                     animationIndex: 1,
                   ),
-                  _buildDrawerItem(
+                  _buildGroupedDrawerItem(
                     context,
                     icon: Icons.notifications_outlined,
                     iconColor: Colors.orange,
                     title: L10n.of(context).notifications,
                     onTap: () => context.go('/rooms/settings/notifications'),
+                    position: CardPosition.middle,
                     animationIndex: 2,
                   ),
-                  _buildDrawerItem(
+                  _buildGroupedDrawerItem(
                     context,
                     icon: Icons.palette_outlined,
                     iconColor: Colors.purple,
                     title: L10n.of(context).changeTheme,
                     onTap: () => context.go('/rooms/settings/style'),
+                    position: CardPosition.last,
                     animationIndex: 3,
                   ),
-                  const Divider(),
-                  _buildDrawerItem(
+                  
+                  const SizedBox(height: 16),
+                  
+                  // Группа действий
+                  _buildGroupedDrawerItem(
                     context,
                     icon: Icons.archive_outlined,
                     iconColor: Colors.brown,
                     title: L10n.of(context).archive,
                     onTap: () => context.go('/rooms/archive'),
+                    position: CardPosition.first,
                     animationIndex: 4,
                   ),
-                  _buildDrawerItem(
+                  _buildGroupedDrawerItem(
                     context,
                     icon: Icons.group_add_outlined,
                     iconColor: Colors.green,
                     title: L10n.of(context).newGroup,
                     onTap: () => context.go('/rooms/newgroup'),
+                    position: CardPosition.middle,
                     animationIndex: 5,
                   ),
-                  _buildDrawerItem(
+                  _buildGroupedDrawerItem(
                     context,
                     icon: Icons.workspaces_outlined,
                     iconColor: Colors.blue,
                     title: L10n.of(context).newSpace,
                     onTap: () => context.go('/rooms/newspace'),
+                    position: CardPosition.last,
                     animationIndex: 6,
                   ),
-                  const Divider(),
-                  _buildDrawerItem(
+                  
+                  const SizedBox(height: 16),
+                  
+                  // Группа информации
+                  _buildGroupedDrawerItem(
                     context,
                     icon: Icons.system_update_outlined,
                     iconColor: Colors.teal,
                     title: L10n.of(context).checkUpdates,
                     onTap: () => _checkForUpdates(context),
                     closeDrawer: false,
+                    position: CardPosition.first,
                     animationIndex: 7,
                   ),
-
-                  _buildDrawerItem(
+                  _buildGroupedDrawerItem(
                     context,
                     icon: Icons.info_outlined,
                     iconColor: Colors.cyan,
                     title: L10n.of(context).about,
                     onTap: () => _showAboutDialog(context),
                     closeDrawer: false,
-                    animationIndex: 9,
+                    position: CardPosition.last,
+                    animationIndex: 8,
                   ),
                 ],
               ),
@@ -338,17 +356,52 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
     );
   }
 
-  Widget _buildDrawerItem(
+  Widget _buildGroupedDrawerItem(
     BuildContext context, {
     required IconData icon,
     required String title,
     required VoidCallback onTap,
     Color? iconColor,
     bool closeDrawer = true,
+    required CardPosition position,
     required int animationIndex,
   }) {
     if (animationIndex >= _itemAnimations.length) {
       return const SizedBox.shrink();
+    }
+    
+    final theme = Theme.of(context);
+    
+    EdgeInsets getMargin() {
+      switch (position) {
+        case CardPosition.single:
+          return const EdgeInsets.symmetric(horizontal: 16, vertical: 4);
+        case CardPosition.first:
+          return const EdgeInsets.only(left: 16, right: 16, top: 4, bottom: 1);
+        case CardPosition.middle:
+          return const EdgeInsets.only(left: 16, right: 16, top: 1, bottom: 1);
+        case CardPosition.last:
+          return const EdgeInsets.only(left: 16, right: 16, top: 1, bottom: 4);
+      }
+    }
+    
+    BorderRadius getBorderRadius() {
+      switch (position) {
+        case CardPosition.single:
+          return BorderRadius.circular(12);
+        case CardPosition.first:
+          return const BorderRadius.only(
+            topLeft: Radius.circular(12),
+            topRight: Radius.circular(12),
+          );
+        case CardPosition.middle:
+          return BorderRadius.zero;
+        case CardPosition.last:
+          return const BorderRadius.only(
+            bottomLeft: Radius.circular(12),
+            bottomRight: Radius.circular(12),
+          );
+      }
     }
     
     return AnimatedBuilder(
@@ -362,46 +415,39 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
           child: Opacity(
             opacity: _itemAnimations[animationIndex].value,
             child: Container(
-              margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 1.5),
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(8),
-                  onTap: () {
-                    if (closeDrawer) {
-                      Navigator.of(context).pop();
-                    }
-                    onTap();
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                    child: Row(
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(7),
-                          decoration: BoxDecoration(
-                            color: (iconColor ?? Colors.grey).withOpacity(0.12),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: Icon(
-                            icon,
-                            color: iconColor ?? Colors.grey,
-                            size: 19,
-                          ),
-                        ),
-                        const SizedBox(width: 14),
-                        Expanded(
-                          child: Text(
-                            title,
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+              margin: getMargin(),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.surfaceContainer,
+                borderRadius: getBorderRadius(),
+              ),
+              child: ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: (iconColor ?? Colors.grey).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
                   ),
+                  child: Icon(
+                    icon,
+                    color: iconColor ?? Colors.grey,
+                    size: 20,
+                  ),
+                ),
+                title: Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                onTap: () {
+                  if (closeDrawer) {
+                    Navigator.of(context).pop();
+                  }
+                  onTap();
+                },
+                shape: RoundedRectangleBorder(
+                  borderRadius: getBorderRadius(),
                 ),
               ),
             ),
