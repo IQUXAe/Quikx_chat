@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 enum CardPosition { single, first, middle, last }
 
-class SettingsCardTile extends StatelessWidget {
+class SettingsCardTile extends StatefulWidget {
   final Widget leading;
   final Widget title;
   final Widget? subtitle;
@@ -22,8 +22,38 @@ class SettingsCardTile extends StatelessWidget {
     this.position = CardPosition.single,
   });
 
+  @override
+  State<SettingsCardTile> createState() => _SettingsCardTileState();
+}
+
+class _SettingsCardTileState extends State<SettingsCardTile> with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 100),
+      vsync: this,
+    );
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.95,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    ));
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
   BorderRadius _getBorderRadius() {
-    switch (position) {
+    switch (widget.position) {
       case CardPosition.single:
         return BorderRadius.circular(12);
       case CardPosition.first:
@@ -42,7 +72,7 @@ class SettingsCardTile extends StatelessWidget {
   }
 
   EdgeInsets _getMargin() {
-    switch (position) {
+    switch (widget.position) {
       case CardPosition.single:
         return const EdgeInsets.symmetric(horizontal: 16, vertical: 4);
       case CardPosition.first:
@@ -58,29 +88,42 @@ class SettingsCardTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     
-    return Container(
-      margin: _getMargin(),
-      decoration: BoxDecoration(
-        color: isActive 
-            ? theme.colorScheme.surfaceContainerHigh
-            : theme.colorScheme.surfaceContainerLow,
-        borderRadius: _getBorderRadius(),
-      ),
-      child: ListTile(
-        leading: leading,
-        title: title,
-        subtitle: subtitle,
-        trailing: trailing,
-        onTap: onTap,
-        shape: RoundedRectangleBorder(
-          borderRadius: _getBorderRadius(),
-        ),
-      ),
+    return AnimatedBuilder(
+      animation: _scaleAnimation,
+      builder: (context, child) {
+        return Transform.scale(
+          scale: _scaleAnimation.value,
+          child: Container(
+            margin: _getMargin(),
+            decoration: BoxDecoration(
+              color: widget.isActive 
+                  ? theme.colorScheme.surfaceContainerHigh
+                  : theme.colorScheme.surfaceContainerLow,
+              borderRadius: _getBorderRadius(),
+            ),
+            child: ListTile(
+              leading: widget.leading,
+              title: widget.title,
+              subtitle: widget.subtitle,
+              trailing: widget.trailing,
+              onTap: widget.onTap == null ? null : () {
+                _animationController.forward().then((_) {
+                  _animationController.reverse();
+                });
+                widget.onTap!();
+              },
+              shape: RoundedRectangleBorder(
+                borderRadius: _getBorderRadius(),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }
 
-class SettingsCardSwitch extends StatelessWidget {
+class SettingsCardSwitch extends StatefulWidget {
   final Widget leading;
   final Widget title;
   final Widget? subtitle;
@@ -100,8 +143,38 @@ class SettingsCardSwitch extends StatelessWidget {
     this.position = CardPosition.single,
   });
 
+  @override
+  State<SettingsCardSwitch> createState() => _SettingsCardSwitchState();
+}
+
+class _SettingsCardSwitchState extends State<SettingsCardSwitch> with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 100),
+      vsync: this,
+    );
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.95,
+    ).animate(CurvedAnimation(
+      parent: _animationController,
+      curve: Curves.easeInOut,
+    ));
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
   BorderRadius _getBorderRadius() {
-    switch (position) {
+    switch (widget.position) {
       case CardPosition.single:
         return BorderRadius.circular(12);
       case CardPosition.first:
@@ -120,7 +193,7 @@ class SettingsCardSwitch extends StatelessWidget {
   }
 
   EdgeInsets _getMargin() {
-    switch (position) {
+    switch (widget.position) {
       case CardPosition.single:
         return const EdgeInsets.symmetric(horizontal: 16, vertical: 4);
       case CardPosition.first:
@@ -136,25 +209,38 @@ class SettingsCardSwitch extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     
-    return Container(
-      margin: _getMargin(),
-      decoration: BoxDecoration(
-        color: isActive 
-            ? theme.colorScheme.surfaceContainerHigh
-            : theme.colorScheme.surfaceContainerLow,
-        borderRadius: _getBorderRadius(),
-      ),
-      child: SwitchListTile.adaptive(
-        secondary: leading,
-        title: title,
-        subtitle: subtitle,
-        value: value,
-        onChanged: onChanged,
-        controlAffinity: ListTileControlAffinity.trailing,
-        shape: RoundedRectangleBorder(
-          borderRadius: _getBorderRadius(),
-        ),
-      ),
+    return AnimatedBuilder(
+      animation: _scaleAnimation,
+      builder: (context, child) {
+        return Transform.scale(
+          scale: _scaleAnimation.value,
+          child: Container(
+            margin: _getMargin(),
+            decoration: BoxDecoration(
+              color: widget.isActive 
+                  ? theme.colorScheme.surfaceContainerHigh
+                  : theme.colorScheme.surfaceContainerLow,
+              borderRadius: _getBorderRadius(),
+            ),
+            child: SwitchListTile.adaptive(
+              secondary: widget.leading,
+              title: widget.title,
+              subtitle: widget.subtitle,
+              value: widget.value,
+              onChanged: widget.onChanged == null ? null : (value) {
+                _animationController.forward().then((_) {
+                  _animationController.reverse();
+                });
+                widget.onChanged!(value);
+              },
+              controlAffinity: ListTileControlAffinity.trailing,
+              shape: RoundedRectangleBorder(
+                borderRadius: _getBorderRadius(),
+              ),
+            ),
+          ),
+        );
+      },
     );
   }
 }

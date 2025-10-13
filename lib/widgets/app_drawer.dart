@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
@@ -120,16 +121,17 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                   const SizedBox(height: 16),
                   
                   // Группа информации
-                  _buildGroupedDrawerItem(
-                    context,
-                    icon: Icons.system_update_outlined,
-                    iconColor: Colors.teal,
-                    title: L10n.of(context).checkUpdates,
-                    onTap: () => _checkForUpdates(context),
-                    closeDrawer: false,
-                    position: CardPosition.first,
-                    animationIndex: 7,
-                  ),
+                  if (!kIsWeb)
+                    _buildGroupedDrawerItem(
+                      context,
+                      icon: Icons.system_update_outlined,
+                      iconColor: Colors.teal,
+                      title: L10n.of(context).checkUpdates,
+                      onTap: () => _checkForUpdates(context),
+                      closeDrawer: false,
+                      position: CardPosition.first,
+                      animationIndex: 7,
+                    ),
                   _buildGroupedDrawerItem(
                     context,
                     icon: Icons.info_outlined,
@@ -137,7 +139,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                     title: L10n.of(context).about,
                     onTap: () => _showAboutDialog(context),
                     closeDrawer: false,
-                    position: CardPosition.last,
+                    position: kIsWeb ? CardPosition.single : CardPosition.last,
                     animationIndex: 8,
                   ),
                 ],
@@ -414,42 +416,57 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
           ),
           child: Opacity(
             opacity: _itemAnimations[animationIndex].value,
-            child: Container(
-              margin: getMargin(),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.surfaceContainer,
-                borderRadius: getBorderRadius(),
-              ),
-              child: ListTile(
-                leading: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: (iconColor ?? Colors.grey).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
+            child: TweenAnimationBuilder<double>(
+              duration: const Duration(milliseconds: 100),
+              tween: Tween<double>(begin: 1.0, end: 1.0),
+              builder: (context, scale, child) {
+                return Transform.scale(
+                  scale: scale,
+                  child: Container(
+                    margin: getMargin(),
+                    decoration: BoxDecoration(
+                      color: theme.colorScheme.surfaceContainer,
+                      borderRadius: getBorderRadius(),
+                    ),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: getBorderRadius(),
+                        onTap: () {
+                          if (closeDrawer) {
+                            Navigator.of(context).pop();
+                          }
+                          onTap();
+                        },
+                        child: ListTile(
+                          leading: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: (iconColor ?? Colors.grey).withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Icon(
+                              icon,
+                              color: iconColor ?? Colors.grey,
+                              size: 20,
+                            ),
+                          ),
+                          title: Text(
+                            title,
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: getBorderRadius(),
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                  child: Icon(
-                    icon,
-                    color: iconColor ?? Colors.grey,
-                    size: 20,
-                  ),
-                ),
-                title: Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                onTap: () {
-                  if (closeDrawer) {
-                    Navigator.of(context).pop();
-                  }
-                  onTap();
-                },
-                shape: RoundedRectangleBorder(
-                  borderRadius: getBorderRadius(),
-                ),
-              ),
+                );
+              },
             ),
           ),
         );
@@ -458,21 +475,26 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
   }
 
   void _checkForUpdates(BuildContext context) async {
-    final data = await OptimizedHttpClient().getJson('https://iquxae.pythonanywhere.com/api/updates');
-    
-    if (data != null) {
-      final latestVersion = data['latest_version'];
-      const currentVersion = AppVersion.version;
-      final minSupportedVersion = data['min_supported_version'] ?? '0.1.0';
+    try {
+      final data = await OptimizedHttpClient().getJson('https://api.github.com/repos/IQUXAe/Quikx_chat/releases/latest');
       
-      if (_isVersionLower(currentVersion, minSupportedVersion)) {
-        _showForceUpdateDialog(context, data);
-      } else if (latestVersion != currentVersion) {
-        _showUpdateDialog(context, data);
+      if (data != null) {
+        final latestVersion = data['tag_name']?.replaceFirst('v', '') ?? data['name'];
+        const currentVersion = AppVersion.version;
+        
+        if (latestVersion != currentVersion && latestVersion != null) {
+          _showUpdateDialog(context, {
+            'latest_version': latestVersion,
+            'release_notes': data['body'] ?? 'Новая версия доступна',
+            'download_url': data['html_url'],
+          });
+        } else {
+          _showNoUpdateDialog(context);
+        }
       } else {
-        _showNoUpdateDialog(context);
+        _showUpdateErrorDialog(context);
       }
-    } else {
+    } catch (e) {
       _showUpdateErrorDialog(context);
     }
   }

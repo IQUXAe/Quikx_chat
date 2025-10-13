@@ -874,7 +874,7 @@ class Message extends StatelessWidget {
                                                           FutureBuilder<bool>(
                                                             future: MessageTranslator.isEnabled,
                                                             builder: (context, snapshot) {
-                                                              if (!(snapshot.data ?? true)) return const SizedBox.shrink();
+                                                              if (!(snapshot.data ?? false)) return const SizedBox.shrink();
                                                               return Padding(
                                                                 padding: const EdgeInsets.only(right: 8.0),
                                                                 child: _TranslateButton(event: event, timeline: timeline),
