@@ -731,6 +731,10 @@ class ChatController extends State<ChatPageWithRoom>
     // Save text for animation
     final messageText = sendController.text;
     
+    // Save reply and edit events before clearing
+    final currentReplyEvent = replyEvent;
+    final currentEditEvent = editEvent;
+    
     // Clear input field immediately for better UX
     sendController.value = TextEditingValue(
       text: pendingText,
@@ -746,12 +750,12 @@ class ChatController extends State<ChatPageWithRoom>
       inputLinkPreview = null;
     });
 
-    // Send message
+    // Send message with saved reply/edit events
     // ignore: unawaited_futures
     room.sendTextEvent(
       messageText,
-      inReplyTo: replyEvent,
-      editEventId: editEvent?.eventId,
+      inReplyTo: currentReplyEvent,
+      editEventId: currentEditEvent?.eventId,
       parseCommands: parseCommands,
     );
   }
@@ -858,9 +862,17 @@ class ChatController extends State<ChatPageWithRoom>
       name: result.fileName ?? audioFile.path,
     );
 
+    // Save reply event before clearing
+    final currentReplyEvent = replyEvent;
+    
+    // Clear reply event in UI immediately
+    setState(() {
+      replyEvent = null;
+    });
+    
     await room.sendFileEvent(
       file,
-      inReplyTo: replyEvent,
+      inReplyTo: currentReplyEvent,
       extraContent: {
         'info': {
           ...file.info,
@@ -881,9 +893,6 @@ class ChatController extends State<ChatPageWithRoom>
         ),
       );
       return null;
-    });
-    setState(() {
-      replyEvent = null;
     });
   }
 
