@@ -698,9 +698,11 @@ class BackgroundPush {
       
       final upFunctions = UPFunctions();
       final unifiedPushUi = UnifiedPushUi(
-        matrix!.context, 
-        ["default"], 
-        upFunctions,
+        context: matrix!.context,
+        instances: ["default"],
+        unifiedPushFunctions: upFunctions,
+        showNoDistribDialog: true,
+        onNoDistribDialogDismissed: () {},
       );
       
       await unifiedPushUi.registerAppWithDialog();
@@ -930,6 +932,10 @@ class BackgroundPush {
     upAction = true;
     final messageStr = utf8.decode(message);
 
+    print('[Push] === RECEIVED UP MESSAGE ===');
+    print('[Push] Message length: ${message.length} bytes');
+    print('[Push] Raw message: $messageStr');
+    
     if (kDebugMode) {
       Logs().i('[Push] === RECEIVED UP MESSAGE ===');
       Logs().i('[Push] Message length: ${message.length} bytes');

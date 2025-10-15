@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:collection/collection.dart';
+import 'package:cross_file/cross_file.dart';
 import 'package:desktop_drop/desktop_drop.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
@@ -23,7 +24,7 @@ import 'package:quikxchat/config/themes.dart';
 import 'package:quikxchat/l10n/l10n.dart';
 import 'package:quikxchat/pages/chat/chat_view.dart';
 import 'package:quikxchat/pages/chat/event_info_dialog.dart';
-import 'package:quikxchat/pages/chat/recording_dialog.dart';
+
 import 'package:quikxchat/pages/chat_details/chat_details.dart';
 import 'package:quikxchat/utils/error_reporter.dart';
 import 'package:quikxchat/utils/file_selector.dart';
@@ -370,6 +371,16 @@ class ChatController extends State<ChatPageWithRoom>
     readMarkerEventId = room.hasNewMessages ? room.fullyRead : '';
     WidgetsBinding.instance.addObserver(this);
     
+    // Подписываемся на обновления комнаты для мгновенного обновления статусов
+    room.onUpdate.stream.listen((_) {
+      if (mounted) {
+        // Принудительно обновляем UI при любых изменениях в комнате
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted) setState(() {});
+        });
+      }
+    });
+    
     // Предзагрузка данных чата с задержкой
     Future.delayed(const Duration(milliseconds: 500), () {
       if (mounted) _preloadChatData();
@@ -484,6 +495,8 @@ class ChatController extends State<ChatPageWithRoom>
       if (mounted) {
         setState(() {});
         setReadMarker();
+        // Принудительно обновляем статусы сообщений
+        room.onUpdate.add('status_update');
       }
     });
     
@@ -638,6 +651,10 @@ class ChatController extends State<ChatPageWithRoom>
     )
         .then((_) {
       _setReadMarkerFuture = null;
+      // Обновляем UI после установки маркера прочитанности
+      if (mounted) {
+        setState(() {});
+      }
     });
     if (eventId == null || eventId == timeline.room.lastEvent?.eventId) {
       Matrix.of(context).backgroundPush?.cancelNotification(roomId);
@@ -824,31 +841,14 @@ class ChatController extends State<ChatPageWithRoom>
     );
   }
 
-  void voiceMessageAction() async {
-    room.client.getConfig(); // Preload server file configuration.
-
+  Future<void> onVoiceMessageSend(
+    String path,
+    int duration,
+    List<int> waveform,
+    String? fileName,
+  ) async {
     final scaffoldMessenger = ScaffoldMessenger.of(context);
-    if (PlatformInfos.isAndroid) {
-      final info = await DeviceInfoPlugin().androidInfo;
-      if (info.version.sdkInt < 19) {
-        showOkAlertDialog(
-          context: context,
-          title: L10n.of(context).unsupportedAndroidVersion,
-          message: L10n.of(context).unsupportedAndroidVersionLong,
-          okLabel: L10n.of(context).close,
-        );
-        return;
-      }
-    }
-
-    if (await AudioRecorder().hasPermission() == false) return;
-    final result = await showDialog<RecordingResult>(
-      context: context,
-      barrierDismissible: false,
-      builder: (c) => const RecordingDialog(),
-    );
-    if (result == null) return;
-    final audioFile = XFile(result.path);
+    final audioFile = XFile(path);
 
     final bytesResult = await showFutureLoadingDialog(
       context: context,
@@ -859,29 +859,24 @@ class ChatController extends State<ChatPageWithRoom>
 
     final file = MatrixAudioFile(
       bytes: bytes,
-      name: result.fileName ?? audioFile.path,
+      name: fileName ?? audioFile.path,
     );
 
-    // Save reply event before clearing
-    final currentReplyEvent = replyEvent;
-    
-    // Clear reply event in UI immediately
     setState(() {
       replyEvent = null;
     });
-    
-    await room.sendFileEvent(
+    room.sendFileEvent(
       file,
-      inReplyTo: currentReplyEvent,
+      inReplyTo: replyEvent,
       extraContent: {
         'info': {
           ...file.info,
-          'duration': result.duration,
+          'duration': duration,
         },
         'org.matrix.msc3245.voice': {},
         'org.matrix.msc1767.audio': {
-          'duration': result.duration,
-          'waveform': result.waveform,
+          'duration': duration,
+          'waveform': waveform,
         },
       },
     ).catchError((e) {
@@ -894,7 +889,10 @@ class ChatController extends State<ChatPageWithRoom>
       );
       return null;
     });
+    return;
   }
+
+
 
   void hideEmojiPicker() {
     setState(() => showEmojiPicker = false);

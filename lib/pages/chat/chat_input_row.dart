@@ -1,80 +1,28 @@
 import 'package:flutter/material.dart';
 
+import 'package:animations/animations.dart';
 import 'package:matrix/matrix.dart';
 
 import 'package:quikxchat/config/app_config.dart';
 import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/pages/chat/recording_input_row.dart';
+import 'package:quikxchat/pages/chat/recording_view_model.dart';
 import 'package:quikxchat/utils/other_party_can_receive.dart';
 import 'package:quikxchat/utils/platform_infos.dart';
 import 'package:quikxchat/widgets/avatar.dart';
 import 'package:quikxchat/widgets/matrix.dart';
-import 'package:quikxchat/widgets/message_send_animation.dart';
 import '../../config/themes.dart';
 import 'chat.dart';
 import 'input_bar.dart';
 
-class ChatInputRow extends StatefulWidget {
+class ChatInputRow extends StatelessWidget {
   final ChatController controller;
 
   const ChatInputRow(this.controller, {super.key});
 
   @override
-  State<ChatInputRow> createState() => _ChatInputRowState();
-}
-
-class _ChatInputRowState extends State<ChatInputRow> with TickerProviderStateMixin {
-  bool _triggerSendAnimation = false;
-  late AnimationController _buttonScaleController;
-  late Animation<double> _buttonScaleAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _buttonScaleController = AnimationController(
-      duration: QuikxChatThemes.fastAnimationDuration,
-      vsync: this,
-    );
-    _buttonScaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.9,
-    ).animate(CurvedAnimation(
-      parent: _buttonScaleController,
-      curve: QuikxChatThemes.fastAnimationCurve,
-    ),);
-  }
-
-  @override
-  void dispose() {
-    _buttonScaleController.dispose();
-    super.dispose();
-  }
-
-  void _onSendPressed() {
-    if (widget.controller.sendController.text.trim().isEmpty) return;
-    
-    setState(() {
-      _triggerSendAnimation = true;
-    });
-    
-    _buttonScaleController.forward().then((_) {
-      _buttonScaleController.reverse();
-    });
-    
-    widget.controller.send();
-    
-    Future.delayed(const Duration(milliseconds: 500), () {
-      if (mounted) {
-        setState(() {
-          _triggerSendAnimation = false;
-        });
-      }
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final controller = widget.controller;
 
     const height = 48.0;
 
@@ -95,10 +43,18 @@ class _ChatInputRowState extends State<ChatInputRow> with TickerProviderStateMix
       foregroundColor: theme.colorScheme.onTertiaryContainer,
     );
 
-    return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: controller.selectMode
+    return RecordingViewModel(
+      builder: (context, recordingViewModel) {
+        if (recordingViewModel.isRecording) {
+          return RecordingInputRow(
+            state: recordingViewModel,
+            onSend: controller.onVoiceMessageSend,
+          );
+        }
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: controller.selectMode
           ? <Widget>[
               if (controller.selectedEvents
                   .every((event) => event.status == EventStatus.error))
@@ -367,76 +323,37 @@ class _ChatInputRowState extends State<ChatInputRow> with TickerProviderStateMix
                 alignment: Alignment.center,
                 child: PlatformInfos.platformCanRecord &&
                         controller.sendController.text.isEmpty
-                    ? AnimatedBuilder(
-                        animation: _buttonScaleAnimation,
-                        builder: (context, child) {
-                          return Transform.scale(
-                            scale: _buttonScaleAnimation.value,
-                            child: FloatingActionButton.small(
-                              tooltip: L10n.of(context).voiceMessage,
-                              onPressed: controller.voiceMessageAction,
-                              elevation: 0,
-                              heroTag: null,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(height),
-                              ),
-                              backgroundColor: theme.bubbleColor,
-                              foregroundColor: theme.onBubbleColor,
-                              child: const Icon(Icons.mic_none_outlined),
+                    ? IconButton(
+                        tooltip: L10n.of(context).voiceMessage,
+                        onPressed: () =>
+                            ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              'Hold to record voice message', // L10n.of(context).longPressToRecordVoiceMessage,
                             ),
-                          );
-                        },
-                      )
-                    : _triggerSendAnimation
-                        ? MessageSendAnimation(
-                            onAnimationComplete: () {
-                              setState(() {
-                                _triggerSendAnimation = false;
-                              });
-                            },
-                            child: AnimatedBuilder(
-                              animation: _buttonScaleAnimation,
-                              builder: (context, child) {
-                                return Transform.scale(
-                                  scale: _buttonScaleAnimation.value,
-                                  child: FloatingActionButton.small(
-                                    tooltip: L10n.of(context).send,
-                                    onPressed: _onSendPressed,
-                                    elevation: 0,
-                                    heroTag: null,
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(height),
-                                    ),
-                                    backgroundColor: theme.bubbleColor,
-                                    foregroundColor: theme.onBubbleColor,
-                                    child: const Icon(Icons.send_outlined),
-                                  ),
-                                );
-                              },
-                            ),
-                          )
-                        : AnimatedBuilder(
-                            animation: _buttonScaleAnimation,
-                            builder: (context, child) {
-                              return Transform.scale(
-                                scale: _buttonScaleAnimation.value,
-                                child: FloatingActionButton.small(
-                                  tooltip: L10n.of(context).send,
-                                  onPressed: _onSendPressed,
-                                  elevation: 0,
-                                  heroTag: null,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(height),
-                                  ),
-                                  backgroundColor: theme.bubbleColor,
-                                  foregroundColor: theme.onBubbleColor,
-                                  child: const Icon(Icons.send_outlined),
-                                ),
-                              );
-                            },
                           ),
+                        ),
+                        onLongPress: () => recordingViewModel
+                            .startRecording(controller.room),
+                        style: IconButton.styleFrom(
+                          backgroundColor: theme.bubbleColor,
+                          foregroundColor: theme.onBubbleColor,
+                        ),
+                        icon: const Icon(Icons.mic_none_outlined),
+                      )
+                    : IconButton(
+                        tooltip: L10n.of(context).send,
+                        onPressed: controller.send,
+                        style: IconButton.styleFrom(
+                          backgroundColor: theme.bubbleColor,
+                          foregroundColor: theme.onBubbleColor,
+                        ),
+                        icon: const Icon(Icons.send_outlined),
+                      ),
               ),
             ],
+        );
+      },
     );
   }
 }

@@ -20,6 +20,7 @@ import 'package:quikxchat/widgets/member_actions_popup_menu_button.dart';
 import '../../../config/app_config.dart';
 import 'package:quikxchat/widgets/message_status_widget.dart';
 import '../../../utils/message_translator.dart';
+import '../../../utils/message_status_helper.dart';
 import 'message_content.dart';
 import 'message_reactions.dart';
 import 'reply_content.dart';
@@ -614,7 +615,13 @@ class Message extends StatelessWidget {
                                                                         ),
                                                                       ),
                                                                       const SizedBox(width: 4),
-                                                                      SimpleMessageStatusWidget(event: displayEvent, textColor: textColor, size: 14),
+                                                                      // Используем ключ для принудительного обновления статуса
+                                                                      SimpleMessageStatusWidget(
+                                                                        key: ValueKey(MessageStatusHelper.createStatusKey(displayEvent)),
+                                                                        event: displayEvent, 
+                                                                        textColor: textColor, 
+                                                                        size: 14
+                                                                      ),
                                                                     ],
                                                                   ],
                                                                 ),

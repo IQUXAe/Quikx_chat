@@ -13,6 +13,7 @@ import 'package:quikxchat/widgets/hover_builder.dart';
 import '../../config/themes.dart';
 import '../../utils/date_time_extension.dart';
 import '../../widgets/avatar.dart';
+import '../../utils/message_status_helper.dart';
 
 enum ArchivedRoomAction { delete, rejoin }
 
@@ -296,6 +297,18 @@ class _ChatListItemState extends State<ChatListItem> {
                       ownMessage &&
                       widget.room.lastEvent!.status.isSending) ...[
                     const AnimatedLoadingIndicator(size: 16),
+                    const SizedBox(width: 4),
+                  ] else if (typingText.isEmpty && ownMessage && lastEvent != null) ...[
+                    // Показываем статус последнего сообщения в списке чатов
+                    Icon(
+                      MessageStatusHelper.isMessageRead(lastEvent)
+                          ? Icons.done_all
+                          : Icons.done,
+                      size: 14,
+                      color: MessageStatusHelper.isMessageRead(lastEvent)
+                          ? const Color(0xFF4CAF50)
+                          : theme.colorScheme.outline,
+                    ),
                     const SizedBox(width: 4),
                   ],
                   AnimatedContainer(

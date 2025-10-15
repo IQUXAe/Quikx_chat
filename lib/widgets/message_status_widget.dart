@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
+import '../utils/message_status_helper.dart';
 
 enum MessageStatus {
   sending,
@@ -32,6 +34,8 @@ class _StatusKey {
   final EventStatus status;
   final int receiptsCount;
   final List<String> readByUsers;
+  final String fullyReadMarker;
+  final DateTime timestamp;
   
   _StatusKey(Event event) : 
     status = event.status,
@@ -39,7 +43,9 @@ class _StatusKey {
     readByUsers = event.receipts
       .where((r) => r.user.id != event.room.client.userID)
       .map((r) => r.user.id)
-      .toList();
+      .toList(),
+    fullyReadMarker = event.room.fullyRead,
+    timestamp = event.originServerTs;
   
   @override
   bool operator ==(Object other) {
@@ -48,11 +54,12 @@ class _StatusKey {
       other.status == status &&
       other.receiptsCount == receiptsCount &&
       other.readByUsers.length == readByUsers.length &&
-      other.readByUsers.every((id) => readByUsers.contains(id));
+      other.readByUsers.every((id) => readByUsers.contains(id)) &&
+      other.fullyReadMarker == fullyReadMarker;
   }
   
   @override
-  int get hashCode => Object.hash(status, receiptsCount, readByUsers.length);
+  int get hashCode => Object.hash(status, receiptsCount, readByUsers.length, fullyReadMarker);
 }
 
 class _MessageStatusWidgetState extends State<MessageStatusWidget>
@@ -62,6 +69,7 @@ class _MessageStatusWidgetState extends State<MessageStatusWidget>
   late Animation<double> _rotationAnimation;
   MessageStatus? _previousStatus;
   _StatusKey? _previousKey;
+  late StreamSubscription? _roomUpdateSubscription;
 
   @override
   void initState() {
@@ -86,11 +94,19 @@ class _MessageStatusWidgetState extends State<MessageStatusWidget>
       parent: _animationController,
       curve: Curves.easeInOut,
     ));
+    
+    // Подписываемся на обновления комнаты для мгновенного обновления статуса
+    _roomUpdateSubscription = widget.event.room.onUpdate.stream.listen((_) {
+      if (mounted) {
+        setState(() {});
+      }
+    });
   }
 
   @override
   void dispose() {
     _animationController.dispose();
+    _roomUpdateSubscription?.cancel();
     super.dispose();
   }
 
@@ -110,20 +126,13 @@ class _MessageStatusWidgetState extends State<MessageStatusWidget>
       return MessageStatus.sent;
     }
     
-    // Проверяем receipts на сообщении
-    final hasReceipts = widget.event.receipts.any((r) => r.user.id != myUserId);
-    if (hasReceipts) {
+    // Используем утилитарный класс для проверки прочитанности
+    if (MessageStatusHelper.isMessageRead(widget.event)) {
       return MessageStatus.read;
     }
     
-    // Проверяем fullyRead маркер комнаты
-    if (room.fullyRead.isNotEmpty) {
-      // Если есть fullyRead маркер и наше сообщение старше, считаем прочитанным
-      if (widget.event.eventId == room.fullyRead || 
-          widget.event.originServerTs.isBefore(DateTime.now().subtract(const Duration(minutes: 1)))) {
-        return MessageStatus.read;
-      }
-    }
+    // НЕ используем fullyRead маркер для определения прочитанности
+    // так как он может быть неточным после перезахода в приложение
     
     return MessageStatus.sent;
   }
@@ -300,6 +309,24 @@ class SimpleMessageStatusWidget extends StatefulWidget {
 
 class _SimpleMessageStatusWidgetState extends State<SimpleMessageStatusWidget> {
   _StatusKey? _previousKey;
+  late StreamSubscription? _roomUpdateSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    // Подписываемся на обновления комнаты для мгновенного обновления статуса
+    _roomUpdateSubscription = widget.event.room.onUpdate.stream.listen((_) {
+      if (mounted) {
+        setState(() {});
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _roomUpdateSubscription?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -346,16 +373,11 @@ class _SimpleMessageStatusWidgetState extends State<SimpleMessageStatusWidget> {
       );
     }
     
-    // Проверяем receipts на сообщении
-    bool isRead = widget.event.receipts.any((r) => r.user.id != myUserId);
+    // Используем утилитарный класс для проверки прочитанности
+    bool isRead = MessageStatusHelper.isMessageRead(widget.event);
     
-    // Проверяем fullyRead маркер
-    if (!isRead && room.fullyRead.isNotEmpty) {
-      if (widget.event.eventId == room.fullyRead || 
-          widget.event.originServerTs.isBefore(DateTime.now().subtract(const Duration(minutes: 1)))) {
-        isRead = true;
-      }
-    }
+    // НЕ используем fullyRead маркер для определения прочитанности
+    // так как он может быть неточным после перезахода в приложение
 
     if (isRead) {
       // Двойная зеленая галочка для прочитанных
