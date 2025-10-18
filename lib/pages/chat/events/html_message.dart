@@ -270,7 +270,12 @@ class HtmlMessage extends StatelessWidget {
                           child: CupertinoCheckbox(
                             checkColor: textColor,
                             side: BorderSide(color: textColor),
-                            activeColor: textColor.withAlpha(64),
+                            activeColor: Color.fromRGBO(
+                              textColor.red,
+                              textColor.green,
+                              textColor.blue,
+                              0.25,
+                            ),
                             value:
                                 staticallyChecked || checkedByReaction != null,
                             onChanged: eventId == null ||

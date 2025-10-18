@@ -416,57 +416,40 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
           ),
           child: Opacity(
             opacity: _itemAnimations[animationIndex].value,
-            child: TweenAnimationBuilder<double>(
-              duration: const Duration(milliseconds: 100),
-              tween: Tween<double>(begin: 1.0, end: 1.0),
-              builder: (context, scale, child) {
-                return Transform.scale(
-                  scale: scale,
-                  child: Container(
-                    margin: getMargin(),
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.surfaceContainer,
-                      borderRadius: getBorderRadius(),
-                    ),
-                    child: Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        borderRadius: getBorderRadius(),
-                        onTap: () {
-                          if (closeDrawer) {
-                            Navigator.of(context).pop();
-                          }
-                          onTap();
-                        },
-                        child: ListTile(
-                          leading: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: (iconColor ?? Colors.grey).withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Icon(
-                              icon,
-                              color: iconColor ?? Colors.grey,
-                              size: 20,
-                            ),
-                          ),
-                          title: Text(
-                            title,
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: getBorderRadius(),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                );
+            child: _AnimatedMenuItem(
+              margin: getMargin(),
+              borderRadius: getBorderRadius(),
+              backgroundColor: theme.colorScheme.surfaceContainer,
+              onTap: () {
+                if (closeDrawer) {
+                  Navigator.of(context).pop();
+                }
+                onTap();
               },
+              child: ListTile(
+                leading: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: (iconColor ?? Colors.grey).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(
+                    icon,
+                    color: iconColor ?? Colors.grey,
+                    size: 20,
+                  ),
+                ),
+                title: Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: getBorderRadius(),
+                ),
+              ),
             ),
           ),
         );
@@ -621,5 +604,80 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
       controller.dispose();
     }
     super.dispose();
+  }
+}
+
+class _AnimatedMenuItem extends StatefulWidget {
+  final EdgeInsets margin;
+  final BorderRadius borderRadius;
+  final Color backgroundColor;
+  final VoidCallback onTap;
+  final Widget child;
+
+  const _AnimatedMenuItem({
+    required this.margin,
+    required this.borderRadius,
+    required this.backgroundColor,
+    required this.onTap,
+    required this.child,
+  });
+
+  @override
+  State<_AnimatedMenuItem> createState() => _AnimatedMenuItemState();
+}
+
+class _AnimatedMenuItemState extends State<_AnimatedMenuItem>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 100),
+      vsync: this,
+    );
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _scaleAnimation,
+      builder: (context, child) {
+        return Transform.scale(
+          scale: _scaleAnimation.value,
+          child: Container(
+            margin: widget.margin,
+            decoration: BoxDecoration(
+              color: widget.backgroundColor,
+              borderRadius: widget.borderRadius,
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: widget.borderRadius,
+                onTapDown: (_) => _controller.forward(),
+                onTapUp: (_) {
+                  _controller.reverse();
+                  widget.onTap();
+                },
+                onTapCancel: () => _controller.reverse(),
+                child: widget.child,
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 }

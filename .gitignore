@@ -123,3 +123,6 @@ logs/
 .vscode/
 .amazonq/
 .qodo/appimagetool
+
+# AppImage builds
+*.AppImage

@@ -282,8 +282,6 @@ class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
   }
 
   Future<void> _resetPushSettings() async {
-    final l10n = L10n.of(context);
-
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -292,7 +290,7 @@ class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: Text(l10n.cancel),
+            child: Text(L10n.of(context).cancel),
           ),
           ElevatedButton(
             onPressed: () =>
@@ -326,7 +324,6 @@ class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
   }
 
   Widget _buildDistributorCard() {
-    final l10n = L10n.of(context);
     final theme = Theme.of(context);
 
     return Card(

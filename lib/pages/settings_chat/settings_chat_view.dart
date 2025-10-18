@@ -11,7 +11,7 @@ import 'package:quikxchat/widgets/layouts/max_width_body.dart';
 import 'package:quikxchat/widgets/matrix.dart';
 import 'package:quikxchat/widgets/settings_switch_list_tile.dart';
 import 'package:quikxchat/widgets/settings_card_tile.dart';
-import '../../utils/message_translator.dart';
+
 import '../../utils/translation_providers.dart';
 import 'settings_chat.dart';
 

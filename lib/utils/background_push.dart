@@ -35,6 +35,7 @@ import 'package:quikxchat/utils/notification_service.dart';
 import 'package:quikxchat/utils/push_helper.dart';
 import 'package:quikxchat/utils/file_logger.dart';
 import 'package:quikxchat/utils/network_error_handler.dart';
+import 'package:quikxchat/utils/notification_deduplication.dart';
 import 'package:quikxchat/widgets/quikx_chat_app.dart';
 import '../config/app_config.dart';
 import '../config/setting_keys.dart';
@@ -888,7 +889,7 @@ class BackgroundPush {
 
   Future<void> _performReliableSync() async {
     var attempts = 0;
-    const maxAttempts = 3; // Уменьшено для производительности
+    const maxAttempts = 3;
     
     while (attempts < maxAttempts) {
       try {
@@ -922,7 +923,22 @@ class BackgroundPush {
       }
     }
     
-    await _showFallbackNotification('Sync failed');
+    // Показываем fallback только если это критическая ошибка
+    if (client.onSyncStatus.value == SyncStatus.error) {
+      await _showFallbackNotification('Sync failed');
+    }
+  }
+  
+  /// Легкая синхронизация без fallback уведомлений
+  Future<void> _performLightSync() async {
+    try {
+      if (client.onLoginStateChanged.value == LoginState.loggedIn) {
+        await client.oneShotSync().timeout(const Duration(seconds: 10));
+        Logs().i('[Push] Light sync completed');
+      }
+    } catch (e) {
+      Logs().w('[Push] Light sync failed (non-critical): $e');
+    }
   }
   
 
@@ -998,22 +1014,28 @@ class BackgroundPush {
       }
 
       // Обрабатываем уведомление с улучшенной retry логикой
-      await NetworkErrorHandler.retryOnNetworkError(
-        () => _processNotificationData(data),
-        maxRetries: 3,
-        initialDelay: const Duration(seconds: 1),
-      );
+      bool notificationProcessed = false;
+      try {
+        await NetworkErrorHandler.retryOnNetworkError(
+          () => _processNotificationData(data),
+          maxRetries: 3,
+          initialDelay: const Duration(seconds: 1),
+        );
+        notificationProcessed = true;
+        Logs().i('[Push] Notification processed successfully');
+      } catch (e) {
+        Logs().e('[Push] Failed to process notification after retries: $e');
+        notificationProcessed = false;
+      }
 
-      // Запускаем надежную синхронизацию в фоне
-      unawaited(_performReliableSyncWithService());
-
-      // Дополнительная проверка через некоторое время
-      Timer(const Duration(seconds: 30), () async {
-        if (client.onSyncStatus.value == SyncStatus.error) {
-          Logs().w('[Push] Sync still in error state after 30s, forcing retry');
-          unawaited(_performReliableSync());
-        }
-      });
+      // Запускаем синхронизацию только если уведомление не было обработано
+      if (!notificationProcessed) {
+        Logs().i('[Push] Starting fallback sync due to processing failure');
+        unawaited(_performReliableSyncWithService());
+      } else {
+        // Легкая синхронизация для обновления состояния
+        unawaited(_performLightSync());
+      }
 
       Logs().i('[Push] === NOTIFICATION PROCESSED SUCCESSFULLY ===');
 
@@ -1027,16 +1049,36 @@ class BackgroundPush {
 
   /// Обрабатывает данные уведомления
   Future<void> _processNotificationData(Map<String, dynamic> data) async {
-    // Получаем ID активной комнаты из MatrixState
-    final activeRoomId = matrix?.activeRoomId;
+    final eventId = data['event_id'] as String? ?? 'unknown';
+    final roomId = data['room_id'] as String? ?? 'unknown';
+    
+    // Проверяем на дубликаты
+    if (NotificationDeduplication.isAlreadyProcessed(roomId, eventId)) {
+      return;
+    }
+    
+    try {
+      // Отмечаем как обрабатываемое
+      NotificationDeduplication.markAsProcessed(roomId, eventId);
+      
+      // Получаем ID активной комнаты из MatrixState
+      final activeRoomId = matrix?.activeRoomId;
 
-    await pushHelper(
-      PushNotification.fromJson(data),
-      client: client,
-      l10n: l10n,
-      activeRoomId: activeRoomId,
-      flutterLocalNotificationsPlugin: NotificationService.instance.localNotifications,
-    );
+      await pushHelper(
+        PushNotification.fromJson(data),
+        client: client,
+        l10n: l10n,
+        activeRoomId: activeRoomId,
+        flutterLocalNotificationsPlugin: NotificationService.instance.localNotifications,
+      );
+      
+      Logs().i('[Push] ✅ Successfully processed notification: ${roomId}_$eventId');
+    } catch (e) {
+      // Убираем из кэша при ошибке, чтобы можно было повторить
+      NotificationDeduplication.removeFromCache(roomId, eventId);
+      Logs().e('[Push] ❌ Failed to process notification: ${roomId}_$eventId - $e');
+      rethrow;
+    }
   }
 
   /// Показывает тестовое уведомление
@@ -1060,11 +1102,42 @@ class BackgroundPush {
     }
   }
 
-  /// Показывает fallback уведомление при ошибке
+  // Кэш для предотвращения дублирования fallback уведомлений
+  static final Set<String> _shownFallbackNotifications = {};
+  static DateTime? _lastFallbackTime;
+  
+  /// Показывает fallback уведомление при критической ошибке
   Future<void> _showFallbackNotification(dynamic error) async {
     try {
+      final now = DateTime.now();
+      final errorKey = error.toString().hashCode.toString();
+      
+      // Предотвращаем спам fallback уведомлений
+      if (_lastFallbackTime != null && 
+          now.difference(_lastFallbackTime!) < const Duration(minutes: 5)) {
+        Logs().i('[Push] Skipping fallback notification - too recent');
+        return;
+      }
+      
+      if (_shownFallbackNotifications.contains(errorKey)) {
+        Logs().i('[Push] Skipping duplicate fallback notification');
+        return;
+      }
+      
+      // Проверяем, что это действительно критическая ошибка
+      final errorStr = error.toString().toLowerCase();
+      if (errorStr.contains('timeout') || 
+          errorStr.contains('network') ||
+          errorStr.contains('connection') ||
+          errorStr.contains('cancelled')) {
+        Logs().i('[Push] Skipping fallback for non-critical error: $error');
+        return;
+      }
+      
       await loadLocale();
-
+      
+      Logs().w('[Push] Showing fallback notification due to: $error');
+      
       await _flutterLocalNotificationsPlugin.show(
         999997,
         l10n?.newMessageInFluffyChat ?? 'New Message',
@@ -1078,6 +1151,15 @@ class BackgroundPush {
           ),
         ),
       );
+      
+      _shownFallbackNotifications.add(errorKey);
+      _lastFallbackTime = now;
+      
+      // Очищаем кэш через 30 минут
+      Timer(const Duration(minutes: 30), () {
+        _shownFallbackNotifications.remove(errorKey);
+      });
+      
     } catch (e) {
       Logs().e('[Push] Failed to show fallback notification', e);
     }

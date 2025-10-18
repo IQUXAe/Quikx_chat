@@ -116,15 +116,15 @@ class _LinkPreviewState extends State<LinkPreview> {
 
       final document = html_parser.parse(response.body);
       
-      String? title = document.querySelector('meta[property="og:title"]')?.attributes['content']?.trim() ??
+      final title = document.querySelector('meta[property="og:title"]')?.attributes['content']?.trim() ??
                      document.querySelector('meta[name="twitter:title"]')?.attributes['content']?.trim() ??
                      document.querySelector('title')?.text?.trim();
       
-      String? description = document.querySelector('meta[property="og:description"]')?.attributes['content']?.trim() ??
+      final description = document.querySelector('meta[property="og:description"]')?.attributes['content']?.trim() ??
                            document.querySelector('meta[name="twitter:description"]')?.attributes['content']?.trim() ??
                            document.querySelector('meta[name="description"]')?.attributes['content']?.trim();
       
-      String? imageUrl = document.querySelector('meta[property="og:image"]')?.attributes['content']?.trim() ??
+      var imageUrl = document.querySelector('meta[property="og:image"]')?.attributes['content']?.trim() ??
                         document.querySelector('meta[name="twitter:image"]')?.attributes['content']?.trim();
       
       if (imageUrl != null && imageUrl.isNotEmpty) {
@@ -179,7 +179,12 @@ class _LinkPreviewState extends State<LinkPreview> {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 4),
       decoration: BoxDecoration(
-        border: Border.all(color: widget.textColor.withOpacity(0.3)),
+        border: Border.all(color: Color.fromRGBO(
+          widget.textColor.red,
+          widget.textColor.green,
+          widget.textColor.blue,
+          0.3,
+        )),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Material(
@@ -203,8 +208,18 @@ class _LinkPreviewState extends State<LinkPreview> {
                         _previewData!.imageUrl!,
                         fit: BoxFit.cover,
                         errorBuilder: (_, __, ___) => Container(
-                          color: widget.textColor.withOpacity(0.1),
-                          child: Icon(Icons.image, color: widget.textColor.withOpacity(0.5)),
+                          color: Color.fromRGBO(
+                            widget.textColor.red,
+                            widget.textColor.green,
+                            widget.textColor.blue,
+                            0.1,
+                          ),
+                          child: Icon(Icons.image, color: Color.fromRGBO(
+                            widget.textColor.red,
+                            widget.textColor.green,
+                            widget.textColor.blue,
+                            0.5,
+                          )),
                         ),
                       ),
                     ),
@@ -227,7 +242,12 @@ class _LinkPreviewState extends State<LinkPreview> {
                   Text(
                     _previewData!.description!,
                     style: TextStyle(
-                      color: widget.textColor.withOpacity(0.8),
+                      color: Color.fromRGBO(
+                        widget.textColor.red,
+                        widget.textColor.green,
+                        widget.textColor.blue,
+                        0.8,
+                      ),
                       fontSize: 12,
                     ),
                     maxLines: 2,

@@ -876,7 +876,7 @@ class ChatListController extends State<ChatList>
     });
 
     if (client.userDeviceKeys[client.userID!]?.deviceKeys.values
-            .any((device) => !device.verified && !device.blocked) ??
+            .any((device) => !device.verified && !device.blocked) ==
         false) {
       late final ScaffoldFeatureController controller;
       final theme = Theme.of(context);

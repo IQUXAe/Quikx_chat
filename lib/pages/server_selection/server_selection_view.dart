@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:quikxchat/config/app_config.dart';
-import 'package:quikxchat/l10n/l10n.dart';
+
 import 'package:quikxchat/widgets/layouts/login_scaffold.dart';
 import 'server_selection.dart';
 

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:animations/animations.dart';
+
 import 'package:matrix/matrix.dart';
 
 import 'package:quikxchat/config/app_config.dart';

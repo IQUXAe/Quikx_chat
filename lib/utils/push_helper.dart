@@ -46,6 +46,7 @@ Future<void> pushHelper(
         .writeToTemporaryErrorLogFile(e, s);
 
     l10n ??= await lookupL10n(const Locale('en'));
+    // Показываем fallback уведомление только при критических ошибках
     flutterLocalNotificationsPlugin.show(
       notification.roomId?.hashCode ?? 0,
       l10n.newMessageInFluffyChat,
@@ -73,6 +74,8 @@ Future<void> pushHelper(
       error: e.toString(),
     );
     
+    Logs().e('[Push] ❌ Push helper crashed, showing fallback notification');
+    
     rethrow;
   }
 }
@@ -94,7 +97,12 @@ Future<void> _tryPushHelper(
   if (notification.roomId != null &&
       activeRoomId == notification.roomId &&
       WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed) {
-    Logs().v('Room is in foreground. Stop push helper here.');
+    Logs().v('[Push] Room is in foreground. Stop push helper here.');
+    // Записываем как успешно обработанное (комната открыта)
+    await PushMonitoring.recordPushReceived(
+      roomId: notification.roomId ?? 'unknown',
+      eventId: notification.eventId ?? 'unknown',
+    );
     return;
   }
 
@@ -123,24 +131,33 @@ Future<void> _tryPushHelper(
     );
     
     Logs().e('Failed to get event after retries: ${NetworkErrorHandler.getErrorDescription(e)}');
-    l10n ??= await lookupL10n(const Locale('en'));
     
-    await flutterLocalNotificationsPlugin.show(
-      notification.roomId?.hashCode ?? 0,
-      l10n.newMessageInFluffyChat,
-      l10n.openAppToReadMessages,
-      NotificationDetails(
-        iOS: const DarwinNotificationDetails(),
-        android: AndroidNotificationDetails(
-          AppConfig.pushNotificationsChannelId,
-          l10n.incomingMessages,
-          number: notification.counts?.unread,
-          importance: Importance.high,
-          priority: Priority.max,
-          shortcutId: notification.roomId,
+    // Показываем fallback уведомление только если это не ошибка сети или таймаут
+    final errorDescription = NetworkErrorHandler.getErrorDescription(e);
+    if (!errorDescription.toLowerCase().contains('timeout') && 
+        !errorDescription.toLowerCase().contains('network') &&
+        !errorDescription.toLowerCase().contains('connection')) {
+      l10n ??= await lookupL10n(const Locale('en'));
+      
+      await flutterLocalNotificationsPlugin.show(
+        notification.roomId?.hashCode ?? 0,
+        l10n.newMessageInFluffyChat,
+        l10n.openAppToReadMessages,
+        NotificationDetails(
+          iOS: const DarwinNotificationDetails(),
+          android: AndroidNotificationDetails(
+            AppConfig.pushNotificationsChannelId,
+            l10n.incomingMessages,
+            number: notification.counts?.unread,
+            importance: Importance.high,
+            priority: Priority.max,
+            shortcutId: notification.roomId,
+          ),
         ),
-      ),
-    );
+      );
+    } else {
+      Logs().i('Skipping fallback notification due to network/timeout error');
+    }
     return;
   }
 
@@ -366,6 +383,7 @@ Future<void> _tryPushHelper(
     eventId: event.eventId,
   );
   
+  Logs().i('[Push] ✅ Push notification processed successfully for room: ${event.roomId}');
   Logs().v('Push helper has been completed!');
 }
 
