@@ -16,7 +16,7 @@ class ServerSelectionView extends StatelessWidget {
     return LoginScaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text('Выбор сервера'),
+        title: const Text('Выбор сервера'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),

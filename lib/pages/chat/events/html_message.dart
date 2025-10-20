@@ -544,7 +544,7 @@ class HtmlMessage extends StatelessWidget {
           url: link,
           textColor: textColor,
           linkColor: linkStyle.color ?? textColor,
-        )),
+        ),),
       ],
     );
   }

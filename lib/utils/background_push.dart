@@ -44,7 +44,9 @@ import 'platform_infos.dart';
 
 @pragma('vm:entry-point')
 void notificationTapBackground(NotificationResponse response) {
-  print('[Push] ==> Background tap: action=${response.actionId}, payload=${response.payload}');
+  if (kDebugMode) {
+    Logs().i('[Push] ==> Background tap: action=${response.actionId}, payload=${response.payload}');
+  }
 }
 
 class BackgroundPush {
@@ -445,7 +447,6 @@ class BackgroundPush {
   }
 
   Future<void> _handleNotificationResponse(NotificationResponse response) async {
-    print('[Push] HANDLER CALLED: ${response.actionId}');
     Logs().i('[Push] HANDLER CALLED: actionId=${response.actionId}, payload=${response.payload}, input=${response.input}');
     
     final actionId = response.actionId;
@@ -454,25 +455,32 @@ class BackgroundPush {
     
     try {
       if (actionId != null) {
-        print('[Push] Processing action: $actionId');
+        if (kDebugMode) {
+          Logs().i('[Push] Processing action: $actionId');
+        }
         
         if (actionId.startsWith('reply_')) {
           final roomId = actionId.substring('reply_'.length);
-          print('[Push] Reply to room: $roomId, message: $input');
+          if (kDebugMode) {
+            Logs().i('[Push] Reply to room: $roomId, message: $input');
+          }
           await handleReplyAction(roomId, input);
           return;
         } else if (actionId.startsWith('mark_read_')) {
           final roomId = actionId.substring('mark_read_'.length);
-          print('[Push] Mark read room: $roomId');
+          if (kDebugMode) {
+            Logs().i('[Push] Mark read room: $roomId');
+          }
           await handleMarkAsReadAction(roomId);
           return;
         }
       }
       
-      print('[Push] Opening room: $payload');
+      if (kDebugMode) {
+        Logs().i('[Push] Opening room: $payload');
+      }
       await goToRoom(response);
     } catch (e, s) {
-      print('[Push] Handler error: $e');
       Logs().e('[Push] Error handling notification response', e, s);
     }
   }
@@ -948,9 +956,11 @@ class BackgroundPush {
     upAction = true;
     final messageStr = utf8.decode(message);
 
-    print('[Push] === RECEIVED UP MESSAGE ===');
-    print('[Push] Message length: ${message.length} bytes');
-    print('[Push] Raw message: $messageStr');
+    if (kDebugMode) {
+      Logs().i('[Push] === RECEIVED UP MESSAGE ===');
+      Logs().i('[Push] Message length: ${message.length} bytes');
+      Logs().i('[Push] Raw message: $messageStr');
+    }
     
     if (kDebugMode) {
       Logs().i('[Push] === RECEIVED UP MESSAGE ===');
@@ -1014,7 +1024,7 @@ class BackgroundPush {
       }
 
       // Обрабатываем уведомление с улучшенной retry логикой
-      bool notificationProcessed = false;
+      var notificationProcessed = false;
       try {
         await NetworkErrorHandler.retryOnNetworkError(
           () => _processNotificationData(data),

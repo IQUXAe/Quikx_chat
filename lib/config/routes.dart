@@ -334,10 +334,16 @@ abstract class AppRoutes {
                   shareItems ??= [];
                   shareItems.add(TextShareItem(body));
                 }
-                return defaultPageBuilder(
-                  context,
-                  state,
-                  ChatPage(
+                
+                // В десктопном режиме используем уникальный ключ для каждого чата
+                final pageKey = QuikxChatThemes.isColumnMode(context) 
+                    ? ValueKey('chat_${state.pathParameters['roomid']}')
+                    : state.pageKey;
+                
+                return ModernPage(
+                  key: pageKey,
+                  transitionType: TransitionType.telegramSlide,
+                  child: ChatPage(
                     roomId: state.pathParameters['roomid']!,
                     shareItems: shareItems,
                     eventId: state.uri.queryParameters['event'],
@@ -491,11 +497,10 @@ abstract class AppRoutes {
     
     final path = state.fullPath ?? '';
     
-    // Специальная обработка для настроек - используем более простую анимацию
     if (path.contains('/settings/')) {
       return ModernPage(
         key: state.pageKey,
-        transitionType: TransitionType.slideHorizontal,
+        transitionType: TransitionType.telegramSlide,
         child: child,
       );
     }
@@ -503,12 +508,14 @@ abstract class AppRoutes {
     if (path.contains('/newgroup') || path.contains('/newprivatechat')) {
       transitionType = TransitionType.slideVertical;
       isModal = true;
-    } else if (path.contains('/details') || path.contains('/members') || path.contains('/chat/')) {
-      transitionType = TransitionType.fadeThrough;
+    } else if (path.contains('/details') || path.contains('/members')) {
+      transitionType = TransitionType.telegramSlide;
     } else if (path.contains('/archive')) {
-      transitionType = TransitionType.container;
+      transitionType = TransitionType.telegramSlide;
     } else if (path.contains('/login') || path.contains('/home')) {
       transitionType = TransitionType.scaleRotate;
+    } else {
+      transitionType = TransitionType.telegramSlide;
     }
     
     return ModernPage(

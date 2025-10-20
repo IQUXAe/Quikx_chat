@@ -65,7 +65,7 @@ class _ChatListItemState extends State<ChatListItem> {
             client,
             width: 44,
             height: 44,
-          ).toString()),
+          ).toString(),),
           context,
         ).catchError((_) {});
       }
@@ -81,7 +81,7 @@ class _ChatListItemState extends State<ChatListItem> {
                 client,
                 width: 44,
                 height: 44,
-              ).toString()),
+              ).toString(),),
               context,
             ).catchError((_) {});
           }
@@ -99,7 +99,7 @@ class _ChatListItemState extends State<ChatListItem> {
             client,
             width: 33,
             height: 33,
-          ).toString()),
+          ).toString(),),
           context,
         ).catchError((_) {});
       }

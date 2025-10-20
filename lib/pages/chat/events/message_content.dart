@@ -150,9 +150,7 @@ class MessageContent extends StatelessWidget {
           case CuteEventContent.eventType:
             return CuteContent(event);
           case MessageTypes.Audio:
-            if (PlatformInfos.isMobile ||
-                    PlatformInfos.isWeb
-                ) {
+            if (PlatformInfos.isMobile || PlatformInfos.isWeb) {
               return AudioPlayerWidget(
                 event,
                 color: textColor,

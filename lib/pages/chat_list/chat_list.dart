@@ -32,6 +32,9 @@ import '../../config/setting_keys.dart';
 import '../../utils/url_launcher.dart';
 import '../../widgets/matrix.dart';
 import '../bootstrap/bootstrap_dialog.dart';
+import 'controllers/chat_list_search_controller.dart';
+import 'controllers/chat_list_filter_controller.dart';
+import 'widgets/status_dialog.dart';
 
 import 'package:quikxchat/utils/tor_stub.dart'
     if (dart.library.html) 'package:tor_detector_web/tor_detector_web.dart';
@@ -93,24 +96,18 @@ class ChatListController extends State<ChatList>
 
   StreamSubscription? _intentUriStreamSubscription;
 
-  ActiveFilter activeFilter = AppConfig.separateChatTypes
-      ? ActiveFilter.messages
-      : ActiveFilter.allChats;
-
-  String? _activeSpaceId;
-  String? get activeSpaceId => _activeSpaceId;
-
+  late final ChatListFilterController _filterController;
+  late final ChatListSearchController _searchController;
+  
+  ActiveFilter get activeFilter => _filterController.activeFilter;
+  String? get activeSpaceId => _filterController.activeSpaceId;
+  
   void setActiveSpace(String spaceId) async {
     await Matrix.of(context).client.getRoomById(spaceId)!.postLoad();
-
-    setState(() {
-      _activeSpaceId = spaceId;
-    });
+    _filterController.setActiveSpace(spaceId, () => setState(() {}));
   }
-
-  void clearActiveSpace() => setState(() {
-        _activeSpaceId = null;
-      });
+  
+  void clearActiveSpace() => _filterController.clearActiveSpace(() => setState(() {}));
 
   void onChatTap(Room room) async {
     if (room.membership == Membership.invite) {
@@ -151,54 +148,14 @@ class ChatListController extends State<ChatList>
     context.go('/rooms/${room.id}');
   }
 
-  bool Function(Room) getRoomFilterByActiveFilter(ActiveFilter activeFilter) {
-    switch (activeFilter) {
-      case ActiveFilter.allChats:
-        return (room) => true;
-      case ActiveFilter.messages:
-        return (room) => !room.isSpace && room.isDirectChat;
-      case ActiveFilter.groups:
-        return (room) => !room.isSpace && !room.isDirectChat;
-      case ActiveFilter.unread:
-        return (room) => room.isUnreadOrInvited;
-      case ActiveFilter.spaces:
-        return (room) => room.isSpace;
-    }
-  }
+  List<Room> get filteredRooms => _filterController.getFilteredRooms(Matrix.of(context).client.rooms);
 
-  List<Room>? _cachedFilteredRooms;
-  ActiveFilter? _lastFilter;
-  int? _lastRoomsHash;
+  bool get isSearchMode => _searchController.isSearchMode;
+  bool get isSearching => _searchController.isSearching;
+  SearchUserDirectoryResponse? get userSearchResult => _searchController.userSearchResult;
+  QueryPublicRoomsResponse? get roomSearchResult => _searchController.roomSearchResult;
+  String? get searchServer => _searchController.searchServer;
   
-  List<Room> get filteredRooms {
-    final rooms = Matrix.of(context).client.rooms;
-    final currentHash = rooms.length.hashCode ^ rooms.map((r) => r.id).join().hashCode;
-    
-    if (_cachedFilteredRooms == null || 
-        _lastFilter != activeFilter || 
-        _lastRoomsHash != currentHash) {
-      _cachedFilteredRooms = rooms
-          .where(getRoomFilterByActiveFilter(activeFilter))
-          .toList();
-      _lastFilter = activeFilter;
-      _lastRoomsHash = currentHash;
-    }
-    return _cachedFilteredRooms!;
-  }
-  
-  void _invalidateRoomsCache() {
-    _cachedFilteredRooms = null;
-  }
-
-  bool isSearchMode = false;
-  Future<QueryPublicRoomsResponse>? publicRoomsResponse;
-  String? searchServer;
-  Timer? _coolDown;
-  Timer? _searchDebouncer;
-  SearchUserDirectoryResponse? userSearchResult;
-  QueryPublicRoomsResponse? roomSearchResult;
-
-  bool isSearching = false;
   static const String _serverStoreNamespace = 'im.fluffychat.search.server';
 
   void setServer() async {
@@ -210,118 +167,29 @@ class ChatListController extends State<ChatList>
       cancelLabel: L10n.of(context).cancel,
       prefixText: 'https://',
       hintText: Matrix.of(context).client.homeserver?.host,
-      initialText: searchServer,
+      initialText: _searchController.searchServer,
       keyboardType: TextInputType.url,
       autocorrect: false,
-      validator: (server) => server.contains('.') == true
-          ? null
-          : L10n.of(context).invalidServerName,
+      validator: (server) => server.contains('.') ? null : L10n.of(context).invalidServerName,
     );
     if (newServer == null) return;
     Matrix.of(context).store.setString(_serverStoreNamespace, newServer);
-    setState(() {
-      searchServer = newServer;
-    });
-    _coolDown?.cancel();
-    _coolDown = Timer(const Duration(milliseconds: 500), _search);
+    _searchController.searchServer = newServer;
+    setState(() {});
   }
 
-  final TextEditingController searchController = TextEditingController();
-  final FocusNode searchFocusNode = FocusNode();
+  TextEditingController get searchController => _searchController.textController;
+  FocusNode get searchFocusNode => _searchController.focusNode;
 
-  void _search() async {
-    final client = Matrix.of(context).client;
-    if (!isSearching) {
-      setState(() {
-        isSearching = true;
-      });
-    }
-    SearchUserDirectoryResponse? userSearchResult;
-    QueryPublicRoomsResponse? roomSearchResult;
-    final searchQuery = searchController.text.trim();
-    try {
-      roomSearchResult = await client.queryPublicRooms(
-        server: searchServer,
-        filter: PublicRoomQueryFilter(genericSearchTerm: searchQuery),
-        limit: 20,
-      );
 
-      if (searchQuery.isValidMatrixId &&
-          searchQuery.sigil == '#' &&
-          roomSearchResult.chunk
-                  .any((room) => room.canonicalAlias == searchQuery) ==
-              false) {
-        final response = await client.getRoomIdByAlias(searchQuery);
-        final roomId = response.roomId;
-        if (roomId != null) {
-          roomSearchResult.chunk.add(
-            PublicRoomsChunk(
-              name: searchQuery,
-              guestCanJoin: false,
-              numJoinedMembers: 0,
-              roomId: roomId,
-              worldReadable: false,
-              canonicalAlias: searchQuery,
-            ),
-          );
-        }
-      }
-      userSearchResult = await client.searchUserDirectory(
-        searchController.text,
-        limit: 20,
-      );
-    } catch (e, s) {
-      Logs().w('Searching has crashed', e, s);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            e.toLocalizedString(context),
-          ),
-        ),
-      );
-    }
-    if (!isSearchMode) return;
-    setState(() {
-      isSearching = false;
-      this.roomSearchResult = roomSearchResult;
-      this.userSearchResult = userSearchResult;
-    });
-  }
 
   void onSearchEnter(String text, {bool globalSearch = true}) {
-    if (text.isEmpty) {
-      cancelSearch(unfocus: false);
-      return;
-    }
-
-    setState(() {
-      isSearchMode = true;
-    });
-    
-    _searchDebouncer?.cancel();
-    if (globalSearch) {
-      _searchDebouncer = Timer(const Duration(milliseconds: 300), _search);
-    }
+    _searchController.onSearchChanged(text);
   }
 
-  void startSearch() {
-    setState(() {
-      isSearchMode = true;
-    });
-    searchFocusNode.requestFocus();
-    _coolDown?.cancel();
-    _coolDown = Timer(const Duration(milliseconds: 500), _search);
-  }
+  void startSearch() => _searchController.startSearch();
 
-  void cancelSearch({bool unfocus = true}) {
-    setState(() {
-      searchController.clear();
-      isSearchMode = false;
-      roomSearchResult = userSearchResult = null;
-      isSearching = false;
-    });
-    if (unfocus) searchFocusNode.unfocus();
-  }
+  void cancelSearch({bool unfocus = true}) => _searchController.cancelSearch(unfocus: unfocus);
 
   bool isTorBrowser = false;
 
@@ -420,6 +288,14 @@ class ChatListController extends State<ChatList>
 
   @override
   void initState() {
+    _filterController = ChatListFilterController(
+      AppConfig.separateChatTypes ? ActiveFilter.messages : ActiveFilter.allChats,
+    );
+    _searchController = ChatListSearchController(
+      client: Matrix.of(context).client,
+      onUpdate: () => setState(() {}),
+    );
+    
     _initReceiveSharingIntent();
     WidgetsBinding.instance.addObserver(this);
 
@@ -428,8 +304,7 @@ class ChatListController extends State<ChatList>
     _hackyWebRTCFixForWeb();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (mounted) {
-        searchServer =
-            Matrix.of(context).store.getString(_serverStoreNamespace);
+        _searchController.searchServer = Matrix.of(context).store.getString(_serverStoreNamespace);
         Matrix.of(context).backgroundPush?.setupPush();
         UpdateNotifier.showUpdateSnackBar(context);
         
@@ -476,7 +351,7 @@ class ChatListController extends State<ChatList>
     _intentDataStreamSubscription?.cancel();
     _intentFileStreamSubscription?.cancel();
     _intentUriStreamSubscription?.cancel();
-    _searchDebouncer?.cancel();
+    _searchController.dispose();
     scrollController.removeListener(_onScroll);
     super.dispose();
   }
@@ -819,7 +694,7 @@ class ChatListController extends State<ChatList>
     
     final result = await showDialog<Map<String, dynamic>>(
       context: context,
-      builder: (context) => _StatusDialog(
+      builder: (context) => StatusDialog(
         currentStatus: currentStatus,
         currentPresence: currentPresence,
       ),
@@ -906,36 +781,26 @@ class ChatListController extends State<ChatList>
   }
 
   void setActiveFilter(ActiveFilter filter) {
-    if (activeFilter != filter) {
-      _invalidateRoomsCache();
-      setState(() {
-        activeFilter = filter;
-      });
-    }
+    _filterController.setFilter(filter, () => setState(() {}));
   }
 
   void setActiveClient(Client client) {
     context.go('/rooms');
-    setState(() {
-      activeFilter = ActiveFilter.allChats;
-      _activeSpaceId = null;
-      Matrix.of(context).setActiveClient(client);
-    });
+    _filterController.setFilter(ActiveFilter.allChats, () {});
+    _filterController.clearActiveSpace(() {});
+    Matrix.of(context).setActiveClient(client);
     _clientStream.add(client);
+    setState(() {});
   }
 
   void setActiveBundle(String bundle) {
     context.go('/rooms');
-    setState(() {
-      _activeSpaceId = null;
-      Matrix.of(context).activeBundle = bundle;
-      if (!Matrix.of(context)
-          .currentBundle!
-          .any((client) => client == Matrix.of(context).client)) {
-        Matrix.of(context)
-            .setActiveClient(Matrix.of(context).currentBundle!.first);
-      }
-    });
+    _filterController.clearActiveSpace(() {});
+    Matrix.of(context).activeBundle = bundle;
+    if (!Matrix.of(context).currentBundle!.any((client) => client == Matrix.of(context).client)) {
+      Matrix.of(context).setActiveClient(Matrix.of(context).currentBundle!.first);
+    }
+    setState(() {});
   }
 
   void editBundlesForAccount(String? userId, String? activeBundle) async {
@@ -1036,7 +901,7 @@ class ChatListController extends State<ChatList>
               client,
               width: 44,
               height: 44,
-            ).toString()),
+            ).toString(),),
             context,
           ).catchError((_) {});
         }
@@ -1052,7 +917,7 @@ class ChatListController extends State<ChatList>
                   client,
                   width: 44,
                   height: 44,
-                ).toString()),
+                ).toString(),),
                 context,
               ).catchError((_) {});
             }
@@ -1073,166 +938,7 @@ class ChatListController extends State<ChatList>
   }
 }
 
-class _StatusDialog extends StatefulWidget {
-  final String currentStatus;
-  final PresenceType currentPresence;
-  
-  const _StatusDialog({
-    required this.currentStatus,
-    required this.currentPresence,
-  });
-  
-  @override
-  State<_StatusDialog> createState() => _StatusDialogState();
-}
 
-class _StatusDialogState extends State<_StatusDialog> {
-  late TextEditingController _controller;
-  late PresenceType _selectedPresence;
-  
-  final List<String> _quickStatuses = [
-    '🏠 Working from home',
-    '🏢 At the office', 
-    '🍕 At lunch',
-    '☕ Coffee break',
-    '🚗 Commuting',
-    '🎯 Focused',
-    '📱 Available',
-    '😴 Do not disturb',
-  ];
-  
-  @override
-  void initState() {
-    super.initState();
-    _controller = TextEditingController(text: widget.currentStatus);
-    _selectedPresence = widget.currentPresence;
-  }
-  
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-  
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    
-    return AlertDialog(
-      title: Text(L10n.of(context).setStatus),
-      content: SizedBox(
-        width: 400,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Presence',
-              style: theme.textTheme.titleSmall,
-            ),
-            const SizedBox(height: 8),
-            SegmentedButton<PresenceType>(
-              segments: const [
-                ButtonSegment(
-                  value: PresenceType.online,
-                  label: Text('🟢 Online'),
-                ),
-                ButtonSegment(
-                  value: PresenceType.unavailable,
-                  label: Text('🟡 Away'),
-                ),
-                ButtonSegment(
-                  value: PresenceType.offline,
-                  label: Text('⚫ Offline'),
-                ),
-              ],
-              selected: {_selectedPresence},
-              onSelectionChanged: (Set<PresenceType> selection) {
-                setState(() {
-                  _selectedPresence = selection.first;
-                });
-              },
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Status Message',
-              style: theme.textTheme.titleSmall,
-            ),
-            const SizedBox(height: 8),
-            TextField(
-              controller: _controller,
-              maxLength: 100,
-              decoration: InputDecoration(
-                hintText: L10n.of(context).statusExampleMessage,
-                border: const OutlineInputBorder(),
-                suffixIcon: _controller.text.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: () {
-                          _controller.clear();
-                          setState(() {});
-                        },
-                      )
-                    : null,
-              ),
-              onChanged: (_) => setState(() {}),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Quick Status',
-              style: theme.textTheme.titleSmall,
-            ),
-            const SizedBox(height: 8),
-            SizedBox(
-              height: 120,
-              child: GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 3,
-                  crossAxisSpacing: 8,
-                  mainAxisSpacing: 4,
-                ),
-                itemCount: _quickStatuses.length,
-                itemBuilder: (context, index) {
-                  final status = _quickStatuses[index];
-                  return OutlinedButton(
-                    onPressed: () {
-                      _controller.text = status;
-                      setState(() {});
-                    },
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 8),
-                    ),
-                    child: Text(
-                      status,
-                      style: const TextStyle(fontSize: 12),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text(L10n.of(context).cancel),
-        ),
-        FilledButton(
-          onPressed: () {
-            Navigator.of(context).pop({
-              'status': _controller.text.trim(),
-              'presence': _selectedPresence,
-            });
-          },
-          child: Text(L10n.of(context).ok),
-        ),
-      ],
-    );
-  }
-}
 
 enum EditBundleAction { addToBundle, removeFromBundle }
 

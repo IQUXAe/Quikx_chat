@@ -327,7 +327,7 @@ class ChatInputRow extends StatelessWidget {
                         tooltip: L10n.of(context).voiceMessage,
                         onPressed: () =>
                             ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
+                          const SnackBar(
                             content: Text(
                               'Hold to record voice message', // L10n.of(context).longPressToRecordVoiceMessage,
                             ),

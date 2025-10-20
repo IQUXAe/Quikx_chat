@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:matrix/matrix.dart';
 import 'package:quikxchat/utils/message_status_helper.dart';
 
 void main() {

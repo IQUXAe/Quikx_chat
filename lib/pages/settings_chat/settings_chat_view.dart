@@ -162,7 +162,7 @@ class _SettingsChatViewState extends State<SettingsChatView> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Icon(Icons.emoji_emotions_outlined,
-                      color: Colors.purple),
+                      color: Colors.purple,),
                 ),
                 title: Text(L10n.of(context).personalEmojis),
                 subtitle: Text(L10n.of(context).personalEmojisDescription),

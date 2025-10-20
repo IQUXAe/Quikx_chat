@@ -44,7 +44,7 @@ void main() {
       final stopwatch = Stopwatch()..start();
 
       // Добавляем 1000 элементов
-      for (int i = 0; i < 1000; i++) {
+      for (var i = 0; i < 1000; i++) {
         cache.put('key$i', 'value$i');
       }
 
@@ -58,7 +58,7 @@ void main() {
       stopwatch.reset();
       stopwatch.start();
       
-      for (int i = 0; i < 100; i++) {
+      for (var i = 0; i < 100; i++) {
         final value = cache.get('key$i');
         expect(value, 'value$i');
       }
@@ -73,7 +73,7 @@ void main() {
       final cache = GlobalCache<String, String>(maxSize: 5);
       
       // Заполняем кэш
-      for (int i = 0; i < 10; i++) {
+      for (var i = 0; i < 10; i++) {
         cache.put('key$i', 'value$i');
       }
       

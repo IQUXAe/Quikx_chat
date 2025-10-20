@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 
 /// Оптимизированный ListView с улучшенной производительностью
 class PerformanceListView extends StatefulWidget {
@@ -126,7 +125,7 @@ class _PerformanceListViewState extends State<PerformanceListView> {
         .clamp(0, widget.itemCount - 1);
 
     final newVisibleItems = <int>{};
-    for (int i = startIndex; i <= endIndex; i++) {
+    for (var i = startIndex; i <= endIndex; i++) {
       newVisibleItems.add(i);
     }
 
@@ -256,9 +255,9 @@ class _LazyPerformanceListViewState extends State<LazyPerformanceListView> {
   }
 
   void _cleanupCache(ScrollMetrics metrics) {
-    final itemHeight = 60.0; // Примерная высота
+    const itemHeight = 60.0; // Примерная высота
     final currentIndex = (metrics.pixels / itemHeight).round();
-    final keepRange = 50; // Количество элементов для сохранения
+    const keepRange = 50; // Количество элементов для сохранения
     
     final keysToRemove = _builtItems.keys
         .where((key) => (key - currentIndex).abs() > keepRange)

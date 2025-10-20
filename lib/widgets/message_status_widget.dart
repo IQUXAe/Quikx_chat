@@ -85,7 +85,7 @@ class _MessageStatusWidgetState extends State<MessageStatusWidget>
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.elasticOut,
-    ));
+    ),);
     
     _rotationAnimation = Tween<double>(
       begin: 0,
@@ -93,7 +93,7 @@ class _MessageStatusWidgetState extends State<MessageStatusWidget>
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeInOut,
-    ));
+    ),);
     
     // Подписываемся на обновления комнаты для мгновенного обновления статуса
     _roomUpdateSubscription = widget.event.room.onUpdate.stream.listen((_) {
@@ -246,7 +246,7 @@ class _MessageStatusWidgetState extends State<MessageStatusWidget>
     final status = _getMessageStatus();
     _triggerAnimation(status);
 
-    Widget statusIcon = _buildStatusIcon(status);
+    var statusIcon = _buildStatusIcon(status);
 
     if (widget.showAnimation && _animationController.isAnimating) {
       statusIcon = AnimatedBuilder(
@@ -374,7 +374,7 @@ class _SimpleMessageStatusWidgetState extends State<SimpleMessageStatusWidget> {
     }
     
     // Используем утилитарный класс для проверки прочитанности
-    bool isRead = MessageStatusHelper.isMessageRead(widget.event);
+    final isRead = MessageStatusHelper.isMessageRead(widget.event);
     
     // НЕ используем fullyRead маркер для определения прочитанности
     // так как он может быть неточным после перезахода в приложение

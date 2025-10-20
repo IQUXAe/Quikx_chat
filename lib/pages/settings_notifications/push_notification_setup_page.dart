@@ -206,7 +206,7 @@ class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
           child: OutlinedButton.icon(
             onPressed: _resetPushSettings,
             icon: const Icon(
-                Icons.refresh), // TODO: Localize 'Reset push settings'
+                Icons.refresh,), // TODO: Localize 'Reset push settings'
             label: Text(L10n.of(context).settings), // Or a more specific key
           ),
         ),
@@ -337,11 +337,11 @@ class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
             ),
             const SizedBox(height: 16),
             _buildDistributorTile('ntfy',
-                'ntfy - простой HTTP-сервис для pub-sub уведомлений'), // TODO: Localize
+                'ntfy - простой HTTP-сервис для pub-sub уведомлений',), // TODO: Localize
             _buildDistributorTile('NextPush',
-                'NextPush - дистрибьютор UnifiedPush для Nextcloud'), // TODO: Localize
+                'NextPush - дистрибьютор UnifiedPush для Nextcloud',), // TODO: Localize
             _buildDistributorTile('Gotify',
-                'Gotify - простой сервер для отправки и получения сообщений'), // TODO: Localize
+                'Gotify - простой сервер для отправки и получения сообщений',), // TODO: Localize
           ],
         ),
       ),
@@ -434,7 +434,7 @@ class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
             const Text('1. Проверьте разрешения на уведомления'),
             const SizedBox(height: 8),
             const Text(
-                '2. Убедитесь, что дистрибьютор UnifiedPush установлен и работает'),
+                '2. Убедитесь, что дистрибьютор UnifiedPush установлен и работает',),
             const SizedBox(height: 8),
             const Text('3. Перезапустите приложение'),
             const SizedBox(height: 8),
@@ -474,10 +474,10 @@ class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
                   child: OutlinedButton.icon(
                     onPressed: () async {
                       final uri = Uri.parse(
-                          'https://unifiedpush.org/users/distributors/');
+                          'https://unifiedpush.org/users/distributors/',);
                       if (await canLaunchUrl(uri)) {
                         await launchUrl(uri,
-                            mode: LaunchMode.externalApplication);
+                            mode: LaunchMode.externalApplication,);
                       }
                     },
                     icon: const Icon(Icons.open_in_new),
@@ -489,10 +489,10 @@ class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
                   child: OutlinedButton.icon(
                     onPressed: () async {
                       final uri = Uri.parse(
-                          'https://github.com/iquxae/simple-messenger/issues/new');
+                          'https://github.com/iquxae/simple-messenger/issues/new',);
                       if (await canLaunchUrl(uri)) {
                         await launchUrl(uri,
-                            mode: LaunchMode.externalApplication);
+                            mode: LaunchMode.externalApplication,);
                       }
                     },
                     icon: const Icon(Icons.bug_report),

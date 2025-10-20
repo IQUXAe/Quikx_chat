@@ -3,7 +3,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:quikxchat/config/themes.dart';
 import 'package:quikxchat/l10n/l10n.dart';
 import 'package:quikxchat/widgets/layouts/max_width_body.dart';
-import 'package:quikxchat/widgets/settings_switch_list_tile.dart';
 import '../../utils/message_translator.dart';
 import '../../utils/translation_providers.dart';
 import '../../config/setting_keys.dart';

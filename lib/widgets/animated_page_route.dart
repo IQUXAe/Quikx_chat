@@ -13,8 +13,8 @@ class ModernPageRoute<T> extends PageRouteBuilder<T> {
     super.settings,
   }) : super(
           pageBuilder: (context, animation, secondaryAnimation) => child,
-          transitionDuration: const Duration(milliseconds: 350),
-          reverseTransitionDuration: const Duration(milliseconds: 300),
+          transitionDuration: const Duration(milliseconds: 250),
+          reverseTransitionDuration: const Duration(milliseconds: 200),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return _buildTransition(
               context,
@@ -46,6 +46,35 @@ class ModernPageRoute<T> extends PageRouteBuilder<T> {
     );
 
     switch (type) {
+      case TransitionType.telegramSlide:
+        return SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(0.3, 0.0),
+            end: Offset.zero,
+          ).animate(CurvedAnimation(
+            parent: animation,
+            curve: const Cubic(0.4, 0.0, 0.2, 1.0),
+          ),),
+          child: SlideTransition(
+            position: Tween<Offset>(
+              begin: Offset.zero,
+              end: const Offset(-0.3, 0.0),
+            ).animate(CurvedAnimation(
+              parent: secondaryAnimation,
+              curve: const Cubic(0.4, 0.0, 0.2, 1.0),
+            ),),
+            child: FadeTransition(
+              opacity: Tween<double>(
+                begin: 0.0,
+                end: 1.0,
+              ).animate(CurvedAnimation(
+                parent: animation,
+                curve: const Interval(0.0, 0.6, curve: Curves.easeOut),
+              ),),
+              child: child,
+            ),
+          ),
+        );
       case TransitionType.slideHorizontal:
         return SlideTransition(
           position: Tween<Offset>(
@@ -164,4 +193,5 @@ enum TransitionType {
   fadeThrough,
   container,
   scaleRotate,
+  telegramSlide,
 }

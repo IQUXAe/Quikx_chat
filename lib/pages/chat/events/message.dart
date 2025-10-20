@@ -363,7 +363,7 @@ class Message extends StatelessWidget {
                                         },
                                       )
                                     else
-                                      SizedBox(width: Avatar.defaultSize),
+                                      const SizedBox(width: Avatar.defaultSize),
                                     Expanded(
                                       child: Column(
                                         crossAxisAlignment:
@@ -620,7 +620,7 @@ class Message extends StatelessWidget {
                                                                         key: ValueKey(MessageStatusHelper.createStatusKey(displayEvent)),
                                                                         event: displayEvent, 
                                                                         textColor: textColor, 
-                                                                        size: 14
+                                                                        size: 14,
                                                                       ),
                                                                     ],
                                                                   ],
@@ -1112,10 +1112,10 @@ class _TranslateButtonState extends State<_TranslateButton> {
       Logs().w('[TranslateButton] Translation error for $eventId: $e');
       if (mounted && e.toString().contains('Translation limit exceeded')) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: const Text('Лимит переводов превышен. Включите VPN или подождите сброса квоты.'),
+          const SnackBar(
+            content: Text('Лимит переводов превышен. Включите VPN или подождите сброса квоты.'),
             backgroundColor: Colors.orange,
-            duration: const Duration(seconds: 5),
+            duration: Duration(seconds: 5),
           ),
         );
       }

@@ -10,7 +10,6 @@ import 'package:quikxchat/pages/chat/seen_by_row.dart';
 import 'package:quikxchat/pages/chat/typing_indicators.dart';
 import 'package:quikxchat/utils/account_config.dart';
 import 'package:quikxchat/utils/matrix_sdk_extensions/filtered_timeline_extension.dart';
-import 'package:quikxchat/utils/platform_infos.dart';
 
 class ChatEventList extends StatelessWidget {
   final ChatController controller;

@@ -84,11 +84,11 @@ class _PerformanceSettingsPageState extends State<PerformanceSettingsPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            const Row(
               children: [
-                const Icon(Icons.memory),
-                const SizedBox(width: 8),
-                const Text(
+                Icon(Icons.memory),
+                SizedBox(width: 8),
+                Text(
                   'Память',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
@@ -156,11 +156,11 @@ class _PerformanceSettingsPageState extends State<PerformanceSettingsPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            const Row(
               children: [
-                const Icon(Icons.storage),
-                const SizedBox(width: 8),
-                const Text(
+                Icon(Icons.storage),
+                SizedBox(width: 8),
+                Text(
                   'Кэши приложения',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
@@ -182,7 +182,7 @@ class _PerformanceSettingsPageState extends State<PerformanceSettingsPage> {
                   ],
                 ),
               );
-            }).toList(),
+            }),
           ],
         ),
       ),
@@ -196,11 +196,11 @@ class _PerformanceSettingsPageState extends State<PerformanceSettingsPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            const Row(
               children: [
-                const Icon(Icons.cleaning_services),
-                const SizedBox(width: 8),
-                const Text(
+                Icon(Icons.cleaning_services),
+                SizedBox(width: 8),
+                Text(
                   'Действия',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
@@ -243,11 +243,11 @@ class _PerformanceSettingsPageState extends State<PerformanceSettingsPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
+            const Row(
               children: [
-                const Icon(Icons.bug_report),
-                const SizedBox(width: 8),
-                const Text(
+                Icon(Icons.bug_report),
+                SizedBox(width: 8),
+                Text(
                   'Отладка',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
@@ -281,7 +281,7 @@ class _PerformanceSettingsPageState extends State<PerformanceSettingsPage> {
           Text(value, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
         ],
       ),
-      backgroundColor: color?.withOpacity(0.1) ?? Theme.of(context).colorScheme.surfaceVariant,
+      backgroundColor: color?.withOpacity(0.1) ?? Theme.of(context).colorScheme.surfaceContainerHighest,
     );
   }
 

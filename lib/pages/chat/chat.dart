@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:collection/collection.dart';
-import 'package:cross_file/cross_file.dart';
 import 'package:desktop_drop/desktop_drop.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
@@ -15,7 +14,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:matrix/matrix.dart';
 
 import 'package:scroll_to_index/scroll_to_index.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:universal_html/html.dart' as html;
 
 import 'package:quikxchat/config/app_config.dart';
@@ -44,10 +42,12 @@ import '../../utils/account_bundles.dart';
 import '../../utils/localized_exception_extension.dart';
 import 'send_file_dialog.dart';
 import 'send_location_dialog.dart';
-import 'events/message.dart';
 import '../../utils/message_translator.dart';
 import '../../utils/link_extractor.dart';
 import 'events/compact_link_preview.dart';
+import 'controllers/chat_input_controller.dart';
+import 'controllers/chat_translation_controller.dart';
+import 'controllers/chat_scroll_controller.dart';
 
 class ChatPage extends StatelessWidget {
   final String roomId;
@@ -110,51 +110,18 @@ class ChatController extends State<ChatPageWithRoom>
   Timeline? timeline;
 
   late final String readMarkerEventId;
-
   String get roomId => widget.room.id;
   
-  bool _autoTranslateEnabled = false;
-  bool get autoTranslateEnabled => _autoTranslateEnabled;
+  late final ChatInputController _inputController;
+  late final ChatTranslationController _translationController;
+  ChatScrollController? _scrollController;
   
-  Timer? _updateTimer;
-  
-  void notifyTranslationChanged() {
-    if (mounted) {
-      Future.delayed(const Duration(milliseconds: 50), () {
-        if (mounted) {
-          setState(() {});
-        }
-      });
-    }
-  }
-  
-  
-  static const int _maxTranslations = 100;
-  void clearTranslations() {
-    try {
-      messageTranslations.clear();
-    } catch (e) {
-      // Ignore setState errors during disposal
-    }
-  }
-  
-  void _cleanupTranslations() {
-    if (messageTranslations.length > _maxTranslations) {
-      final keys = messageTranslations.keys.toList();
-      for (var i = 0; i < keys.length - _maxTranslations; i++) {
-        messageTranslations.remove(keys[i]);
-      }
-    }
-  }
-
   final AutoScrollController scrollController = AutoScrollController();
+  bool get autoTranslateEnabled => _translationController.autoTranslateEnabled;
 
   late final FocusNode inputFocus;
   StreamSubscription<html.Event>? onFocusSub;
 
-  Timer? typingCoolDown;
-  Timer? typingTimeout;
-  bool currentlyTyping = false;
   bool dragging = false;
 
   void onDragEntered(_) => setState(() => dragging = true);
@@ -196,9 +163,7 @@ class ChatController extends State<ChatPageWithRoom>
   Event? editEvent;
 
   bool _scrolledUp = false;
-
-  bool get showScrollDownButton =>
-      _scrolledUp || timeline?.allowNewEvent == false;
+  bool get showScrollDownButton => _scrolledUp || timeline?.allowNewEvent == false;
 
   bool get selectMode => selectedEvents.isNotEmpty;
 
@@ -245,32 +210,9 @@ class ChatController extends State<ChatPageWithRoom>
     setReadMarker(eventId: mostRecentEventId);
   }
 
-  void _updateScrollController() {
-    if (!mounted) {
-      return;
-    }
-    if (!scrollController.hasClients) return;
-    if (timeline?.allowNewEvent == false ||
-        scrollController.position.pixels > 0 && _scrolledUp == false) {
-      setState(() => _scrolledUp = true);
-    } else if (scrollController.position.pixels <= 0 && _scrolledUp == true) {
-      setState(() => _scrolledUp = false);
-      setReadMarker();
-    }
 
-    if (scrollController.position.pixels == 0 ||
-        scrollController.position.pixels == 64) {
-      requestFuture();
-    }
-  }
 
-  void _loadDraft() async {
-    final prefs = await SharedPreferences.getInstance();
-    final draft = prefs.getString('draft_$roomId');
-    if (draft != null && draft.isNotEmpty) {
-      sendController.text = draft;
-    }
-  }
+
 
   void _shareItems() {
     final shareItems = widget.shareItems;
@@ -358,8 +300,8 @@ class ChatController extends State<ChatPageWithRoom>
   @override
   void initState() {
     inputFocus = FocusNode(onKeyEvent: _customEnterKeyHandling);
-
-    scrollController.addListener(_updateScrollController);
+    _inputController = ChatInputController(widget.room, inputFocus);
+    _translationController = ChatTranslationController(() => setState(() {}));
     inputFocus.addListener(_inputFocusListener);
 
     super.initState();
@@ -381,36 +323,24 @@ class ChatController extends State<ChatPageWithRoom>
       }
     });
     
-    // Предзагрузка данных чата с задержкой
-    Future.delayed(const Duration(milliseconds: 500), () {
-      if (mounted) _preloadChatData();
-    });
+    // Немедленная предзагрузка для быстрого открытия
+    _preloadChatData();
     
     if (kIsWeb) {
       onFocusSub = html.window.onFocus.listen((_) => setReadMarker());
     }
     
-    // Clear translation cache on startup (only once)
+    scrollController.addListener(_updateScrollController);
+    
     WidgetsBinding.instance.addPostFrameCallback((_) {
       MessageTranslator.clearCache();
-      _loadDraft();
+      _inputController.loadDraft();
       _shareItems();
     });
   }
   
-  Future<void> _preloadChatData() async {
-    try {
-      _tryLoadTimeline();
-      
-      // Предзагружаем ключи шифрования для быстрой расшифровки
-      Future.delayed(const Duration(milliseconds: 100), () {
-        if (mounted && timeline != null) {
-          timeline!.requestKeys(onlineKeyBackupOnly: false);
-        }
-      });
-    } catch (e) {
-      Logs().v('Failed to preload chat data: $e');
-    }
+  void _preloadChatData() {
+    _tryLoadTimeline();
   }
   
 
@@ -495,70 +425,12 @@ class ChatController extends State<ChatPageWithRoom>
       if (mounted) {
         setState(() {});
         setReadMarker();
-        // Принудительно обновляем статусы сообщений
         room.onUpdate.add('status_update');
       }
     });
     
-    // Auto-translate messages if enabled
-    if (_autoTranslateEnabled) {
-      Future.delayed(const Duration(milliseconds: 100), () {
-        if (mounted) _autoTranslateAllMessages();
-      });
-    }
-  }
-  
-  void _autoTranslateAllMessages() async {
-    if (!mounted || !await MessageTranslator.isEnabled || !_autoTranslateEnabled) return;
-    
-    final timeline = this.timeline;
-    if (timeline == null || !mounted) return;
-    
-    // Получаем ВСЕ текстовые сообщения в чате
-    final allTextEvents = timeline.events
-        .where((event) => 
-            event.type == EventTypes.Message && 
-            event.messageType == MessageTypes.Text &&
-            event.body.trim().isNotEmpty &&
-            !messageTranslations.containsKey(event.eventId),)
-        .toList();
-    
-    if (allTextEvents.isEmpty || !mounted) return;
-    
-    // Переводим все сообщения пакетами для оптимизации
-    Future.microtask(() => _translateMessagesBatch(allTextEvents));
-  }
-  
-  void _translateMessagesBatch(List<Event> events) async {
-    const batchSize = 3; // Уменьшено для производительности
-    
-    for (var i = 0; i < events.length; i += batchSize) {
-      if (!mounted || !_autoTranslateEnabled) break;
-      
-      final batch = events.skip(i).take(batchSize).toList();
-      
-      // Простой перевод без изолятов
-      for (final event in batch) {
-        if (!mounted || !_autoTranslateEnabled) break;
-        try {
-          final translation = await MessageTranslator.translateMessage(event.body, 'auto');
-          if (translation != null && mounted) {
-            messageTranslations[event.eventId] = translation;
-          }
-        } catch (e) {
-          Logs().v('Failed to translate ${event.eventId}: $e');
-        }
-      }
-      
-      if (mounted) {
-        _cleanupTranslations();
-        notifyTranslationChanged();
-      }
-      
-      // Задержка между пакетами
-      if (i + batchSize < events.length) {
-        await Future.delayed(const Duration(milliseconds: 200));
-      }
+    if (autoTranslateEnabled && timeline != null) {
+      _translationController.translateVisibleMessages(timeline!.events);
     }
   }
   
@@ -680,32 +552,38 @@ class ChatController extends State<ChatPageWithRoom>
 
   @override
   void dispose() {
-    _updateTimer?.cancel();
     _linkPreviewTimer?.cancel();
     timeline?.cancelSubscriptions();
     timeline = null;
     inputFocus.removeListener(_inputFocusListener);
+    scrollController.removeListener(_updateScrollController);
     onFocusSub?.cancel();
-    typingCoolDown?.cancel();
-    typingTimeout?.cancel();
-    _storeInputTimeoutTimer?.cancel();
-    // Clear translations and auto-translate flag on chat disposal
-    _autoTranslateEnabled = false;
-    clearTranslations();
+    _inputController.dispose();
+    _translationController.dispose();
+    _scrollController?.dispose();
+    scrollController.dispose();
     super.dispose();
   }
 
   TextEditingController sendController = TextEditingController();
 
-  void setSendingClient(Client c) {
-    // first cancel typing with the old sending client
-    if (currentlyTyping) {
-      // no need to have the setting typing to false be blocking
-      typingCoolDown?.cancel();
-      typingCoolDown = null;
-      room.setTyping(false);
-      currentlyTyping = false;
+  void _updateScrollController() {
+    if (!mounted || !scrollController.hasClients) return;
+    
+    final atBottom = scrollController.position.pixels <= 0;
+    final shouldBeScrolledUp = !atBottom || timeline?.allowNewEvent == false;
+    
+    if (shouldBeScrolledUp != _scrolledUp) {
+      setState(() => _scrolledUp = shouldBeScrolledUp);
+      if (!_scrolledUp) setReadMarker();
     }
+    
+    if (atBottom || scrollController.position.pixels == 64) {
+      requestFuture();
+    }
+  }
+  
+  void setSendingClient(Client c) {
     // then cancel the old timeline
     // fixes bug with read reciepts and quick switching
     loadTimelineFuture = _getTimeline(eventContextId: room.fullyRead).onError(
@@ -725,9 +603,7 @@ class ChatController extends State<ChatPageWithRoom>
 
   Future<void> send() async {
     if (sendController.text.trim().isEmpty) return;
-    _storeInputTimeoutTimer?.cancel();
-    final prefs = await SharedPreferences.getInstance();
-    prefs.remove('draft_$roomId');
+    await _inputController.clearDraft();
     var parseCommands = true;
 
     final commandMatch = RegExp(r'^\/(\w+)').firstMatch(sendController.text);
@@ -1161,7 +1037,6 @@ class ChatController extends State<ChatPageWithRoom>
     if (eventIndex == -1) {
       setState(() {
         timeline = null;
-        _scrolledUp = false;
         loadTimelineFuture = _getTimeline(eventContextId: eventId).onError(
           ErrorReporter(context, 'Unable to load timeline after scroll to ID')
               .onErrorCallback,
@@ -1183,14 +1058,12 @@ class ChatController extends State<ChatPageWithRoom>
       duration: QuikxChatThemes.animationDuration,
       preferPosition: AutoScrollPosition.middle,
     );
-    _updateScrollController();
   }
 
   void scrollDown() async {
     if (!timeline!.allowNewEvent) {
       setState(() {
         timeline = null;
-        _scrolledUp = false;
         loadTimelineFuture = _getTimeline().onError(
           ErrorReporter(context, 'Unable to load timeline after scroll down')
               .onErrorCallback,
@@ -1386,21 +1259,12 @@ class ChatController extends State<ChatPageWithRoom>
     );
   }
 
-  Timer? _storeInputTimeoutTimer;
-  static const Duration _storeInputTimeout = Duration(milliseconds: 500);
-
   void onInputBarChanged(String text) {
     if (_inputTextIsEmpty != text.isEmpty) {
-      setState(() {
-        _inputTextIsEmpty = text.isEmpty;
-      });
+      setState(() => _inputTextIsEmpty = text.isEmpty);
     }
-
-    _storeInputTimeoutTimer?.cancel();
-    _storeInputTimeoutTimer = Timer(_storeInputTimeout, () async {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('draft_$roomId', text);
-    });
+    
+    _inputController.onChanged(text);
 
     // Handle link preview in input
     _linkPreviewTimer?.cancel();
@@ -1423,25 +1287,6 @@ class ChatController extends State<ChatPageWithRoom>
           });
           return;
         }
-      }
-    }
-    if (AppConfig.sendTypingNotifications) {
-      typingCoolDown?.cancel();
-      typingCoolDown = Timer(const Duration(seconds: 2), () {
-        typingCoolDown = null;
-        currentlyTyping = false;
-        room.setTyping(false);
-      });
-      typingTimeout ??= Timer(const Duration(seconds: 30), () {
-        typingTimeout = null;
-        currentlyTyping = false;
-      });
-      if (!currentlyTyping) {
-        currentlyTyping = true;
-        room.setTyping(
-          true,
-          timeout: const Duration(seconds: 30).inMilliseconds,
-        );
       }
     }
   }
@@ -1561,22 +1406,10 @@ class ChatController extends State<ChatPageWithRoom>
     _displayChatDetailsColumn.value = !_displayChatDetailsColumn.value;
   }
   
-  void translateAllVisibleMessages() async {
-    if (!mounted) return;
-    
-    _autoTranslateEnabled = !_autoTranslateEnabled;
-    setState(() {});
-    
-    if (_autoTranslateEnabled) {
-      // Немедленно переводим ВСЕ сообщения в чате
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) {
-          _autoTranslateAllMessages();
-        }
-      });
-    } else {
-      // Очищаем переводы при отключении
-      clearTranslations();
+  void translateAllVisibleMessages() {
+    _translationController.toggle();
+    if (autoTranslateEnabled && timeline != null) {
+      _translationController.translateVisibleMessages(timeline!.events);
     }
   }
   

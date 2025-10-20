@@ -1,9 +1,6 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:matrix/matrix.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../pages/chat/events/message.dart';
-import '../config/setting_keys.dart';
 import 'translation_providers.dart';
 
 class MessageTranslator {

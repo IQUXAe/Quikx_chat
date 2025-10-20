@@ -39,6 +39,6 @@ class MessageStatusHelper {
   static String createStatusKey(Event event) {
     final myUserId = event.room.client.userID;
     final receiptsCount = event.receipts.where((r) => r.user.id != myUserId).length;
-    return '${event.eventId}_${event.status}_${receiptsCount}';
+    return '${event.eventId}_${event.status}_$receiptsCount';
   }
 }

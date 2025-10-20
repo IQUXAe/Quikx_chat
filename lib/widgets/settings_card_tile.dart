@@ -43,7 +43,7 @@ class _SettingsCardTileState extends State<SettingsCardTile> with SingleTickerPr
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeInOut,
-    ));
+    ),);
   }
 
   @override
@@ -164,7 +164,7 @@ class _SettingsCardSwitchState extends State<SettingsCardSwitch> with SingleTick
     ).animate(CurvedAnimation(
       parent: _animationController,
       curve: Curves.easeInOut,
-    ));
+    ),);
   }
 
   @override

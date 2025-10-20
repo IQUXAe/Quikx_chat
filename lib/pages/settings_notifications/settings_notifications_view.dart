@@ -160,7 +160,7 @@ class SettingsNotificationsView extends StatelessWidget {
                         leading: Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: statusColor?.withOpacity(0.1),
+                            color: statusColor.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Icon(

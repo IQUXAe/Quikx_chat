@@ -74,7 +74,7 @@ class SettingsCardGroup extends StatelessWidget {
           }
           
           return child;
-        }).toList(),
+        }),
       ],
     );
   }

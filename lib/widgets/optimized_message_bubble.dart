@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:matrix/matrix.dart';
 
 /// Оптимизированный пузырь сообщения с улучшенной анимацией
 class OptimizedMessageBubble extends StatefulWidget {
@@ -47,7 +46,7 @@ class _OptimizedMessageBubbleState extends State<OptimizedMessageBubble>
     ).animate(CurvedAnimation(
       parent: _controller,
       curve: const Interval(0.0, 0.6, curve: Curves.easeOutCubic),
-    ));
+    ),);
 
     _fadeAnimation = Tween<double>(
       begin: 0.0,
@@ -55,7 +54,7 @@ class _OptimizedMessageBubbleState extends State<OptimizedMessageBubble>
     ).animate(CurvedAnimation(
       parent: _controller,
       curve: const Interval(0.0, 0.8, curve: Curves.easeOut),
-    ));
+    ),);
 
     _slideAnimation = Tween<Offset>(
       begin: Offset(widget.ownMessage ? 0.3 : -0.3, 0.1),
@@ -63,7 +62,7 @@ class _OptimizedMessageBubbleState extends State<OptimizedMessageBubble>
     ).animate(CurvedAnimation(
       parent: _controller,
       curve: const Interval(0.2, 1.0, curve: Curves.easeOutQuart),
-    ));
+    ),);
 
     // Запускаем анимацию если нужно
     if (widget.animateIn) {
@@ -197,7 +196,7 @@ class _TypingIndicatorBubbleState extends State<TypingIndicatorBubble>
           0.6 + index * 0.2,
           curve: Curves.easeInOut,
         ),
-      ));
+      ),);
     });
 
     _controller.repeat(reverse: true);

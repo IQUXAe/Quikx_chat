@@ -27,7 +27,7 @@ class MemoryManager {
       _checkAndOptimizeMemory();
     });
 
-    Logs().i('[MemoryManager] Initialized with limits: ${_maxImageCacheCount} images, ${_maxImageCacheSize ~/ (1024 * 1024)}MB');
+    Logs().i('[MemoryManager] Initialized with limits: $_maxImageCacheCount images, ${_maxImageCacheSize ~/ (1024 * 1024)}MB');
   }
   
   bool get isLowMemory {

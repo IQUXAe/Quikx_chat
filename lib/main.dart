@@ -15,6 +15,7 @@ import 'package:quikxchat/utils/file_logger.dart';
 import 'package:quikxchat/utils/memory_manager.dart';
 import 'package:quikxchat/utils/optimized_message_translator.dart';
 import 'package:quikxchat/utils/notification_handler.dart';
+import 'package:quikxchat/utils/image_cache_manager.dart';
 
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'config/setting_keys.dart';
@@ -30,24 +31,27 @@ void main() async {
   // widget bindings are initialized already.
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Инициализируем файловый логгер для отладки push-уведомлений
-  await FileLogger.init();
-
-  // Инициализируем менеджер памяти
-  MemoryManager().initialize();
-
-  // Инициализируем оптимизированный HTTP клиент
-  OptimizedHttpClient().initialize();
-
-  // Инициализируем WebRTC для всех платформ
-  if (!PlatformInfos.isWeb) {
-    await WebRTC.initialize();
-  }
-
-  await vod.init(wasmPath: './assets/assets/vodozemac/');
-
+  // Параллельная инициализация для ускорения запуска
   Logs().nativeColors = true;
-  final store = await SharedPreferences.getInstance();
+  
+  final initFutures = <Future>[
+    FileLogger.init(),
+    SharedPreferences.getInstance(),
+    vod.init(wasmPath: './assets/assets/vodozemac/'),
+  ];
+  
+  // WebRTC инициализируем асинхронно, не блокируя старт
+  if (!PlatformInfos.isWeb) {
+    WebRTC.initialize().catchError((e) => Logs().w('WebRTC init failed', e));
+  }
+  
+  // Инициализируем сервисы синхронно (быстро)
+  MemoryManager().initialize();
+  OptimizedHttpClient().initialize();
+  ImageCacheManager().configure();
+  
+  final results = await Future.wait(initFutures);
+  final store = results[1] as SharedPreferences;
   final clients = await ClientManager.getClients(store: store);
 
   // If the app starts in detached mode, we assume that it is in
@@ -92,31 +96,34 @@ Future<void> startGui(List<Client> clients, SharedPreferences store) async {
     }
   }
 
-  // Preload first client - параллельная загрузка
+  // Инициализируем переводчик синхронно
+  OptimizedMessageTranslator.initialize();
+  
+  // Запускаем GUI сразу, остальное грузим асинхронно
+  runApp(QuikxChatApp(clients: clients, pincode: pin, store: store));
+  
+  // Фоновая инициализация после старта GUI
+  _initializeInBackground(clients);
+
+}
+
+Future<void> _initializeInBackground(List<Client> clients) async {
+  // Предзагрузка данных клиента
   final firstClient = clients.firstOrNull;
   if (firstClient != null) {
     final futures = <Future>[];
-    if (firstClient.roomsLoading != null) {
-      futures.add(firstClient.roomsLoading!);
-    }
-    if (firstClient.accountDataLoading != null) {
-      futures.add(firstClient.accountDataLoading!);
-    }
+    if (firstClient.roomsLoading != null) futures.add(firstClient.roomsLoading!);
+    if (firstClient.accountDataLoading != null) futures.add(firstClient.accountDataLoading!);
     if (futures.isNotEmpty) {
-      await Future.wait(futures);
+      Future.wait(futures).catchError((e) => Logs().w('Client preload failed', e));
     }
   }
-
-  // Инициализируем менеджер памяти и оптимизированный переводчик
-  MemoryManager().initialize();
-  OptimizedMessageTranslator.initialize();
-
-  // Инициализируем менеджер push-уведомлений с глобальным обработчиком
+  
+  // Инициализация уведомлений в фоне
   try {
     await NotificationService.instance.initialize();
-
-    // Устанавливаем обработчик уведомлений
-    final initialized = await NotificationService.instance.localNotifications.initialize(
+    
+    await NotificationService.instance.localNotifications.initialize(
       InitializationSettings(
         android: const AndroidInitializationSettings('notifications_icon'),
         linux: PlatformInfos.isLinux ? const LinuxInitializationSettings(
@@ -126,18 +133,11 @@ Future<void> startGui(List<Client> clients, SharedPreferences store) async {
       onDidReceiveNotificationResponse: NotificationHandler.onNotificationResponse,
       onDidReceiveBackgroundNotificationResponse: NotificationHandler.onNotificationResponse,
     );
-
-    Logs().d('[Main] Notification initialization result: $initialized');
-    Logs().i('Push notification manager initialized: $initialized');
-
-    // Обрабатываем отложенные действия уведомлений
+    
     NotificationHandler.processPendingNotificationActions(clients.firstOrNull);
-
   } catch (e, s) {
-    Logs().w('Failed to initialize push notification manager', e, s);
+    Logs().w('Background init failed', e, s);
   }
-
-  runApp(QuikxChatApp(clients: clients, pincode: pin, store: store));
 }
 
 /// Watches the lifecycle changes to start the application when it

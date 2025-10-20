@@ -14,43 +14,43 @@ class ServerSelectionController extends State<ServerSelection> {
   bool isLoading = false;
 
   final List<ServerOption> servers = [
-    ServerOption(
+    const ServerOption(
       id: 'matrix',
       name: 'matrix.org',
       description: '',
       registrationUrl: 'https://app.element.io/#/register',
     ),
-    ServerOption(
+    const ServerOption(
       id: 'envs',
       name: 'envs.net',
       description: '',
       registrationUrl: 'https://element.envs.net/#/register',
     ),
-    ServerOption(
+    const ServerOption(
       id: 'g24',
       name: 'g24.at',
       description: '',
       registrationUrl: 'https://element.g24.at/#/register',
     ),
-    ServerOption(
+    const ServerOption(
       id: 'imagisphe',
       name: 'imagisphe.re',
       description: '',
       registrationUrl: 'https://element.imagisphe.re/#/register',
     ),
-    ServerOption(
+    const ServerOption(
       id: 'socialnetwork24',
       name: 'socialnetwork24.com',
       description: '',
       registrationUrl: 'https://chat.socialnetwork24.com/#/register',
     ),
-    ServerOption(
+    const ServerOption(
       id: 'gnulinux',
       name: 'gnulinux.club',
       description: '',
       registrationUrl: 'https://element.gnulinux.club/#/register',
     ),
-    ServerOption(
+    const ServerOption(
       id: 'jonasled',
       name: 'jonasled.de',
       description: '',

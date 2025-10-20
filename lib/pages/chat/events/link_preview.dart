@@ -118,7 +118,7 @@ class _LinkPreviewState extends State<LinkPreview> {
       
       final title = document.querySelector('meta[property="og:title"]')?.attributes['content']?.trim() ??
                      document.querySelector('meta[name="twitter:title"]')?.attributes['content']?.trim() ??
-                     document.querySelector('title')?.text?.trim();
+                     document.querySelector('title')?.text.trim();
       
       final description = document.querySelector('meta[property="og:description"]')?.attributes['content']?.trim() ??
                            document.querySelector('meta[name="twitter:description"]')?.attributes['content']?.trim() ??
@@ -134,7 +134,7 @@ class _LinkPreviewState extends State<LinkPreview> {
           } else if (imageUrl.startsWith('/')) {
             imageUrl = '${uri.scheme}://${uri.host}$imageUrl';
           } else {
-            imageUrl = '${uri.scheme}://${uri.host}/${imageUrl}';
+            imageUrl = '${uri.scheme}://${uri.host}/$imageUrl';
           }
         }
       }
@@ -184,7 +184,7 @@ class _LinkPreviewState extends State<LinkPreview> {
           widget.textColor.green,
           widget.textColor.blue,
           0.3,
-        )),
+        ),),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Material(
@@ -201,7 +201,7 @@ class _LinkPreviewState extends State<LinkPreview> {
                 if (_previewData!.imageUrl != null) ...[
                   ClipRRect(
                     borderRadius: BorderRadius.circular(6),
-                    child: Container(
+                    child: SizedBox(
                       height: 120,
                       width: double.infinity,
                       child: Image.network(
@@ -219,7 +219,7 @@ class _LinkPreviewState extends State<LinkPreview> {
                             widget.textColor.green,
                             widget.textColor.blue,
                             0.5,
-                          )),
+                          ),),
                         ),
                       ),
                     ),
