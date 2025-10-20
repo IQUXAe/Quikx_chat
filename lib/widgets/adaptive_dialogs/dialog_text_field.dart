@@ -40,56 +40,22 @@ class DialogTextField extends StatelessWidget {
     final suffixText = this.suffixText;
     final errorText = this.errorText;
     final theme = Theme.of(context);
-    switch (theme.platform) {
-      case TargetPlatform.android:
-      case TargetPlatform.fuchsia:
-      case TargetPlatform.linux:
-      case TargetPlatform.windows:
-        return TextField(
-          controller: controller,
-          obscureText: obscureText,
-          minLines: minLines,
-          maxLines: maxLines,
-          maxLength: maxLength,
-          keyboardType: keyboardType,
-          autocorrect: autocorrect,
-          decoration: InputDecoration(
-            errorText: errorText,
-            hintText: hintText,
-            labelText: labelText,
-            prefixText: prefixText,
-            suffixText: suffixText,
-            counterText: counterText,
-          ),
-        );
-      case TargetPlatform.iOS:
-      case TargetPlatform.macOS:
-        return Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            CupertinoTextField(
-              controller: controller,
-              obscureText: obscureText,
-              minLines: minLines,
-              maxLines: maxLines,
-              maxLength: maxLength,
-              keyboardType: keyboardType,
-              autocorrect: autocorrect,
-              prefix: prefixText != null ? Text(prefixText) : null,
-              suffix: suffixText != null ? Text(suffixText) : null,
-              placeholder: labelText ?? hintText,
-            ),
-            if (errorText != null)
-              Text(
-                errorText,
-                style: TextStyle(
-                  fontSize: 11,
-                  color: theme.colorScheme.error,
-                ),
-                textAlign: TextAlign.left,
-              ),
-          ],
-        );
-    }
+    return TextField(
+      controller: controller,
+      obscureText: obscureText,
+      minLines: minLines,
+      maxLines: maxLines,
+      maxLength: maxLength,
+      keyboardType: keyboardType,
+      autocorrect: autocorrect,
+      decoration: InputDecoration(
+        errorText: errorText,
+        hintText: hintText,
+        labelText: labelText,
+        prefixText: prefixText,
+        suffixText: suffixText,
+        counterText: counterText,
+      ),
+    );
   }
 }

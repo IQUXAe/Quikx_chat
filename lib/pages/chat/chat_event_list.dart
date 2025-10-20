@@ -59,9 +59,7 @@ class ChatEventList extends StatelessWidget {
         ),
         reverse: true,
         controller: controller.scrollController,
-        keyboardDismissBehavior: PlatformInfos.isIOS
-            ? ScrollViewKeyboardDismissBehavior.onDrag
-            : ScrollViewKeyboardDismissBehavior.manual,
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,
         childrenDelegate: SliverChildBuilderDelegate(
           (BuildContext context, int i) {
             // Footer to display typing indicator and read receipts:

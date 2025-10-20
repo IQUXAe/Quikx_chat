@@ -13,9 +13,7 @@ class SyncService {
         priority: NotificationPriority.LOW,
 
       ),
-      iosNotificationOptions: const IOSNotificationOptions(
-        showNotification: false,
-      ),
+      iosNotificationOptions: const IOSNotificationOptions(),
       foregroundTaskOptions: ForegroundTaskOptions(
         eventAction: ForegroundTaskEventAction.once(),
         autoRunOnBoot: false,

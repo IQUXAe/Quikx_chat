@@ -230,7 +230,6 @@ class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
             importance: Importance.high,
             priority: Priority.high,
           ),
-          iOS: DarwinNotificationDetails(),
         ),
       );
 

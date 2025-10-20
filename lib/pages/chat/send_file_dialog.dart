@@ -344,21 +344,12 @@ class SendFileDialogState extends State<SendFileDialog> {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        if ({TargetPlatform.iOS, TargetPlatform.macOS}
-                            .contains(theme.platform))
-                          CupertinoSwitch(
-                            value: compressionSupported && compress,
-                            onChanged: compressionSupported
-                                ? (v) => setState(() => compress = v)
-                                : null,
-                          )
-                        else
-                          Switch.adaptive(
-                            value: compressionSupported && compress,
-                            onChanged: compressionSupported
-                                ? (v) => setState(() => compress = v)
-                                : null,
-                          ),
+                        Switch.adaptive(
+                          value: compressionSupported && compress,
+                          onChanged: compressionSupported
+                              ? (v) => setState(() => compress = v)
+                              : null,
+                        ),
                         const SizedBox(width: 16),
                         Expanded(
                           child: Column(

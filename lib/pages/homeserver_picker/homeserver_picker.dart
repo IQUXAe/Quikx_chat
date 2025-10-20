@@ -126,7 +126,7 @@ class HomeserverPickerController extends State<HomeserverPicker> {
   bool get supportsSso => _supportsFlow('m.login.sso');
 
   bool isDefaultPlatform =
-      (PlatformInfos.isMobile || PlatformInfos.isWeb || PlatformInfos.isMacOS);
+      (PlatformInfos.isMobile || PlatformInfos.isWeb);
 
   bool get supportsPasswordLogin => _supportsFlow('m.login.password');
 

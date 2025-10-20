@@ -46,7 +46,7 @@ void main() async {
 
   await vod.init(wasmPath: './assets/assets/vodozemac/');
 
-  Logs().nativeColors = !PlatformInfos.isIOS;
+  Logs().nativeColors = true;
   final store = await SharedPreferences.getInstance();
   final clients = await ClientManager.getClients(store: store);
 

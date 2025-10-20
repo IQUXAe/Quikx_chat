@@ -24,8 +24,6 @@ class QrScannerModalState extends State<QrScannerModal> {
     super.reassemble();
     if (Platform.isAndroid) {
       controller!.pauseCamera();
-    } else if (Platform.isIOS) {
-      controller!.resumeCamera();
     }
   }
 

@@ -31,8 +31,6 @@ class MemoryManager {
   }
   
   bool get isLowMemory {
-    if (Platform.isIOS) return false;
-    
     try {
       return ProcessInfo.currentRss > _lowMemoryThreshold * 4;
     } catch (e) {

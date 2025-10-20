@@ -7,9 +7,6 @@ IconData _getIconFromName(String displayname) {
   if ({'android'}.any((s) => name.contains(s))) {
     return Icons.phone_android_outlined;
   }
-  if ({'ios', 'ipad', 'iphone', 'ipod'}.any((s) => name.contains(s))) {
-    return Icons.phone_iphone_outlined;
-  }
   if ({
     'web',
     'http://',

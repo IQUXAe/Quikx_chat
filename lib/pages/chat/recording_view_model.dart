@@ -69,10 +69,7 @@ class RecordingViewModelState extends State<RecordingViewModel> {
 
     try {
       final codec = kIsWeb
-          // Web seems to create webm instead of ogg when using opus encoder
-          // which does not play on iOS right now. So we use wav for now:
           ? AudioEncoder.wav
-          // Everywhere else we use opus if supported by the platform:
           : await audioRecorder.isEncoderSupported(AudioEncoder.opus)
               ? AudioEncoder.opus
               : AudioEncoder.aacLc;

@@ -63,9 +63,6 @@ class BootstrapDialogState extends State<BootstrapDialog> {
     if (PlatformInfos.isAndroid) {
       return L10n.of(context).storeInAndroidKeystore;
     }
-    if (PlatformInfos.isIOS || PlatformInfos.isMacOS) {
-      return L10n.of(context).storeInAppleKeyChain;
-    }
     return L10n.of(context).storeSecurlyOnThisDevice;
   }
 

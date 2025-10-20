@@ -118,9 +118,7 @@ Future<MatrixSdkDatabase> _constructDatabase(String clientName) async {
 }
 
 Future<String> _getDatabasePath(String clientName) async {
-  final databaseDirectory = PlatformInfos.isIOS || PlatformInfos.isMacOS
-      ? await getLibraryDirectory()
-      : await getApplicationSupportDirectory();
+  final databaseDirectory = await getApplicationSupportDirectory();
 
   return join(databaseDirectory.path, '$clientName.sqlite');
 }
