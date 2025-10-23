@@ -34,7 +34,6 @@ import '../../widgets/matrix.dart';
 import '../bootstrap/bootstrap_dialog.dart';
 import 'controllers/chat_list_search_controller.dart';
 import 'controllers/chat_list_filter_controller.dart';
-import 'widgets/status_dialog.dart';
 
 import 'package:quikxchat/utils/tor_stub.dart'
     if (dart.library.html) 'package:tor_detector_web/tor_detector_web.dart';
@@ -98,16 +97,17 @@ class ChatListController extends State<ChatList>
 
   late final ChatListFilterController _filterController;
   late final ChatListSearchController _searchController;
-  
+
   ActiveFilter get activeFilter => _filterController.activeFilter;
   String? get activeSpaceId => _filterController.activeSpaceId;
-  
+
   void setActiveSpace(String spaceId) async {
     await Matrix.of(context).client.getRoomById(spaceId)!.postLoad();
     _filterController.setActiveSpace(spaceId, () => setState(() {}));
   }
-  
-  void clearActiveSpace() => _filterController.clearActiveSpace(() => setState(() {}));
+
+  void clearActiveSpace() =>
+      _filterController.clearActiveSpace(() => setState(() {}));
 
   void onChatTap(Room room) async {
     if (room.membership == Membership.invite) {
@@ -148,14 +148,17 @@ class ChatListController extends State<ChatList>
     context.go('/rooms/${room.id}');
   }
 
-  List<Room> get filteredRooms => _filterController.getFilteredRooms(Matrix.of(context).client.rooms);
+  List<Room> get filteredRooms =>
+      _filterController.getFilteredRooms(Matrix.of(context).client.rooms);
 
   bool get isSearchMode => _searchController.isSearchMode;
   bool get isSearching => _searchController.isSearching;
-  SearchUserDirectoryResponse? get userSearchResult => _searchController.userSearchResult;
-  QueryPublicRoomsResponse? get roomSearchResult => _searchController.roomSearchResult;
+  SearchUserDirectoryResponse? get userSearchResult =>
+      _searchController.userSearchResult;
+  QueryPublicRoomsResponse? get roomSearchResult =>
+      _searchController.roomSearchResult;
   String? get searchServer => _searchController.searchServer;
-  
+
   static const String _serverStoreNamespace = 'im.fluffychat.search.server';
 
   void setServer() async {
@@ -170,7 +173,8 @@ class ChatListController extends State<ChatList>
       initialText: _searchController.searchServer,
       keyboardType: TextInputType.url,
       autocorrect: false,
-      validator: (server) => server.contains('.') ? null : L10n.of(context).invalidServerName,
+      validator: (server) =>
+          server.contains('.') ? null : L10n.of(context).invalidServerName,
     );
     if (newServer == null) return;
     Matrix.of(context).store.setString(_serverStoreNamespace, newServer);
@@ -178,10 +182,9 @@ class ChatListController extends State<ChatList>
     setState(() {});
   }
 
-  TextEditingController get searchController => _searchController.textController;
+  TextEditingController get searchController =>
+      _searchController.textController;
   FocusNode get searchFocusNode => _searchController.focusNode;
-
-
 
   void onSearchEnter(String text, {bool globalSearch = true}) {
     _searchController.onSearchChanged(text);
@@ -189,7 +192,8 @@ class ChatListController extends State<ChatList>
 
   void startSearch() => _searchController.startSearch();
 
-  void cancelSearch({bool unfocus = true}) => _searchController.cancelSearch(unfocus: unfocus);
+  void cancelSearch({bool unfocus = true}) =>
+      _searchController.cancelSearch(unfocus: unfocus);
 
   bool isTorBrowser = false;
 
@@ -289,13 +293,15 @@ class ChatListController extends State<ChatList>
   @override
   void initState() {
     _filterController = ChatListFilterController(
-      AppConfig.separateChatTypes ? ActiveFilter.messages : ActiveFilter.allChats,
+      AppConfig.separateChatTypes
+          ? ActiveFilter.messages
+          : ActiveFilter.allChats,
     );
     _searchController = ChatListSearchController(
       client: Matrix.of(context).client,
       onUpdate: () => setState(() {}),
     );
-    
+
     _initReceiveSharingIntent();
     WidgetsBinding.instance.addObserver(this);
 
@@ -304,30 +310,11 @@ class ChatListController extends State<ChatList>
     _hackyWebRTCFixForWeb();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (mounted) {
-        _searchController.searchServer = Matrix.of(context).store.getString(_serverStoreNamespace);
+        _searchController.searchServer =
+            Matrix.of(context).store.getString(_serverStoreNamespace);
         Matrix.of(context).backgroundPush?.setupPush();
         UpdateNotifier.showUpdateSnackBar(context);
-        
-        // Восстанавливаем сохраненный статус при запуске
-        final client = Matrix.of(context).client;
-        final store = Matrix.of(context).store;
-        if (client.isLogged() && AppConfig.showPresences) {
-          try {
-            final savedStatus = store.getString('user_status_msg');
-            final savedPresence = PresenceType.values.firstWhere(
-              (p) => p.name == store.getString('user_presence_type'),
-              orElse: () => PresenceType.online,
-            );
-            await client.setPresence(
-              client.userID!,
-              savedPresence,
-              statusMsg: savedStatus?.isEmpty == true ? null : savedStatus,
-            );
-          } catch (e) {
-            Logs().w('Failed to restore presence', e);
-          }
-        }
-        
+
         // Предзагружаем профили всех пользователей
         _preloadAllProfiles();
       }
@@ -354,40 +341,6 @@ class ChatListController extends State<ChatList>
     _searchController.dispose();
     scrollController.removeListener(_onScroll);
     super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    super.didChangeAppLifecycleState(state);
-    final client = Matrix.of(context).client;
-    final store = Matrix.of(context).store;
-    
-    if (!client.isLogged() || !AppConfig.showPresences) return;
-    
-    // Получаем сохраненное статусное сообщение
-    final savedStatusMsg = store.getString('user_status_msg');
-    final statusMsg = savedStatusMsg?.isEmpty == true ? null : savedStatusMsg;
-    
-    switch (state) {
-      case AppLifecycleState.resumed:
-        client.setPresence(client.userID!, PresenceType.online, statusMsg: statusMsg).catchError((e) {
-          Logs().w('Failed to set online presence', e);
-        });
-        break;
-      case AppLifecycleState.paused:
-      case AppLifecycleState.inactive:
-        client.setPresence(client.userID!, PresenceType.unavailable, statusMsg: statusMsg).catchError((e) {
-          Logs().w('Failed to set away presence', e);
-        });
-        break;
-      case AppLifecycleState.detached:
-        client.setPresence(client.userID!, PresenceType.offline, statusMsg: statusMsg).catchError((e) {
-          Logs().w('Failed to set offline presence', e);
-        });
-        break;
-      case AppLifecycleState.hidden:
-        break;
-    }
   }
 
   void chatContextAction(
@@ -676,45 +629,28 @@ class ChatListController extends State<ChatList>
 
   void setStatus() async {
     final client = Matrix.of(context).client;
-    final store = Matrix.of(context).store;
-    
-    var currentStatus = store.getString('user_status_msg') ?? '';
-    var currentPresence = PresenceType.values.firstWhere(
-      (p) => p.name == store.getString('user_presence_type'),
-      orElse: () => PresenceType.online,
-    );
-    
-    try {
-      final presence = await client.fetchCurrentPresence(client.userID!);
-      currentStatus = presence.statusMsg ?? currentStatus;
-      currentPresence = presence.presence ?? currentPresence;
-    } catch (e) {
-      Logs().w('Failed to get current status: $e');
-    }
-    
-    final result = await showDialog<Map<String, dynamic>>(
+    final currentPresence = await client.fetchCurrentPresence(client.userID!);
+    final input = await showTextInputDialog(
+      useRootNavigator: false,
       context: context,
-      builder: (context) => StatusDialog(
-        currentStatus: currentStatus,
-        currentPresence: currentPresence,
-      ),
+      title: L10n.of(context).setStatus,
+      message: L10n.of(context).leaveEmptyToClearStatus,
+      okLabel: L10n.of(context).ok,
+      cancelLabel: L10n.of(context).cancel,
+      hintText: L10n.of(context).statusExampleMessage,
+      maxLines: 6,
+      minLines: 1,
+      maxLength: 255,
+      initialText: currentPresence.statusMsg,
     );
-    
-    if (result == null || !mounted) return;
-    
-    final statusMsg = result['status'] as String?;
-    final presenceType = result['presence'] as PresenceType;
-    
-    // Save to SharedPreferences
-    await store.setString('user_status_msg', statusMsg ?? '');
-    await store.setString('user_presence_type', presenceType.name);
-    
+    if (input == null) return;
+    if (!mounted) return;
     await showFutureLoadingDialog(
       context: context,
       future: () => client.setPresence(
         client.userID!,
-        presenceType,
-        statusMsg: statusMsg?.isEmpty == true ? null : statusMsg,
+        PresenceType.online,
+        statusMsg: input,
       ),
     );
   }
@@ -797,8 +733,11 @@ class ChatListController extends State<ChatList>
     context.go('/rooms');
     _filterController.clearActiveSpace(() {});
     Matrix.of(context).activeBundle = bundle;
-    if (!Matrix.of(context).currentBundle!.any((client) => client == Matrix.of(context).client)) {
-      Matrix.of(context).setActiveClient(Matrix.of(context).currentBundle!.first);
+    if (!Matrix.of(context)
+        .currentBundle!
+        .any((client) => client == Matrix.of(context).client)) {
+      Matrix.of(context)
+          .setActiveClient(Matrix.of(context).currentBundle!.first);
     }
     setState(() {});
   }
@@ -883,41 +822,51 @@ class ChatListController extends State<ChatList>
   }
 
   Future<void> dehydrate() => Matrix.of(context).dehydrateAction(context);
-  
+
   Future<void> _preloadAllProfiles() async {
     if (!mounted) return;
-    
+
     try {
       final client = Matrix.of(context).client;
-      final rooms = client.rooms.take(20); // Ограничиваем количество для производительности
-      
+      final rooms = client.rooms
+          .take(20); // Ограничиваем количество для производительности
+
       for (final room in rooms) {
         if (!mounted) break;
-        
+
         // Предзагружаем аватары комнат
         if (room.avatar != null) {
           precacheImage(
-            NetworkImage(room.avatar!.getThumbnail(
-              client,
-              width: 44,
-              height: 44,
-            ).toString(),),
+            NetworkImage(
+              room.avatar!
+                  .getThumbnail(
+                    client,
+                    width: 44,
+                    height: 44,
+                  )
+                  .toString(),
+            ),
             context,
           ).catchError((_) {});
         }
-        
+
         // Предзагружаем профили для прямых чатов
         final directChatMatrixId = room.directChatMatrixID;
         if (directChatMatrixId != null) {
           try {
-            final profile = await client.getProfileFromUserId(directChatMatrixId);
+            final profile =
+                await client.getProfileFromUserId(directChatMatrixId);
             if (profile.avatarUrl != null && mounted) {
               precacheImage(
-                NetworkImage(profile.avatarUrl!.getThumbnail(
-                  client,
-                  width: 44,
-                  height: 44,
-                ).toString(),),
+                NetworkImage(
+                  profile.avatarUrl!
+                      .getThumbnail(
+                        client,
+                        width: 44,
+                        height: 44,
+                      )
+                      .toString(),
+                ),
                 context,
               ).catchError((_) {});
             }
@@ -925,11 +874,11 @@ class ChatListController extends State<ChatList>
             // Игнорируем ошибки загрузки профиля
           }
         }
-        
+
         // Небольшая задержка между запросами
         await Future.delayed(const Duration(milliseconds: 50));
       }
-      
+
       // Обновляем UI после предзагрузки
       if (mounted) setState(() {});
     } catch (e) {
@@ -937,8 +886,6 @@ class ChatListController extends State<ChatList>
     }
   }
 }
-
-
 
 enum EditBundleAction { addToBundle, removeFromBundle }
 

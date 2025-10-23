@@ -13,8 +13,8 @@ class ModernPageRoute<T> extends PageRouteBuilder<T> {
     super.settings,
   }) : super(
           pageBuilder: (context, animation, secondaryAnimation) => child,
-          transitionDuration: const Duration(milliseconds: 250),
-          reverseTransitionDuration: const Duration(milliseconds: 200),
+          transitionDuration: const Duration(milliseconds: 400),
+          reverseTransitionDuration: const Duration(milliseconds: 350),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return _buildTransition(
               context,

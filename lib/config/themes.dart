@@ -35,9 +35,9 @@ abstract class QuikxChatThemes {
     );
   }
 
-  static const Duration animationDuration = Duration(milliseconds: 250);
-  static const Duration fastAnimationDuration = Duration(milliseconds: 150);
-  static const Duration slowAnimationDuration = Duration(milliseconds: 350);
+  static const Duration animationDuration = Duration(milliseconds: 400);
+  static const Duration fastAnimationDuration = Duration(milliseconds: 250);
+  static const Duration slowAnimationDuration = Duration(milliseconds: 550);
   static const Curve animationCurve = Curves.easeInOutCubic;
   static const Curve fastAnimationCurve = Curves.easeOutQuart;
   static const Curve bounceAnimationCurve = Curves.elasticOut;

@@ -125,37 +125,10 @@ class ClientChooserButton extends StatelessWidget {
               : null,
           onSelected: (o) => _clientSelected(o, context),
           itemBuilder: _bundleMenuItems,
-          child: FutureBuilder<CachedPresence>(
-            future: matrix.client.fetchCurrentPresence(matrix.client.userID!),
-            builder: (context, presenceSnapshot) {
-              final cached = presenceSnapshot.data;
-              final hasStatusMsg = cached?.statusMsg?.isNotEmpty == true;
-              
-              return GestureDetector(
-                onTap: hasStatusMsg ? () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(cached!.statusMsg!),
-                      duration: const Duration(seconds: 3),
-                    ),
-                  );
-                } : null,
-                child: Container(
-                  decoration: hasStatusMsg ? BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: Colors.blue,
-                      width: 2,
-                    ),
-                  ) : null,
-                  child: Avatar(
-                    mxContent: snapshot.data?.avatarUrl,
-                    name: snapshot.data?.displayName ?? matrix.client.userID?.localpart,
-                    size: 36,
-                  ),
-                ),
-              );
-            },
+          child: Avatar(
+            mxContent: snapshot.data?.avatarUrl,
+            name: snapshot.data?.displayName ?? matrix.client.userID?.localpart,
+            size: 36,
           ),
         ),
       ),

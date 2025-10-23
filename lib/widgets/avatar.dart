@@ -161,7 +161,7 @@ class _AvatarState extends State<Avatar> {
                 return Stack(
                   clipBehavior: Clip.none,
                   children: [
-                    // Status message border
+                    // Status message border (синий круг)
                     if (hasStatusMsg)
                       Positioned.fill(
                         child: Container(
@@ -169,18 +169,18 @@ class _AvatarState extends State<Avatar> {
                             borderRadius: borderRadius,
                             border: Border.all(
                               color: Colors.blue,
-                              width: 2,
+                              width: 3,
                             ),
                           ),
                         ),
                       ),
                     // Presence dot
                     Positioned(
-                      bottom: -3,
-                      right: -3,
+                      bottom: 0,
+                      right: 0,
                       child: Container(
-                        width: 16,
-                        height: 16,
+                        width: 14,
+                        height: 14,
                         decoration: BoxDecoration(
                           color: widget.presenceBackgroundColor ?? theme.colorScheme.surface,
                           borderRadius: BorderRadius.circular(32),
@@ -192,10 +192,6 @@ class _AvatarState extends State<Avatar> {
                           decoration: BoxDecoration(
                             color: dotColor,
                             borderRadius: BorderRadius.circular(16),
-                            border: Border.all(
-                              width: 1,
-                              color: theme.colorScheme.surface,
-                            ),
                           ),
                         ),
                       ),
