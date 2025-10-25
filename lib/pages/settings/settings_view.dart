@@ -68,10 +68,13 @@ class SettingsView extends StatelessWidget {
         ],
         Expanded(
           child: Scaffold(
+            backgroundColor: theme.colorScheme.surface,
             appBar: QuikxChatThemes.isColumnMode(context)
                 ? null
                 : AppBar(
-                    title: Text(L10n.of(context).settings),
+                    elevation: 0,
+                    backgroundColor: Colors.transparent,
+                    title: Text(L10n.of(context).settings, style: TextStyle(fontWeight: FontWeight.w600)),
                     leading: Center(
                       child: BackButton(
                         onPressed: () => context.go('/rooms'),
@@ -82,6 +85,7 @@ class SettingsView extends StatelessWidget {
               iconColor: theme.colorScheme.onSurface,
               child: ListView(
                 key: const Key('SettingsListViewContent'),
+                padding: const EdgeInsets.only(bottom: 24),
                 children: <Widget>[
                   FutureBuilder<Profile>(
                     future: controller.profileFuture,
@@ -92,104 +96,187 @@ class SettingsView extends StatelessWidget {
                           L10n.of(context).user;
                       final displayname =
                           profile?.displayName ?? mxid.localpart ?? mxid;
-                      return Row(
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(32.0),
-                            child: Stack(
+                      return Container(
+                        margin: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+                        padding: const EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            colors: [
+                              theme.colorScheme.primaryContainer,
+                              theme.colorScheme.secondaryContainer,
+                            ],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(20),
+                          boxShadow: [
+                            BoxShadow(
+                              color: theme.colorScheme.primary.withOpacity(0.1),
+                              blurRadius: 20,
+                              offset: const Offset(0, 8),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            Stack(
                               children: [
-                                Avatar(
-                                  mxContent: avatar,
-                                  name: displayname,
-                                  size: Avatar.defaultSize * 2.5,
-                                  onTap: avatar != null
-                                      ? () => showDialog(
-                                            context: context,
-                                            builder: (_) =>
-                                                MxcImageViewer(avatar),
-                                          )
-                                      : null,
+                                Container(
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: theme.colorScheme.onPrimaryContainer.withOpacity(0.2),
+                                      width: 3,
+                                    ),
+                                  ),
+                                  child: Avatar(
+                                    mxContent: avatar,
+                                    name: displayname,
+                                    size: 72,
+                                    onTap: avatar != null
+                                        ? () => showDialog(
+                                              context: context,
+                                              builder: (_) =>
+                                                  MxcImageViewer(avatar),
+                                            )
+                                        : null,
+                                  ),
                                 ),
                                 if (profile != null)
                                   Positioned(
                                     bottom: 0,
                                     right: 0,
-                                    child: FloatingActionButton.small(
-                                      elevation: 2,
-                                      onPressed: controller.setAvatarAction,
-                                      heroTag: null,
-                                      child: const Icon(
-                                        Icons.camera_alt_outlined,
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: theme.colorScheme.primary,
+                                        shape: BoxShape.circle,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(0.2),
+                                            blurRadius: 8,
+                                          ),
+                                        ],
+                                      ),
+                                      child: IconButton(
+                                        icon: const Icon(Icons.camera_alt_rounded, size: 18),
+                                        color: theme.colorScheme.onPrimary,
+                                        onPressed: controller.setAvatarAction,
+                                        padding: const EdgeInsets.all(8),
+                                        constraints: const BoxConstraints(),
                                       ),
                                     ),
                                   ),
                               ],
                             ),
-                          ),
-                          Expanded(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                TextButton.icon(
-                                  onPressed: controller.setDisplaynameAction,
-                                  icon: const Icon(
-                                    Icons.edit_outlined,
-                                    size: 16,
-                                  ),
-                                  style: TextButton.styleFrom(
-                                    foregroundColor:
-                                        theme.colorScheme.onSurface,
-                                    iconColor: theme.colorScheme.onSurface,
-                                  ),
-                                  label: Text(
-                                    displayname,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      fontSize: 18,
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  InkWell(
+                                    onTap: controller.setDisplaynameAction,
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Flexible(
+                                            child: Text(
+                                              displayname,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                fontSize: 20,
+                                                fontWeight: FontWeight.bold,
+                                                color: theme.colorScheme.onPrimaryContainer,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 6),
+                                          Icon(
+                                            Icons.edit_rounded,
+                                            size: 16,
+                                            color: theme.colorScheme.onPrimaryContainer.withOpacity(0.7),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ),
-                                TextButton.icon(
-                                  onPressed: () =>
-                                      FluffyShare.share(mxid, context),
-                                  icon: const Icon(
-                                    Icons.copy_outlined,
-                                    size: 14,
+                                  const SizedBox(height: 4),
+                                  InkWell(
+                                    onTap: () => FluffyShare.share(mxid, context),
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Flexible(
+                                            child: Text(
+                                              mxid,
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                fontSize: 13,
+                                                color: theme.colorScheme.onPrimaryContainer.withOpacity(0.8),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 6),
+                                          Icon(
+                                            Icons.copy_rounded,
+                                            size: 14,
+                                            color: theme.colorScheme.onPrimaryContainer.withOpacity(0.6),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ),
-                                  style: TextButton.styleFrom(
-                                    foregroundColor:
-                                        theme.colorScheme.secondary,
-                                    iconColor: theme.colorScheme.secondary,
-                                  ),
-                                  label: Text(
-                                    mxid,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    //    style: const TextStyle(fontSize: 12),
-                                  ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       );
                     },
                   ),
-                  // Группа аккаунта
+                  if (accountManageUrl != null || showChatBackupBanner != null)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                      child: Text(
+                        L10n.of(context).account,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: theme.colorScheme.primary,
+                          letterSpacing: 0.5,
+                        ),
+                      ),
+                    ),
                   if (accountManageUrl != null)
                     SettingsCardTile(
                       leading: Container(
-                        padding: const EdgeInsets.all(8),
+                        padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: Colors.cyan.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(8),
+                          gradient: LinearGradient(
+                            colors: [Colors.cyan.shade400, Colors.cyan.shade600],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.cyan.withOpacity(0.3),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
                         ),
-                        child: const Icon(Icons.account_circle_outlined, color: Colors.cyan),
+                        child: const Icon(Icons.account_circle_rounded, color: Colors.white, size: 24),
                       ),
                       title: Text(L10n.of(context).manageAccount),
-                      trailing: const Icon(Icons.open_in_new_outlined),
+                      trailing: Icon(Icons.open_in_new_rounded, size: 20, color: theme.colorScheme.primary),
                       onTap: () => launchUrlString(
                         accountManageUrl,
                         mode: LaunchMode.inAppBrowserView,
@@ -199,12 +286,16 @@ class SettingsView extends StatelessWidget {
                   if (showChatBackupBanner == null)
                     SettingsCardTile(
                       leading: Container(
-                        padding: const EdgeInsets.all(8),
+                        padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: Colors.amber.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(8),
+                          gradient: LinearGradient(
+                            colors: [Colors.amber.shade400, Colors.orange.shade600],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                        child: const Icon(Icons.backup_outlined, color: Colors.amber),
+                        child: const Icon(Icons.backup_rounded, color: Colors.white, size: 24),
                       ),
                       title: Text(L10n.of(context).chatBackup),
                       trailing: const CircularProgressIndicator.adaptive(),
@@ -213,118 +304,198 @@ class SettingsView extends StatelessWidget {
                   else
                     SettingsCardSwitch(
                       leading: Container(
-                        padding: const EdgeInsets.all(8),
+                        padding: const EdgeInsets.all(10),
                         decoration: BoxDecoration(
-                          color: Colors.amber.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(8),
+                          gradient: LinearGradient(
+                            colors: [Colors.amber.shade400, Colors.orange.shade600],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                        child: const Icon(Icons.backup_outlined, color: Colors.amber),
+                        child: const Icon(Icons.backup_rounded, color: Colors.white, size: 24),
                       ),
                       title: Text(L10n.of(context).chatBackup),
                       value: controller.showChatBackupBanner == false,
                       onChanged: controller.firstRunBootstrapAction,
                       position: accountManageUrl != null ? CardPosition.last : CardPosition.single,
                     ),
-                  const SizedBox(height: 16),
-                  
-                  // Группа основных настроек
+                  const SizedBox(height: 20),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                    child: Text(
+                      L10n.of(context).settings,
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: theme.colorScheme.primary,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ),
                   SettingsCardTile(
                     leading: Container(
-                      padding: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: Colors.purple.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
+                        gradient: LinearGradient(
+                          colors: [Colors.purple.shade400, Colors.deepPurple.shade600],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.purple.withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
-                      child: const Icon(Icons.palette_outlined, color: Colors.purple),
+                      child: const Icon(Icons.palette_rounded, color: Colors.white, size: 24),
                     ),
                     title: Text(L10n.of(context).changeTheme),
+                    trailing: Icon(Icons.chevron_right_rounded, color: theme.colorScheme.onSurfaceVariant),
                     isActive: activeRoute.startsWith('/rooms/settings/style'),
                     onTap: controller.navigateToStyle,
                     position: CardPosition.first,
                   ),
                   SettingsCardTile(
                     leading: Container(
-                      padding: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: Colors.orange.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
+                        gradient: LinearGradient(
+                          colors: [Colors.orange.shade400, Colors.deepOrange.shade600],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.orange.withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
-                      child: const Icon(Icons.notifications_outlined, color: Colors.orange),
+                      child: const Icon(Icons.notifications_rounded, color: Colors.white, size: 24),
                     ),
                     title: Text(L10n.of(context).notifications),
+                    trailing: Icon(Icons.chevron_right_rounded, color: theme.colorScheme.onSurfaceVariant),
                     isActive: activeRoute.startsWith('/rooms/settings/notifications'),
                     onTap: controller.navigateToNotifications,
                     position: CardPosition.middle,
                   ),
                   SettingsCardTile(
                     leading: Container(
-                      padding: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: Colors.green.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
+                        gradient: LinearGradient(
+                          colors: [Colors.green.shade400, Colors.teal.shade600],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.green.withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
-                      child: const Icon(Icons.devices_outlined, color: Colors.green),
+                      child: const Icon(Icons.devices_rounded, color: Colors.white, size: 24),
                     ),
                     title: Text(L10n.of(context).devices),
+                    trailing: Icon(Icons.chevron_right_rounded, color: theme.colorScheme.onSurfaceVariant),
                     isActive: activeRoute.startsWith('/rooms/settings/devices'),
                     onTap: controller.navigateToDevices,
                     position: CardPosition.middle,
                   ),
                   SettingsCardTile(
                     leading: Container(
-                      padding: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: Colors.blue.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
+                        gradient: LinearGradient(
+                          colors: [Colors.blue.shade400, Colors.indigo.shade600],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.blue.withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
-                      child: const Icon(Icons.chat_bubble_outline, color: Colors.blue),
+                      child: const Icon(Icons.chat_bubble_rounded, color: Colors.white, size: 24),
                     ),
                     title: Text(L10n.of(context).chat),
+                    trailing: Icon(Icons.chevron_right_rounded, color: theme.colorScheme.onSurfaceVariant),
                     isActive: activeRoute.startsWith('/rooms/settings/chat'),
                     onTap: controller.navigateToChat,
                     position: CardPosition.middle,
                   ),
                   SettingsCardTile(
                     leading: Container(
-                      padding: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: Colors.red.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
+                        gradient: LinearGradient(
+                          colors: [Colors.red.shade400, Colors.pink.shade600],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.red.withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
-                      child: const Icon(Icons.shield_outlined, color: Colors.red),
+                      child: const Icon(Icons.shield_rounded, color: Colors.white, size: 24),
                     ),
                     title: Text(L10n.of(context).security),
+                    trailing: Icon(Icons.chevron_right_rounded, color: theme.colorScheme.onSurfaceVariant),
                     isActive: activeRoute.startsWith('/rooms/settings/security'),
                     onTap: controller.navigateToSecurity,
                     position: CardPosition.last,
                   ),
-                  // VoIP temporarily disabled
-                  // SettingsCardTile(
-                  //   leading: Container(
-                  //     padding: const EdgeInsets.all(8),
-                  //     decoration: BoxDecoration(
-                  //       color: Colors.deepPurple.withOpacity(0.1),
-                  //       borderRadius: BorderRadius.circular(8),
-                  //     ),
-                  //     child: const Icon(Icons.call_outlined, color: Colors.deepPurple),
-                  //   ),
-                  //   title: const Text('Настройки VoIP'),
-                  //   isActive: activeRoute.startsWith('/rooms/settings/voip'),
-                  //   onTap: () => context.go('/rooms/settings/voip'),
-                  //   position: CardPosition.last,
-                  // ),
-
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 20),
                   
-                  // Группа информации
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+                    child: Text(
+                      L10n.of(context).about,
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                        color: theme.colorScheme.primary,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                  ),
                   SettingsCardTile(
                     leading: Container(
-                      padding: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: Colors.indigo.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
+                        gradient: LinearGradient(
+                          colors: [Colors.indigo.shade400, Colors.blue.shade700],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.indigo.withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
-                      child: const Icon(Icons.dns_outlined, color: Colors.indigo),
+                      child: const Icon(Icons.dns_rounded, color: Colors.white, size: 24),
                     ),
                     title: Text(
                       L10n.of(context).aboutHomeserver(
@@ -332,50 +503,85 @@ class SettingsView extends StatelessWidget {
                             'homeserver',
                       ),
                     ),
+                    trailing: Icon(Icons.chevron_right_rounded, color: theme.colorScheme.onSurfaceVariant),
                     isActive: activeRoute.startsWith('/rooms/settings/homeserver'),
                     onTap: controller.navigateToHomeserver,
                     position: CardPosition.first,
                   ),
                   SettingsCardTile(
                     leading: Container(
-                      padding: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: Colors.teal.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
+                        gradient: LinearGradient(
+                          colors: [Colors.teal.shade400, Colors.green.shade700],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.teal.withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
-                      child: const Icon(Icons.privacy_tip_outlined, color: Colors.teal),
+                      child: const Icon(Icons.privacy_tip_rounded, color: Colors.white, size: 24),
                     ),
                     title: Text(L10n.of(context).privacy),
+                    trailing: Icon(Icons.open_in_new_rounded, size: 20, color: theme.colorScheme.primary),
                     onTap: () => launchUrlString(AppConfig.privacyUrl),
                     position: CardPosition.middle,
                   ),
                   SettingsCardTile(
                     leading: Container(
-                      padding: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: Colors.grey.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
+                        gradient: LinearGradient(
+                          colors: [Colors.blueGrey.shade400, Colors.blueGrey.shade700],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.blueGrey.withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
-                      child: const Icon(Icons.info_outline_rounded, color: Colors.grey),
+                      child: const Icon(Icons.info_rounded, color: Colors.white, size: 24),
                     ),
                     title: Text(L10n.of(context).about),
+                    trailing: Icon(Icons.chevron_right_rounded, color: theme.colorScheme.onSurfaceVariant),
                     onTap: () => _showAboutDialog(context),
                     position: CardPosition.last,
                   ),
                   
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 20),
                   
-                  // Выход отдельно
                   SettingsCardTile(
                     leading: Container(
-                      padding: const EdgeInsets.all(8),
+                      padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: Colors.pink.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
+                        gradient: LinearGradient(
+                          colors: [Colors.pink.shade400, Colors.red.shade600],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.pink.withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
-                      child: const Icon(Icons.logout_outlined, color: Colors.pink),
+                      child: const Icon(Icons.logout_rounded, color: Colors.white, size: 24),
                     ),
-                    title: Text(L10n.of(context).logout),
+                    title: Text(L10n.of(context).logout, style: TextStyle(color: Colors.red.shade700, fontWeight: FontWeight.w600)),
                     onTap: controller.logoutAction,
                     position: CardPosition.single,
                   ),

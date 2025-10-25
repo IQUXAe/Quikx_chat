@@ -57,7 +57,7 @@ class ChatListHeader extends StatelessWidget implements PreferredSizeWidget {
               fillColor: theme.colorScheme.secondaryContainer,
               border: OutlineInputBorder(
                 borderSide: BorderSide.none,
-                borderRadius: BorderRadius.circular(99),
+                borderRadius: BorderRadius.circular(28),
               ),
               contentPadding: EdgeInsets.zero,
               hintText: hide

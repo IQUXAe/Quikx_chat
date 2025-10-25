@@ -8,6 +8,7 @@ import 'package:quikxchat/l10n/l10n.dart';
 import 'package:quikxchat/pages/chat_list/chat_list.dart';
 import 'package:quikxchat/widgets/app_drawer.dart';
 import 'package:quikxchat/widgets/navigation_rail.dart';
+import 'package:quikxchat/widgets/tap_scale_animation.dart';
 import 'chat_list_body.dart';
 
 class ChatListView extends StatelessWidget {
@@ -68,12 +69,14 @@ class ChatListView extends StatelessWidget {
                   child: !controller.isSearchMode &&
                           controller.activeSpaceId == null
                       ? RepaintBoundary(
-                          child: Container(
-                            decoration: BoxDecoration(
+                          child: TapScaleAnimation(
+                            onTap: () => context.go('/rooms/newprivatechat'),
+                            child: Container(
+                              decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: [
-                                  Theme.of(context).colorScheme.primary,
-                                  Theme.of(context).colorScheme.primary.withOpacity(0.8),
+                                  Color.lerp(Theme.of(context).colorScheme.primary, Colors.white, 0.1)!,
+                                  Color.lerp(Theme.of(context).colorScheme.primary, Colors.black, 0.3)!,
                                 ],
                                 begin: Alignment.topLeft,
                                 end: Alignment.bottomRight,
@@ -88,7 +91,7 @@ class ChatListView extends StatelessWidget {
                               ],
                             ),
                             child: FloatingActionButton.extended(
-                              onPressed: () => context.go('/rooms/newprivatechat'),
+                              onPressed: null,
                               backgroundColor: Colors.transparent,
                               elevation: 0,
                               icon: const Icon(Icons.add_outlined),
@@ -97,6 +100,7 @@ class ChatListView extends StatelessWidget {
                                 overflow: TextOverflow.fade,
                               ),
                               heroTag: 'newChat',
+                              ),
                             ),
                           ),
                         )

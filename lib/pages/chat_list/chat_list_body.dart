@@ -7,6 +7,7 @@ import 'package:quikxchat/config/app_config.dart';
 import 'package:quikxchat/l10n/l10n.dart';
 import 'package:quikxchat/pages/chat_list/chat_list.dart';
 import 'package:quikxchat/pages/chat_list/chat_list_item.dart';
+import 'package:quikxchat/widgets/settings_card_tile.dart';
 import 'package:quikxchat/pages/chat_list/dummy_chat_list_item.dart';
 import 'package:quikxchat/pages/chat_list/search_title.dart';
 import 'package:quikxchat/pages/chat_list/space_view.dart';
@@ -257,6 +258,18 @@ class ChatListViewBody extends StatelessWidget {
                   itemBuilder: (BuildContext context, int i) {
                     final room = rooms[i];
                     final space = spaceDelegateCandidates[room.id];
+                    
+                    CardPosition position;
+                    if (rooms.length == 1) {
+                      position = CardPosition.single;
+                    } else if (i == 0) {
+                      position = CardPosition.first;
+                    } else if (i == rooms.length - 1) {
+                      position = CardPosition.last;
+                    } else {
+                      position = CardPosition.middle;
+                    }
+                    
                     return RepaintBoundary(
                       child: ChatListItem(
                         room,
@@ -267,6 +280,7 @@ class ChatListViewBody extends StatelessWidget {
                         onLongPress: (context) =>
                             controller.chatContextAction(room, context, space),
                         activeChat: controller.activeChat == room.id,
+                        position: position,
                       ),
                     );
                   },

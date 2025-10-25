@@ -267,32 +267,53 @@ class MessageContent extends StatelessWidget {
                 final bigEmotes = event.onlyEmotes &&
                     event.numberEmotes > 0 &&
                     event.numberEmotes <= 3;
+                final ownMessage = event.senderId == event.room.client.userID;
                 return Padding(
                   padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
+                    horizontal: 14,
                     vertical: 8,
                   ),
-                  child: HtmlMessage(
-                    html: html,
-                    textColor: textColor,
-                    room: event.room,
-                    fontSize: AppConfig.fontSizeFactor *
-                        AppConfig.messageFontSize *
-                        (bigEmotes ? 5 : 1),
-                    limitHeight: !selected,
-                    linkStyle: TextStyle(
-                      color: linkColor,
-                      fontSize:
-                          AppConfig.fontSizeFactor * AppConfig.messageFontSize,
-                      decoration: TextDecoration.underline,
-                      decorationColor: linkColor,
-                    ),
-                    onOpen: (url) => UrlLauncher(context, url.url).launchUrl(),
-                    eventId: event.eventId,
-                    checkboxCheckedEvents: event.aggregatedEvents(
-                      timeline,
-                      EventCheckboxRoomExtension.relationshipType,
-                    ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    textDirection: ownMessage ? TextDirection.ltr : TextDirection.rtl,
+                    children: [
+                      Flexible(
+                        child: HtmlMessage(
+                          html: html,
+                          textColor: textColor,
+                          room: event.room,
+                          fontSize: AppConfig.fontSizeFactor *
+                              AppConfig.messageFontSize *
+                              (bigEmotes ? 5 : 1),
+                          limitHeight: !selected,
+                          linkStyle: TextStyle(
+                            color: linkColor,
+                            fontSize:
+                                AppConfig.fontSizeFactor * AppConfig.messageFontSize,
+                            decoration: TextDecoration.underline,
+                            decorationColor: linkColor,
+                          ),
+                          onOpen: (url) => UrlLauncher(context, url.url).launchUrl(),
+                          eventId: event.eventId,
+                          checkboxCheckedEvents: event.aggregatedEvents(
+                            timeline,
+                            EventCheckboxRoomExtension.relationshipType,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 2),
+                        child: Text(
+                          event.originServerTs.localizedTimeShort(context),
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: textColor.withAlpha(180),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 );
               },

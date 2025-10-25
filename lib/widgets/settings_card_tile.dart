@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quikxchat/widgets/tap_scale_animation.dart';
 
 enum CardPosition { single, first, middle, last }
 
@@ -26,31 +27,7 @@ class SettingsCardTile extends StatefulWidget {
   State<SettingsCardTile> createState() => _SettingsCardTileState();
 }
 
-class _SettingsCardTileState extends State<SettingsCardTile> with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _scaleAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 100),
-      vsync: this,
-    );
-    _scaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.95,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ),);
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
-  }
+class _SettingsCardTileState extends State<SettingsCardTile> {
 
   BorderRadius _getBorderRadius() {
     switch (widget.position) {
@@ -88,37 +65,48 @@ class _SettingsCardTileState extends State<SettingsCardTile> with SingleTickerPr
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     
-    return AnimatedBuilder(
-      animation: _scaleAnimation,
-      builder: (context, child) {
-        return Transform.scale(
-          scale: _scaleAnimation.value,
-          child: Container(
-            margin: _getMargin(),
-            decoration: BoxDecoration(
-              color: widget.isActive 
-                  ? theme.colorScheme.surfaceContainerHigh
-                  : theme.colorScheme.surfaceContainerLow,
-              borderRadius: _getBorderRadius(),
-            ),
-            child: ListTile(
-              leading: widget.leading,
-              title: widget.title,
-              subtitle: widget.subtitle,
-              trailing: widget.trailing,
-              onTap: widget.onTap == null ? null : () {
-                _animationController.forward().then((_) {
-                  _animationController.reverse();
-                });
-                widget.onTap!();
-              },
-              shape: RoundedRectangleBorder(
-                borderRadius: _getBorderRadius(),
-              ),
-            ),
+    return TapScaleAnimation(
+      onTap: widget.onTap,
+      child: Container(
+        margin: _getMargin(),
+        decoration: BoxDecoration(
+          color: widget.isActive 
+              ? theme.colorScheme.primaryContainer.withOpacity(0.3)
+              : theme.colorScheme.surface,
+          borderRadius: _getBorderRadius(),
+          border: Border.all(
+            color: widget.isActive
+                ? theme.colorScheme.primary.withOpacity(0.3)
+                : theme.colorScheme.outlineVariant.withOpacity(0.5),
+            width: 1,
           ),
-        );
-      },
+          boxShadow: [
+            BoxShadow(
+              color: theme.colorScheme.shadow.withOpacity(0.05),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: ListTile(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          leading: widget.leading,
+          title: DefaultTextStyle(
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
+              color: theme.colorScheme.onSurface,
+            ),
+            child: widget.title,
+          ),
+          subtitle: widget.subtitle,
+          trailing: widget.trailing,
+          onTap: null,
+          shape: RoundedRectangleBorder(
+            borderRadius: _getBorderRadius(),
+          ),
+        ),
+      ),
     );
   }
 }
@@ -147,31 +135,7 @@ class SettingsCardSwitch extends StatefulWidget {
   State<SettingsCardSwitch> createState() => _SettingsCardSwitchState();
 }
 
-class _SettingsCardSwitchState extends State<SettingsCardSwitch> with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<double> _scaleAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _animationController = AnimationController(
-      duration: const Duration(milliseconds: 100),
-      vsync: this,
-    );
-    _scaleAnimation = Tween<double>(
-      begin: 1.0,
-      end: 0.95,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeInOut,
-    ),);
-  }
-
-  @override
-  void dispose() {
-    _animationController.dispose();
-    super.dispose();
-  }
+class _SettingsCardSwitchState extends State<SettingsCardSwitch> {
 
   BorderRadius _getBorderRadius() {
     switch (widget.position) {
@@ -209,38 +173,49 @@ class _SettingsCardSwitchState extends State<SettingsCardSwitch> with SingleTick
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     
-    return AnimatedBuilder(
-      animation: _scaleAnimation,
-      builder: (context, child) {
-        return Transform.scale(
-          scale: _scaleAnimation.value,
-          child: Container(
-            margin: _getMargin(),
-            decoration: BoxDecoration(
-              color: widget.isActive 
-                  ? theme.colorScheme.surfaceContainerHigh
-                  : theme.colorScheme.surfaceContainerLow,
-              borderRadius: _getBorderRadius(),
-            ),
-            child: SwitchListTile.adaptive(
-              secondary: widget.leading,
-              title: widget.title,
-              subtitle: widget.subtitle,
-              value: widget.value,
-              onChanged: widget.onChanged == null ? null : (value) {
-                _animationController.forward().then((_) {
-                  _animationController.reverse();
-                });
-                widget.onChanged!(value);
-              },
-              controlAffinity: ListTileControlAffinity.trailing,
-              shape: RoundedRectangleBorder(
-                borderRadius: _getBorderRadius(),
-              ),
-            ),
+    return TapScaleAnimation(
+      onTap: widget.onChanged == null ? null : () => widget.onChanged!(!widget.value),
+      child: Container(
+        margin: _getMargin(),
+        decoration: BoxDecoration(
+          color: widget.isActive 
+              ? theme.colorScheme.primaryContainer.withOpacity(0.3)
+              : theme.colorScheme.surface,
+          borderRadius: _getBorderRadius(),
+          border: Border.all(
+            color: widget.isActive
+                ? theme.colorScheme.primary.withOpacity(0.3)
+                : theme.colorScheme.outlineVariant.withOpacity(0.5),
+            width: 1,
           ),
-        );
-      },
+          boxShadow: [
+            BoxShadow(
+              color: theme.colorScheme.shadow.withOpacity(0.05),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: SwitchListTile.adaptive(
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          secondary: widget.leading,
+          title: DefaultTextStyle(
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w500,
+              color: theme.colorScheme.onSurface,
+            ),
+            child: widget.title,
+          ),
+          subtitle: widget.subtitle,
+          value: widget.value,
+          onChanged: null,
+          controlAffinity: ListTileControlAffinity.trailing,
+          shape: RoundedRectangleBorder(
+            borderRadius: _getBorderRadius(),
+          ),
+        ),
+      ),
     );
   }
 }

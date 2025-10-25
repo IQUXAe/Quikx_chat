@@ -94,11 +94,11 @@ abstract class QuikxChatThemes {
             : colorScheme.surfaceContainerLow,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide.none,
+          borderSide: BorderSide(color: colorScheme.outline.withOpacity(0.5)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide.none,
+          borderSide: BorderSide(color: colorScheme.outline.withOpacity(0.5)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),

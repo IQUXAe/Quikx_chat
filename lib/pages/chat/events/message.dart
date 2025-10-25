@@ -126,8 +126,14 @@ class Message extends StatelessWidget {
         previousEvent!.senderId == event.senderId &&
         previousEvent!.originServerTs.sameEnvironment(event.originServerTs);
 
-    final textColor =
-        ownMessage ? theme.onBubbleColor : theme.colorScheme.onSurface;
+    final textColor = Colors.white;
+    final textShadows = [
+      const Shadow(
+        offset: Offset(0, 1),
+        blurRadius: 3,
+        color: Colors.black45,
+      ),
+    ];
 
     final linkColor = ownMessage
         ? theme.brightness == Brightness.light
@@ -163,8 +169,7 @@ class Message extends StatelessWidget {
             event.numberEmotes <= 3);
 
     if (ownMessage) {
-      color =
-          displayEvent.status.isError ? Colors.redAccent : theme.bubbleColor;
+      color = displayEvent.status.isError ? Colors.redAccent : theme.colorScheme.primary;
     }
 
     final resetAnimateIn = this.resetAnimateIn;
@@ -463,7 +468,6 @@ class Message extends StatelessWidget {
                                                   child: BubbleBackground(
                                                     colors: colors,
                                                     ignore: noBubble ||
-                                                        !ownMessage ||
                                                         MediaQuery.highContrastOf(
                                                           context,
                                                         ),
@@ -585,45 +589,7 @@ class Message extends StatelessWidget {
                                                               selected: selected,
                                                             ),
                                                             // Compact time display in bubble
-                                                            if (!noBubble)
-                                                              Padding(
-                                                                padding: const EdgeInsets.only(
-                                                                  bottom: 6.0,
-                                                                  left: 10.0,
-                                                                  right: 10.0,
-                                                                ),
-                                                                child: Row(
-                                                                  mainAxisAlignment: ownMessage ? MainAxisAlignment.end : MainAxisAlignment.start,
-                                                                  children: [
-                                                                    if (!ownMessage) ...[
-                                                                      Text(
-                                                                        displayEvent.originServerTs.localizedTimeShort(context),
-                                                                        style: TextStyle(
-                                                                          fontSize: 11,
-                                                                          color: textColor.withAlpha(180),
-                                                                          fontWeight: FontWeight.w500,
-                                                                        ),
-                                                                      ),
-                                                                    ],
-                                                                    if (ownMessage) ...[
-                                                                      Text(
-                                                                        displayEvent.originServerTs.localizedTimeShort(context),
-                                                                        style: TextStyle(
-                                                                          fontSize: 11,
-                                                                          color: textColor.withAlpha(180),
-                                                                          fontWeight: FontWeight.w500,
-                                                                        ),
-                                                                      ),
-                                                                      const SizedBox(width: 4),
-                                                                      SimpleMessageStatusWidget(
-                                                                        event: displayEvent, 
-                                                                        textColor: textColor, 
-                                                                        size: 14,
-                                                                      ),
-                                                                    ],
-                                                                  ],
-                                                                ),
-                                                              ),
+
                                                             if (event
                                                                 .hasAggregatedEvents(
                                                               timeline,
@@ -1012,11 +978,15 @@ class BubblePainter extends CustomPainter {
 
     final origin =
         bubbleBox.localToGlobal(Offset.zero, ancestor: scrollableBox);
+    
+    final lightColors = colors.map((c) => Color.lerp(c, Colors.white, 0.1)!).toList();
+    final darkColors = colors.map((c) => Color.lerp(c, Colors.black, 0.3)!).toList();
+    
     final paint = Paint()
       ..shader = ui.Gradient.linear(
         scrollableRect.topCenter,
         scrollableRect.bottomCenter,
-        colors,
+        [lightColors[0], darkColors[1]],
         [0.0, 1.0],
         TileMode.clamp,
         Matrix4.translationValues(-origin.dx, -origin.dy, 0.0).storage,
