@@ -140,26 +140,54 @@ class _ChatListItemState extends State<ChatListItem> {
 
     return Padding(
       padding: const EdgeInsets.symmetric(
-        horizontal: 8,
-        vertical: 1,
+        horizontal: 12,
+        vertical: 4,
       ),
-      child: Material(
-        borderRadius: BorderRadius.circular(AppConfig.borderRadius),
-        clipBehavior: Clip.hardEdge,
-        color: backgroundColor,
-        child: HoverBuilder(
+      child: AnimatedContainer(
+        duration: QuikxChatThemes.fastAnimationDuration,
+        curve: QuikxChatThemes.fastAnimationCurve,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          color: widget.activeChat
+              ? theme.colorScheme.primaryContainer.withOpacity(0.5)
+              : theme.colorScheme.surfaceContainerLow,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.03),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: Material(
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(16),
+          clipBehavior: Clip.hardEdge,
+          child: HoverBuilder(
           builder: (context, listTileHovered) => ListTile(
-              visualDensity: const VisualDensity(vertical: -0.5),
-              contentPadding: const EdgeInsets.symmetric(horizontal: 8),
+              visualDensity: VisualDensity.comfortable,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               onLongPress: () => widget.onLongPress?.call(context),
               leading: HoverBuilder(
                 builder: (context, hovered) => AnimatedScale(
                   duration: QuikxChatThemes.animationDuration,
                   curve: QuikxChatThemes.animationCurve,
                   scale: hovered ? 1.1 : 1.0,
-                  child: SizedBox(
+                  child: Container(
                     width: Avatar.defaultSize,
                     height: Avatar.defaultSize,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      boxShadow: unread
+                          ? [
+                              BoxShadow(
+                                color: theme.colorScheme.primary.withOpacity(0.3),
+                                blurRadius: 8,
+                                spreadRadius: 1,
+                              ),
+                            ]
+                          : null,
+                    ),
                     child: Stack(
                       alignment: Alignment.center,
                       children: [
@@ -250,8 +278,9 @@ class _ChatListItemState extends State<ChatListItem> {
                       softWrap: false,
                       style: TextStyle(
                         fontWeight: unread || widget.room.hasNewMessages
-                            ? FontWeight.w500
-                            : null,
+                            ? FontWeight.w600
+                            : FontWeight.w500,
+                        fontSize: 15,
                       ),
                     ),
                   ),
@@ -391,12 +420,37 @@ class _ChatListItemState extends State<ChatListItem> {
                                 widget.room.notificationCount.toString().length +
                             9,
                     decoration: BoxDecoration(
-                      color: widget.room.highlightCount > 0
-                          ? theme.colorScheme.error
+                      gradient: widget.room.highlightCount > 0
+                          ? LinearGradient(
+                              colors: [
+                                theme.colorScheme.error,
+                                theme.colorScheme.error.withOpacity(0.8),
+                              ],
+                            )
                           : hasNotifications || widget.room.markedUnread
-                              ? theme.colorScheme.primary
-                              : theme.colorScheme.primaryContainer,
-                      borderRadius: BorderRadius.circular(7),
+                              ? LinearGradient(
+                                  colors: [
+                                    theme.colorScheme.primary,
+                                    theme.colorScheme.primary.withOpacity(0.85),
+                                  ],
+                                )
+                              : null,
+                      color: !hasNotifications && !widget.room.markedUnread
+                          ? theme.colorScheme.primaryContainer
+                          : null,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: hasNotifications
+                          ? [
+                              BoxShadow(
+                                color: (widget.room.highlightCount > 0
+                                        ? theme.colorScheme.error
+                                        : theme.colorScheme.primary)
+                                    .withOpacity(0.4),
+                                blurRadius: 6,
+                                offset: const Offset(0, 2),
+                              ),
+                            ]
+                          : null,
                     ),
                     child: hasNotifications
                         ? Text(
@@ -445,6 +499,7 @@ class _ChatListItemState extends State<ChatListItem> {
                       onPressed: widget.onForget,
                     ),
             ),
+          ),
         ),
       ),
     );

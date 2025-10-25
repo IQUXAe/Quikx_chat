@@ -615,9 +615,7 @@ class Message extends StatelessWidget {
                                                                         ),
                                                                       ),
                                                                       const SizedBox(width: 4),
-                                                                      // Используем ключ для принудительного обновления статуса
                                                                       SimpleMessageStatusWidget(
-                                                                        key: ValueKey(MessageStatusHelper.createStatusKey(displayEvent)),
                                                                         event: displayEvent, 
                                                                         textColor: textColor, 
                                                                         size: 14,

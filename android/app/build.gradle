@@ -41,6 +41,10 @@ android {
         jvmTarget = '17'
     }
 
+    buildFeatures {
+        buildConfig true
+    }
+
     def keystoreProperties = new Properties()
     def keystorePropertiesFile = rootProject.file('key.properties')
     if (keystorePropertiesFile.exists()) {
@@ -62,6 +66,7 @@ android {
         targetSdkVersion 36
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+        buildConfigField "boolean", "ENABLE_LOGS", "true"
     }
 
     buildTypes {
@@ -70,6 +75,7 @@ android {
             minifyEnabled true
             shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "boolean", "ENABLE_LOGS", "false"
         }
         debug {
             minifyEnabled false

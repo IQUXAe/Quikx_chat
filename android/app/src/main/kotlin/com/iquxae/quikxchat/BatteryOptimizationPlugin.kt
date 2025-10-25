@@ -36,7 +36,7 @@ class BatteryOptimizationPlugin: FlutterPlugin, MethodChannel.MethodCallHandler 
                         result.error("INVALID_PACKAGE", "Invalid package name format", null)
                     }
                 } else {
-                    result.error("SERVICE_UNAVAILABLE", "PowerManager service is not available", null)
+                    result.error("SERVICE_UNAVAILABLE", "Service unavailable", null)
                 }
             }
             "requestIgnoreBatteryOptimizations" -> {
@@ -45,7 +45,7 @@ class BatteryOptimizationPlugin: FlutterPlugin, MethodChannel.MethodCallHandler 
                     // Validate package name to prevent injection
                     if (packageName.matches(PACKAGE_NAME_REGEX)) {
                         val intent = Intent(Settings.ACTION_REQUEST_IGNORE_BATTERY_OPTIMIZATIONS)
-                        intent.data = Uri.parse("package:$packageName")
+                        intent.data = Uri.parse("package:${Uri.encode(packageName)}")
                         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
                         context.startActivity(intent)
                         result.success(null)
@@ -53,8 +53,7 @@ class BatteryOptimizationPlugin: FlutterPlugin, MethodChannel.MethodCallHandler 
                         result.error("INVALID_PACKAGE", "Invalid package name format", null)
                     }
                 } catch (e: Exception) {
-                    // Don't log exception details to prevent information disclosure
-                    result.error("ERROR", "Failed to request battery optimization settings", null)
+                    result.error("ERROR", "Operation failed", null)
                 }
             }
             else -> {

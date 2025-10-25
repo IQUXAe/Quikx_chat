@@ -7,51 +7,44 @@ import '../config/app_config.dart';
 
 extension RoomStatusExtension on Room {
   String getLocalizedTypingText(BuildContext context) {
-    var typingText = '';
-    final typingUsers = this.typingUsers;
-    typingUsers.removeWhere((User u) => u.id == client.userID);
+    final typingUsers = this.typingUsers.where((u) => u.id != client.userID).toList();
+    if (typingUsers.isEmpty) return '';
+
+    final l10n = L10n.of(context);
+    final isDirect = typingUsers.first.id == directChatMatrixID;
 
     if (AppConfig.hideTypingUsernames) {
-      typingText = L10n.of(context).isTyping;
-      if (typingUsers.first.id != directChatMatrixID) {
-        typingText = L10n.of(context).numUsersTyping(typingUsers.length);
-      }
-    } else if (typingUsers.length == 1) {
-      typingText = L10n.of(context).isTyping;
-      if (typingUsers.first.id != directChatMatrixID) {
-        typingText =
-            L10n.of(context).userIsTyping(typingUsers.first.calcDisplayname());
-      }
-    } else if (typingUsers.length == 2) {
-      typingText = L10n.of(context).userAndUserAreTyping(
-        typingUsers.first.calcDisplayname(),
+      return isDirect ? l10n.isTyping : l10n.numUsersTyping(typingUsers.length);
+    }
+
+    if (typingUsers.length == 1) {
+      return isDirect ? l10n.isTyping : l10n.userIsTyping(typingUsers.first.calcDisplayname());
+    }
+
+    if (typingUsers.length == 2) {
+      return l10n.userAndUserAreTyping(
+        typingUsers[0].calcDisplayname(),
         typingUsers[1].calcDisplayname(),
       );
-    } else if (typingUsers.length > 2) {
-      typingText = L10n.of(context).userAndOthersAreTyping(
-        typingUsers.first.calcDisplayname(),
-        (typingUsers.length - 1),
-      );
     }
-    return typingText;
+
+    return l10n.userAndOthersAreTyping(
+      typingUsers.first.calcDisplayname(),
+      typingUsers.length - 1,
+    );
   }
 
   List<User> getSeenByUsers(Timeline timeline, {String? eventId}) {
     if (timeline.events.isEmpty) return [];
-    eventId ??= timeline.events.first.eventId;
-
-    final lastReceipts = <User>{};
-    // now we iterate the timeline events until we hit the first rendered event
-    for (final event in timeline.events) {
-      lastReceipts.addAll(event.receipts.map((r) => r.user));
-      if (event.eventId == eventId) {
-        break;
-      }
-    }
-    lastReceipts.removeWhere(
-      (user) =>
-          user.id == client.userID || user.id == timeline.events.first.senderId,
+    
+    final targetEvent = timeline.events.firstWhere(
+      (e) => e.eventId == (eventId ?? timeline.events.first.eventId),
+      orElse: () => timeline.events.first,
     );
-    return lastReceipts.toList();
+    
+    return targetEvent.receipts
+        .map((r) => r.user)
+        .where((u) => u.id != client.userID && u.id != targetEvent.senderId)
+        .toList();
   }
 }

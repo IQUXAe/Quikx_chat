@@ -68,14 +68,36 @@ class ChatListView extends StatelessWidget {
                   child: !controller.isSearchMode &&
                           controller.activeSpaceId == null
                       ? RepaintBoundary(
-                          child: FloatingActionButton.extended(
-                            onPressed: () => context.go('/rooms/newprivatechat'),
-                            icon: const Icon(Icons.add_outlined),
-                            label: Text(
-                              L10n.of(context).chat,
-                              overflow: TextOverflow.fade,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  Theme.of(context).colorScheme.primary,
+                                  Theme.of(context).colorScheme.primary.withOpacity(0.8),
+                                ],
+                                begin: Alignment.topLeft,
+                                end: Alignment.bottomRight,
+                              ),
+                              borderRadius: BorderRadius.circular(20),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Theme.of(context).colorScheme.primary.withOpacity(0.4),
+                                  blurRadius: 12,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
                             ),
-                            heroTag: 'newChat',
+                            child: FloatingActionButton.extended(
+                              onPressed: () => context.go('/rooms/newprivatechat'),
+                              backgroundColor: Colors.transparent,
+                              elevation: 0,
+                              icon: const Icon(Icons.add_outlined),
+                              label: Text(
+                                L10n.of(context).chat,
+                                overflow: TextOverflow.fade,
+                              ),
+                              heroTag: 'newChat',
+                            ),
                           ),
                         )
                       : const SizedBox.shrink(),
