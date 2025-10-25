@@ -57,11 +57,11 @@ class _DrawerMenuItemState extends State<DrawerMenuItem>
       builder: (context, child) {
         return Transform.translate(
           offset: Offset(
-            (1 - widget.animation.value) * -20,
+            (1 - widget.animation.value) * -30,
             0,
           ),
           child: Opacity(
-            opacity: widget.animation.value,
+            opacity: widget.animation.value.clamp(0.0, 1.0),
             child: AnimatedBuilder(
               animation: _scaleAnimation,
               builder: (context, child) {
@@ -86,28 +86,37 @@ class _DrawerMenuItemState extends State<DrawerMenuItem>
                           widget.onTap();
                         },
                         onTapCancel: () => _controller.reverse(),
-                        child: ListTile(
-                          leading: Container(
-                            padding: const EdgeInsets.all(8),
-                            decoration: BoxDecoration(
-                              color: (widget.iconColor ?? Colors.grey).withOpacity(0.1),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Icon(
-                              widget.icon,
-                              color: widget.iconColor ?? Colors.grey,
-                              size: 20,
-                            ),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 12,
                           ),
-                          title: Text(
-                            widget.title,
-                            style: const TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: _getBorderRadius(),
+                          child: Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: (widget.iconColor ?? Colors.grey)
+                                      .withValues(alpha: 0.15),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Icon(
+                                  widget.icon,
+                                  color: widget.iconColor ?? Colors.grey,
+                                  size: 20,
+                                ),
+                              ),
+                              const SizedBox(width: 14),
+                              Expanded(
+                                child: Text(
+                                  widget.title,
+                                  style: const TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),

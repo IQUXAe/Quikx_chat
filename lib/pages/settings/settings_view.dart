@@ -21,8 +21,6 @@ class SettingsView extends StatelessWidget {
 
   const SettingsView(this.controller, {super.key});
 
-
-
   void _showAboutDialog(BuildContext context) {
     showDialog(
       context: context,
@@ -45,14 +43,14 @@ class SettingsView extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final showChatBackupBanner = controller.showChatBackupBanner;
-    final activeRoute =
-        GoRouter.of(context).routeInformationProvider.value.uri.path;
+    final activeRoute = GoRouter.of(context).routeInformationProvider.value.uri.path;
     final accountManageUrl = Matrix.of(context)
         .client
         .wellKnown
         ?.additionalProperties
         .tryGetMap<String, Object?>('org.matrix.msc2965.authentication')
         ?.tryGet<String>('account');
+    
     return Row(
       children: [
         if (QuikxChatThemes.isColumnMode(context)) ...[
@@ -61,536 +59,413 @@ class SettingsView extends StatelessWidget {
             onGoToChats: () => context.go('/rooms'),
             onGoToSpaceId: (spaceId) => context.go('/rooms?spaceId=$spaceId'),
           ),
-          Container(
-            color: Theme.of(context).dividerColor,
-            width: 1,
-          ),
+          Container(color: Theme.of(context).dividerColor, width: 1),
         ],
         Expanded(
           child: Scaffold(
             backgroundColor: theme.colorScheme.surface,
-            appBar: QuikxChatThemes.isColumnMode(context)
-                ? null
-                : AppBar(
-                    elevation: 0,
-                    backgroundColor: Colors.transparent,
-                    title: Text(L10n.of(context).settings, style: TextStyle(fontWeight: FontWeight.w600)),
-                    leading: Center(
-                      child: BackButton(
-                        onPressed: () => context.go('/rooms'),
-                      ),
-                    ),
-                  ),
-            body: ListTileTheme(
-              iconColor: theme.colorScheme.onSurface,
-              child: ListView(
-                key: const Key('SettingsListViewContent'),
-                padding: const EdgeInsets.only(bottom: 24),
-                children: <Widget>[
-                  FutureBuilder<Profile>(
-                    future: controller.profileFuture,
-                    builder: (context, snapshot) {
-                      final profile = snapshot.data;
-                      final avatar = profile?.avatarUrl;
-                      final mxid = Matrix.of(context).client.userID ??
-                          L10n.of(context).user;
-                      final displayname =
-                          profile?.displayName ?? mxid.localpart ?? mxid;
-                      return Container(
-                        margin: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-                        padding: const EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [
-                              theme.colorScheme.primaryContainer,
-                              theme.colorScheme.secondaryContainer,
-                            ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(20),
-                          boxShadow: [
-                            BoxShadow(
-                              color: theme.colorScheme.primary.withOpacity(0.1),
-                              blurRadius: 20,
-                              offset: const Offset(0, 8),
+            body: CustomScrollView(
+              slivers: [
+                SliverAppBar(
+                  expandedHeight: 280,
+                  pinned: true,
+                  elevation: 0,
+                  backgroundColor: theme.colorScheme.primary,
+                  automaticallyImplyLeading: false,
+                  flexibleSpace: FlexibleSpaceBar(
+                    background: FutureBuilder<Profile>(
+                      future: controller.profileFuture,
+                      builder: (context, snapshot) {
+                        final profile = snapshot.data;
+                        final avatar = profile?.avatarUrl;
+                        final mxid = Matrix.of(context).client.userID ?? L10n.of(context).user;
+                        final displayname = profile?.displayName ?? mxid.localpart ?? mxid;
+                        
+                        return Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              colors: [
+                                theme.colorScheme.primary,
+                                theme.colorScheme.secondary,
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
                             ),
-                          ],
-                        ),
-                        child: Row(
-                          children: [
-                            Stack(
+                          ),
+                          child: SafeArea(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    border: Border.all(
-                                      color: theme.colorScheme.onPrimaryContainer.withOpacity(0.2),
-                                      width: 3,
-                                    ),
-                                  ),
-                                  child: Avatar(
-                                    mxContent: avatar,
-                                    name: displayname,
-                                    size: 72,
-                                    onTap: avatar != null
-                                        ? () => showDialog(
-                                              context: context,
-                                              builder: (_) =>
-                                                  MxcImageViewer(avatar),
-                                            )
-                                        : null,
+                                const SizedBox(height: 40),
+                                GestureDetector(
+                                  onTap: controller.setAvatarAction,
+                                  child: Stack(
+                                    children: [
+                                      Hero(
+                                        tag: 'settings_avatar',
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black.withOpacity(0.3),
+                                                blurRadius: 20,
+                                                spreadRadius: 5,
+                                              ),
+                                            ],
+                                          ),
+                                          child: Avatar(
+                                            mxContent: avatar,
+                                            name: displayname,
+                                            size: 100,
+                                            onTap: avatar != null
+                                                ? () => showDialog(
+                                                      context: context,
+                                                      builder: (_) => MxcImageViewer(avatar),
+                                                    )
+                                                : null,
+                                          ),
+                                        ),
+                                      ),
+                                      Positioned(
+                                        bottom: 0,
+                                        right: 0,
+                                        child: Container(
+                                          padding: const EdgeInsets.all(8),
+                                          decoration: BoxDecoration(
+                                            color: theme.colorScheme.primaryContainer,
+                                            shape: BoxShape.circle,
+                                            border: Border.all(color: Colors.white, width: 3),
+                                          ),
+                                          child: Icon(
+                                            Icons.edit,
+                                            size: 18,
+                                            color: theme.colorScheme.onPrimaryContainer,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                if (profile != null)
-                                  Positioned(
-                                    bottom: 0,
-                                    right: 0,
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: theme.colorScheme.primary,
-                                        shape: BoxShape.circle,
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: Colors.black.withOpacity(0.2),
-                                            blurRadius: 8,
-                                          ),
-                                        ],
-                                      ),
-                                      child: IconButton(
-                                        icon: const Icon(Icons.camera_alt_rounded, size: 18),
-                                        color: theme.colorScheme.onPrimary,
-                                        onPressed: controller.setAvatarAction,
-                                        padding: const EdgeInsets.all(8),
-                                        constraints: const BoxConstraints(),
-                                      ),
+                                const SizedBox(height: 16),
+                                GestureDetector(
+                                  onTap: controller.setDisplaynameAction,
+                                  child: Text(
+                                    displayname,
+                                    style: const TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
                                     ),
                                   ),
+                                ),
+                                const SizedBox(height: 8),
+                                GestureDetector(
+                                  onTap: () => FluffyShare.share(mxid, context),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white.withOpacity(0.2),
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          mxid,
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        const Icon(Icons.copy, size: 16, color: Colors.white),
+                                      ],
+                                    ),
+                                  ),
+                                ),
                               ],
                             ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  InkWell(
-                                    onTap: controller.setDisplaynameAction,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                SliverToBoxAdapter(
+                  child: Column(
+                    children: [
+                      const SizedBox(height: 24),
+                      if (accountManageUrl != null || showChatBackupBanner != null)
+                        _buildSection(
+                          context,
+                          title: L10n.of(context).account,
+                          children: [
+                            if (accountManageUrl != null)
+                              SettingsCardTile(
+                                leading: Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.cyan.withOpacity(0.1),
                                     borderRadius: BorderRadius.circular(8),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Flexible(
-                                            child: Text(
-                                              displayname,
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(
-                                                fontSize: 20,
-                                                fontWeight: FontWeight.bold,
-                                                color: theme.colorScheme.onPrimaryContainer,
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(width: 6),
-                                          Icon(
-                                            Icons.edit_rounded,
-                                            size: 16,
-                                            color: theme.colorScheme.onPrimaryContainer.withOpacity(0.7),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
                                   ),
-                                  const SizedBox(height: 4),
-                                  InkWell(
-                                    onTap: () => FluffyShare.share(mxid, context),
-                                    borderRadius: BorderRadius.circular(8),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Flexible(
-                                            child: Text(
-                                              mxid,
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
-                                              style: TextStyle(
-                                                fontSize: 13,
-                                                color: theme.colorScheme.onPrimaryContainer.withOpacity(0.8),
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(width: 6),
-                                          Icon(
-                                            Icons.copy_rounded,
-                                            size: 14,
-                                            color: theme.colorScheme.onPrimaryContainer.withOpacity(0.6),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ],
+                                  child: const Icon(Icons.manage_accounts, color: Colors.cyan),
+                                ),
+                                title: Text(L10n.of(context).manageAccount),
+                                trailing: const Icon(Icons.open_in_new, size: 20),
+                                onTap: () => launchUrlString(accountManageUrl, mode: LaunchMode.inAppBrowserView),
+                                position: showChatBackupBanner == null ? CardPosition.single : CardPosition.first,
                               ),
-                            ),
+                            if (showChatBackupBanner == null)
+                              SettingsCardTile(
+                                leading: Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.amber.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: const Icon(Icons.backup, color: Colors.amber),
+                                ),
+                                title: Text(L10n.of(context).chatBackup),
+                                trailing: const SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                ),
+                                position: accountManageUrl != null ? CardPosition.last : CardPosition.single,
+                              )
+                            else
+                              SettingsCardSwitch(
+                                leading: Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.amber.withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: const Icon(Icons.backup, color: Colors.amber),
+                                ),
+                                title: Text(L10n.of(context).chatBackup),
+                                value: showChatBackupBanner == false,
+                                onChanged: controller.firstRunBootstrapAction,
+                                position: accountManageUrl != null ? CardPosition.last : CardPosition.single,
+                              ),
                           ],
                         ),
-                      );
-                    },
-                  ),
-                  if (accountManageUrl != null || showChatBackupBanner != null)
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-                      child: Text(
-                        L10n.of(context).account,
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: theme.colorScheme.primary,
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                    ),
-                  if (accountManageUrl != null)
-                    SettingsCardTile(
-                      leading: Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [Colors.cyan.shade400, Colors.cyan.shade600],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(12),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.cyan.withOpacity(0.3),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
+                      _buildSection(
+                        context,
+                        title: L10n.of(context).settings,
+                        children: [
+                          SettingsCardTile(
+                            leading: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.purple.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: const Icon(Icons.palette, color: Colors.purple),
                             ),
-                          ],
-                        ),
-                        child: const Icon(Icons.account_circle_rounded, color: Colors.white, size: 24),
-                      ),
-                      title: Text(L10n.of(context).manageAccount),
-                      trailing: Icon(Icons.open_in_new_rounded, size: 20, color: theme.colorScheme.primary),
-                      onTap: () => launchUrlString(
-                        accountManageUrl,
-                        mode: LaunchMode.inAppBrowserView,
-                      ),
-                      position: showChatBackupBanner != null ? CardPosition.first : CardPosition.single,
-                    ),
-                  if (showChatBackupBanner == null)
-                    SettingsCardTile(
-                      leading: Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [Colors.amber.shade400, Colors.orange.shade600],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
+                            title: Text(L10n.of(context).changeTheme),
+                            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                            onTap: controller.navigateToStyle,
+                            isActive: activeRoute.startsWith('/rooms/settings/style'),
+                            position: CardPosition.first,
                           ),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Icon(Icons.backup_rounded, color: Colors.white, size: 24),
-                      ),
-                      title: Text(L10n.of(context).chatBackup),
-                      trailing: const CircularProgressIndicator.adaptive(),
-                      position: accountManageUrl != null ? CardPosition.last : CardPosition.single,
-                    )
-                  else
-                    SettingsCardSwitch(
-                      leading: Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [Colors.amber.shade400, Colors.orange.shade600],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
+                          SettingsCardTile(
+                            leading: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.orange.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: const Icon(Icons.notifications, color: Colors.orange),
+                            ),
+                            title: Text(L10n.of(context).notifications),
+                            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                            onTap: controller.navigateToNotifications,
+                            isActive: activeRoute.startsWith('/rooms/settings/notifications'),
+                            position: CardPosition.middle,
                           ),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: const Icon(Icons.backup_rounded, color: Colors.white, size: 24),
-                      ),
-                      title: Text(L10n.of(context).chatBackup),
-                      value: controller.showChatBackupBanner == false,
-                      onChanged: controller.firstRunBootstrapAction,
-                      position: accountManageUrl != null ? CardPosition.last : CardPosition.single,
-                    ),
-                  const SizedBox(height: 20),
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-                    child: Text(
-                      L10n.of(context).settings,
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: theme.colorScheme.primary,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                  ),
-                  SettingsCardTile(
-                    leading: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [Colors.purple.shade400, Colors.deepPurple.shade600],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.purple.withOpacity(0.3),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
+                          SettingsCardTile(
+                            leading: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.green.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: const Icon(Icons.devices, color: Colors.green),
+                            ),
+                            title: Text(L10n.of(context).devices),
+                            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                            onTap: controller.navigateToDevices,
+                            isActive: activeRoute.startsWith('/rooms/settings/devices'),
+                            position: CardPosition.middle,
+                          ),
+                          SettingsCardTile(
+                            leading: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.blue.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: const Icon(Icons.chat_bubble, color: Colors.blue),
+                            ),
+                            title: Text(L10n.of(context).chat),
+                            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                            onTap: controller.navigateToChat,
+                            isActive: activeRoute.startsWith('/rooms/settings/chat'),
+                            position: CardPosition.middle,
+                          ),
+                          SettingsCardTile(
+                            leading: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.red.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: const Icon(Icons.security, color: Colors.red),
+                            ),
+                            title: Text(L10n.of(context).security),
+                            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                            onTap: controller.navigateToSecurity,
+                            isActive: activeRoute.startsWith('/rooms/settings/security'),
+                            position: CardPosition.last,
                           ),
                         ],
                       ),
-                      child: const Icon(Icons.palette_rounded, color: Colors.white, size: 24),
-                    ),
-                    title: Text(L10n.of(context).changeTheme),
-                    trailing: Icon(Icons.chevron_right_rounded, color: theme.colorScheme.onSurfaceVariant),
-                    isActive: activeRoute.startsWith('/rooms/settings/style'),
-                    onTap: controller.navigateToStyle,
-                    position: CardPosition.first,
-                  ),
-                  SettingsCardTile(
-                    leading: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [Colors.orange.shade400, Colors.deepOrange.shade600],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.orange.withOpacity(0.3),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
+                      _buildSection(
+                        context,
+                        title: L10n.of(context).about,
+                        children: [
+                          SettingsCardTile(
+                            leading: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.indigo.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: const Icon(Icons.dns, color: Colors.indigo),
+                            ),
+                            title: Text(L10n.of(context).aboutHomeserver(
+                              Matrix.of(context).client.userID?.domain ?? 'homeserver',
+                            )),
+                            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                            onTap: controller.navigateToHomeserver,
+                            isActive: activeRoute.startsWith('/rooms/settings/homeserver'),
+                            position: CardPosition.first,
+                          ),
+                          SettingsCardTile(
+                            leading: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.teal.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: const Icon(Icons.privacy_tip, color: Colors.teal),
+                            ),
+                            title: Text(L10n.of(context).privacy),
+                            trailing: const Icon(Icons.open_in_new, size: 20),
+                            onTap: () => launchUrlString(AppConfig.privacyUrl),
+                            position: CardPosition.middle,
+                          ),
+                          SettingsCardTile(
+                            leading: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.blueGrey.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: const Icon(Icons.info, color: Colors.blueGrey),
+                            ),
+                            title: Text(L10n.of(context).about),
+                            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                            onTap: () => _showAboutDialog(context),
+                            position: CardPosition.last,
                           ),
                         ],
                       ),
-                      child: const Icon(Icons.notifications_rounded, color: Colors.white, size: 24),
-                    ),
-                    title: Text(L10n.of(context).notifications),
-                    trailing: Icon(Icons.chevron_right_rounded, color: theme.colorScheme.onSurfaceVariant),
-                    isActive: activeRoute.startsWith('/rooms/settings/notifications'),
-                    onTap: controller.navigateToNotifications,
-                    position: CardPosition.middle,
-                  ),
-                  SettingsCardTile(
-                    leading: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [Colors.green.shade400, Colors.teal.shade600],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.green.withOpacity(0.3),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
+                      const SizedBox(height: 16),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: _buildLogoutButton(context),
                       ),
-                      child: const Icon(Icons.devices_rounded, color: Colors.white, size: 24),
-                    ),
-                    title: Text(L10n.of(context).devices),
-                    trailing: Icon(Icons.chevron_right_rounded, color: theme.colorScheme.onSurfaceVariant),
-                    isActive: activeRoute.startsWith('/rooms/settings/devices'),
-                    onTap: controller.navigateToDevices,
-                    position: CardPosition.middle,
+                      const SizedBox(height: 32),
+                    ],
                   ),
-                  SettingsCardTile(
-                    leading: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [Colors.blue.shade400, Colors.indigo.shade600],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.blue.withOpacity(0.3),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: const Icon(Icons.chat_bubble_rounded, color: Colors.white, size: 24),
-                    ),
-                    title: Text(L10n.of(context).chat),
-                    trailing: Icon(Icons.chevron_right_rounded, color: theme.colorScheme.onSurfaceVariant),
-                    isActive: activeRoute.startsWith('/rooms/settings/chat'),
-                    onTap: controller.navigateToChat,
-                    position: CardPosition.middle,
-                  ),
-                  SettingsCardTile(
-                    leading: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [Colors.red.shade400, Colors.pink.shade600],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.red.withOpacity(0.3),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: const Icon(Icons.shield_rounded, color: Colors.white, size: 24),
-                    ),
-                    title: Text(L10n.of(context).security),
-                    trailing: Icon(Icons.chevron_right_rounded, color: theme.colorScheme.onSurfaceVariant),
-                    isActive: activeRoute.startsWith('/rooms/settings/security'),
-                    onTap: controller.navigateToSecurity,
-                    position: CardPosition.last,
-                  ),
-                  const SizedBox(height: 20),
-                  
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-                    child: Text(
-                      L10n.of(context).about,
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: theme.colorScheme.primary,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                  ),
-                  SettingsCardTile(
-                    leading: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [Colors.indigo.shade400, Colors.blue.shade700],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.indigo.withOpacity(0.3),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: const Icon(Icons.dns_rounded, color: Colors.white, size: 24),
-                    ),
-                    title: Text(
-                      L10n.of(context).aboutHomeserver(
-                        Matrix.of(context).client.userID?.domain ??
-                            'homeserver',
-                      ),
-                    ),
-                    trailing: Icon(Icons.chevron_right_rounded, color: theme.colorScheme.onSurfaceVariant),
-                    isActive: activeRoute.startsWith('/rooms/settings/homeserver'),
-                    onTap: controller.navigateToHomeserver,
-                    position: CardPosition.first,
-                  ),
-                  SettingsCardTile(
-                    leading: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [Colors.teal.shade400, Colors.green.shade700],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.teal.withOpacity(0.3),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: const Icon(Icons.privacy_tip_rounded, color: Colors.white, size: 24),
-                    ),
-                    title: Text(L10n.of(context).privacy),
-                    trailing: Icon(Icons.open_in_new_rounded, size: 20, color: theme.colorScheme.primary),
-                    onTap: () => launchUrlString(AppConfig.privacyUrl),
-                    position: CardPosition.middle,
-                  ),
-                  SettingsCardTile(
-                    leading: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [Colors.blueGrey.shade400, Colors.blueGrey.shade700],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.blueGrey.withOpacity(0.3),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: const Icon(Icons.info_rounded, color: Colors.white, size: 24),
-                    ),
-                    title: Text(L10n.of(context).about),
-                    trailing: Icon(Icons.chevron_right_rounded, color: theme.colorScheme.onSurfaceVariant),
-                    onTap: () => _showAboutDialog(context),
-                    position: CardPosition.last,
-                  ),
-                  
-                  const SizedBox(height: 20),
-                  
-                  SettingsCardTile(
-                    leading: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          colors: [Colors.pink.shade400, Colors.red.shade600],
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                        ),
-                        borderRadius: BorderRadius.circular(12),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.pink.withOpacity(0.3),
-                            blurRadius: 8,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
-                      ),
-                      child: const Icon(Icons.logout_rounded, color: Colors.white, size: 24),
-                    ),
-                    title: Text(L10n.of(context).logout, style: TextStyle(color: Colors.red.shade700, fontWeight: FontWeight.w600)),
-                    onTap: controller.logoutAction,
-                    position: CardPosition.single,
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildSection(BuildContext context, {required String title, required List<Widget> children}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 0, 24, 12),
+            child: Text(
+              title.toUpperCase(),
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.primary.withOpacity(0.7),
+                letterSpacing: 1.2,
+              ),
+            ),
+          ),
+          ...children,
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLogoutButton(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Colors.red.shade400, Colors.pink.shade600],
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+        ),
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.red.withOpacity(0.3),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: controller.logoutAction,
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.logout, color: Colors.white, size: 24),
+                const SizedBox(width: 12),
+                Text(
+                  L10n.of(context).logout,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

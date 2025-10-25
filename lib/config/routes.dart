@@ -22,6 +22,7 @@ import 'package:quikxchat/pages/login/login.dart';
 import 'package:quikxchat/pages/new_group/new_group.dart';
 import 'package:quikxchat/pages/new_private_chat/new_private_chat.dart';
 import 'package:quikxchat/pages/settings/settings.dart';
+import 'package:quikxchat/widgets/tabbed_page_view.dart';
 import 'package:quikxchat/pages/settings_3pid/settings_3pid.dart';
 import 'package:quikxchat/pages/settings_chat/settings_chat.dart';
 import 'package:quikxchat/pages/settings_emotes/settings_emotes.dart';
@@ -139,15 +140,22 @@ abstract class AppRoutes {
         GoRoute(
           path: '/rooms',
           redirect: loggedOutRedirect,
-          pageBuilder: (context, state) => defaultPageBuilder(
-            context,
-            state,
-            QuikxChatThemes.isColumnMode(context)
-                ? const EmptyPage()
-                : ChatList(
-                    activeChat: state.pathParameters['roomid'],
-                  ),
-          ),
+          pageBuilder: (context, state) {
+            if (QuikxChatThemes.isColumnMode(context)) {
+              return defaultPageBuilder(context, state, const EmptyPage());
+            }
+            return noTransitionPageBuilder(
+              context,
+              state,
+              TabbedPageView(
+                chatsPage: ChatList(
+                  activeChat: state.pathParameters['roomid'],
+                ),
+                settingsPage: const Settings(),
+                initialIndex: 0,
+              ),
+            );
+          },
           routes: [
             GoRoute(
               path: 'archive',
@@ -201,11 +209,22 @@ abstract class AppRoutes {
             ),
             GoRoute(
               path: 'settings',
-              pageBuilder: (context, state) => defaultPageBuilder(
-                context,
-                state,
-                const Settings(),
-              ),
+              pageBuilder: (context, state) {
+                if (QuikxChatThemes.isColumnMode(context)) {
+                  return defaultPageBuilder(context, state, const Settings());
+                }
+                return noTransitionPageBuilder(
+                  context,
+                  state,
+                  TabbedPageView(
+                    chatsPage: ChatList(
+                      activeChat: state.pathParameters['roomid'],
+                    ),
+                    settingsPage: const Settings(),
+                    initialIndex: 1,
+                  ),
+                );
+              },
               routes: [
                 GoRoute(
                   path: 'notifications',

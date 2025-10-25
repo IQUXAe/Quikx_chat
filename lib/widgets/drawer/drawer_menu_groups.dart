@@ -35,36 +35,28 @@ class DrawerMenuGroups extends StatelessWidget {
     return Column(
       children: [
         DrawerMenuItem(
-          icon: Icons.settings_outlined,
-          iconColor: Colors.grey,
-          title: L10n.of(context).settings,
-          onTap: () => context.go('/rooms/settings'),
+          icon: Icons.shield_rounded,
+          iconColor: Colors.red,
+          title: L10n.of(context).security,
+          onTap: () => context.go('/rooms/settings/security'),
           position: CardPosition.first,
           animation: itemAnimations[0],
         ),
         DrawerMenuItem(
-          icon: Icons.security_outlined,
-          iconColor: Colors.red,
-          title: L10n.of(context).security,
-          onTap: () => context.go('/rooms/settings/security'),
-          position: CardPosition.middle,
-          animation: itemAnimations[1],
-        ),
-        DrawerMenuItem(
-          icon: Icons.notifications_outlined,
+          icon: Icons.notifications_rounded,
           iconColor: Colors.orange,
           title: L10n.of(context).notifications,
           onTap: () => context.go('/rooms/settings/notifications'),
           position: CardPosition.middle,
-          animation: itemAnimations[2],
+          animation: itemAnimations[1],
         ),
         DrawerMenuItem(
-          icon: Icons.palette_outlined,
+          icon: Icons.palette_rounded,
           iconColor: Colors.purple,
           title: L10n.of(context).changeTheme,
           onTap: () => context.go('/rooms/settings/style'),
           position: CardPosition.last,
-          animation: itemAnimations[3],
+          animation: itemAnimations[2],
         ),
       ],
     );
@@ -74,7 +66,7 @@ class DrawerMenuGroups extends StatelessWidget {
     return Column(
       children: [
         DrawerMenuItem(
-          icon: Icons.archive_outlined,
+          icon: Icons.archive_rounded,
           iconColor: Colors.brown,
           title: L10n.of(context).archive,
           onTap: () => context.go('/rooms/archive'),
@@ -82,7 +74,7 @@ class DrawerMenuGroups extends StatelessWidget {
           animation: itemAnimations[4],
         ),
         DrawerMenuItem(
-          icon: Icons.group_add_outlined,
+          icon: Icons.group_add_rounded,
           iconColor: Colors.green,
           title: L10n.of(context).newGroup,
           onTap: () => context.go('/rooms/newgroup'),
@@ -90,7 +82,7 @@ class DrawerMenuGroups extends StatelessWidget {
           animation: itemAnimations[5],
         ),
         DrawerMenuItem(
-          icon: Icons.workspaces_outlined,
+          icon: Icons.workspaces_rounded,
           iconColor: Colors.blue,
           title: L10n.of(context).newSpace,
           onTap: () => context.go('/rooms/newspace'),
@@ -106,7 +98,7 @@ class DrawerMenuGroups extends StatelessWidget {
       children: [
         if (!kIsWeb)
           DrawerMenuItem(
-            icon: Icons.system_update_outlined,
+            icon: Icons.system_update_rounded,
             iconColor: Colors.teal,
             title: L10n.of(context).checkUpdates,
             onTap: () => onCheckUpdates(context),
@@ -115,7 +107,7 @@ class DrawerMenuGroups extends StatelessWidget {
             animation: itemAnimations[7],
           ),
         DrawerMenuItem(
-          icon: Icons.info_outlined,
+          icon: Icons.info_rounded,
           iconColor: Colors.cyan,
           title: L10n.of(context).about,
           onTap: () => onShowAbout(context),

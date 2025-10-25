@@ -22,45 +22,47 @@ class CustomDrawerHeader extends StatelessWidget {
     final userId = client.userID ?? '';
     
     return Container(
-      height: 180,
+      height: 200,
       width: double.infinity,
       decoration: BoxDecoration(
-        image: profile?.avatarUrl != null
-            ? DecorationImage(
-                image: NetworkImage(profile!.avatarUrl!.getThumbnail(
-                  client,
-                  width: 200,
-                  height: 200,
-                ).toString(),),
-                fit: BoxFit.cover,
-              )
-            : null,
-        gradient: profile?.avatarUrl == null
-            ? LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  theme.colorScheme.primary.withOpacity(0.8),
-                  theme.colorScheme.secondary.withOpacity(0.8),
-                ],
-              )
-            : null,
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            theme.colorScheme.primary,
+            theme.colorScheme.secondary,
+          ],
+        ),
       ),
       child: Stack(
         children: [
           if (profile?.avatarUrl != null)
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.black.withOpacity(0.3),
-                    Colors.black.withOpacity(0.7),
-                  ],
+            Positioned.fill(
+              child: Opacity(
+                opacity: 0.3,
+                child: Image.network(
+                  profile!.avatarUrl!.getThumbnail(
+                    client,
+                    width: 400,
+                    height: 400,
+                  ).toString(),
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, __, ___) => const SizedBox(),
                 ),
               ),
             ),
+          Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Colors.transparent,
+                  Colors.black.withValues(alpha: 0.5),
+                ],
+              ),
+            ),
+          ),
           Positioned(
             bottom: 24,
             left: 16,
@@ -71,7 +73,7 @@ class CustomDrawerHeader extends StatelessWidget {
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
                     border: Border.all(
-                      color: Colors.white.withOpacity(0.3),
+                      color: Colors.white.withValues(alpha: 0.3),
                       width: 3,
                     ),
                   ),
@@ -100,21 +102,18 @@ class CustomDrawerHeader extends StatelessWidget {
                             ),
                           ],
                         ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                       const SizedBox(height: 4),
                       Text(
                         userId,
-                        style: const TextStyle(
-                          color: Colors.white70,
-                          fontSize: 14,
-                          shadows: [
-                            Shadow(
-                              offset: Offset(0, 1),
-                              blurRadius: 3,
-                              color: Colors.black54,
-                            ),
-                          ],
+                        style: TextStyle(
+                          color: Colors.white.withValues(alpha: 0.9),
+                          fontSize: 13,
                         ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),

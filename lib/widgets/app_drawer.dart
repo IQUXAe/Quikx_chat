@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
@@ -20,9 +21,15 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
   Profile? _cachedProfile;
   bool _isLoadingProfile = false;
   late AnimationController _slideController;
+  late AnimationController _fadeController;
+  late AnimationController _scaleController;
   late Animation<Offset> _slideAnimation;
+  late Animation<double> _fadeAnimation;
+  late Animation<double> _scaleAnimation;
   late List<AnimationController> _itemControllers;
   late List<Animation<double>> _itemAnimations;
+  final ScrollController _scrollController = ScrollController();
+  double _scrollOffset = 0.0;
 
   @override
   Widget build(BuildContext context) {
@@ -32,7 +39,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
     return SlideTransition(
       position: _slideAnimation,
       child: Drawer(
-        backgroundColor: theme.colorScheme.surfaceContainerLowest,
+        backgroundColor: theme.colorScheme.surface,
         child: Column(
           children: [
             CustomDrawerHeader(
@@ -42,6 +49,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
             Expanded(
               child: ListView(
                 padding: EdgeInsets.zero,
+                physics: const BouncingScrollPhysics(),
                 children: [
                   DrawerMenuGroups(
                     itemAnimations: _itemAnimations,
@@ -63,19 +71,25 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
     super.initState();
     _loadProfile();
     
-    // Асинхронное обновление профиля
     Matrix.of(context).client.onSync.stream.listen((_) async {
-      if (mounted) {
-        await _loadProfile();
-      }
+      if (mounted) await _loadProfile();
     });
     
-    // Немедленное обновление при старте
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       if (mounted) await _loadProfile();
     });
     
     _slideController = AnimationController(
+      duration: const Duration(milliseconds: 400),
+      vsync: this,
+    );
+    
+    _fadeController = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    
+    _scaleController = AnimationController(
       duration: const Duration(milliseconds: 300),
       vsync: this,
     );
@@ -86,9 +100,24 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
     ).animate(CurvedAnimation(
       parent: _slideController,
       curve: Curves.easeOutCubic,
-    ),);
+    ));
     
-    // Создаем контроллеры для каждого элемента меню
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _fadeController,
+      curve: Curves.easeIn,
+    ));
+    
+    _scaleAnimation = Tween<double>(
+      begin: 0.95,
+      end: 1.0,
+    ).animate(CurvedAnimation(
+      parent: _scaleController,
+      curve: Curves.easeOut,
+    ));
+    
     const itemCount = 12;
     _itemControllers = List.generate(
       itemCount,
@@ -107,11 +136,10 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
       ),
     ).toList();
     
-    // Запускаем анимации с задержкой
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _slideController.forward();
       for (var i = 0; i < _itemControllers.length; i++) {
-        Future.delayed(Duration(milliseconds: 50 + (i * 20)), () {
+        Future.delayed(Duration(milliseconds: 50 + (i * 30)), () {
           if (mounted) _itemControllers[i].forward();
         });
       }
@@ -147,7 +175,7 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
       child: Text(
         '${AppConfig.applicationName} v${AppVersion.version}',
         style: theme.textTheme.bodySmall?.copyWith(
-          color: theme.colorScheme.onSurface.withOpacity(0.6),
+          color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
         ),
         textAlign: TextAlign.center,
       ),
@@ -206,6 +234,8 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
   @override
   void dispose() {
     _slideController.dispose();
+    _fadeController.dispose();
+    _scaleController.dispose();
     for (final controller in _itemControllers) {
       controller.dispose();
     }
