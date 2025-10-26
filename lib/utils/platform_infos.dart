@@ -8,6 +8,8 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 import 'package:quikxchat/l10n/l10n.dart';
 import '../config/app_config.dart';
+import '../config/app_version.dart';
+import '../widgets/about_app_dialog.dart';
 
 abstract class PlatformInfos {
   static bool get isWeb => kIsWeb;
@@ -36,35 +38,10 @@ abstract class PlatformInfos {
       '${AppConfig.applicationName} ${isWeb ? 'web' : Platform.operatingSystem}${kReleaseMode ? '' : 'Debug'}';
 
   static Future<String> getVersion() async {
-    var version = kIsWeb ? 'Web' : 'Unknown';
-    try {
-      version = (await PackageInfo.fromPlatform()).version;
-    } catch (_) {}
-    return version;
+    return AppVersion.version;
   }
 
-  static void showAboutDialog(BuildContext context) async {
-    final version = await PlatformInfos.getVersion();
-    showDialog<void>(
-      context: context,
-      builder: (context) => AboutDialog(
-        applicationName: AppConfig.applicationName,
-        applicationVersion: version,
-        applicationIcon: Image.asset('assets/logo.png', width: 64, height: 64),
-        children: [
-          const Text('Безопасный мессенджер на основе протокола Matrix.'),
-          const SizedBox(height: 16),
-          const Text('Разработчик: IQUXAe'),
-          const SizedBox(height: 8),
-          const Text('Создан с помощью Flutter и Matrix SDK'),
-          const SizedBox(height: 16),
-          TextButton.icon(
-            onPressed: () => launchUrlString(AppConfig.sourceCodeUrl),
-            icon: const Icon(Icons.code_outlined),
-            label: Text(L10n.of(context).sourceCode),
-          ),
-        ],
-      ),
-    );
+  static void showAboutDialog(BuildContext context) {
+    AboutAppDialog.show(context);
   }
 }

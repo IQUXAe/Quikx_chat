@@ -50,29 +50,47 @@ class SettingsSecurityView extends StatelessWidget {
               }
               return Column(
                 children: [
-                  ListTile(
-                    title: Text(
-                      L10n.of(context).privacy,
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 16, 24, 12),
+                    child: Text(
+                      L10n.of(context).privacy.toUpperCase(),
                       style: TextStyle(
-                        color: theme.colorScheme.secondary,
+                        fontSize: 12,
                         fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.primary.withOpacity(0.7),
+                        letterSpacing: 1.2,
                       ),
                     ),
                   ),
-                  SettingsSwitchListTile.adaptive(
-                    title: L10n.of(context).sendTypingNotifications,
-                    subtitle:
-                        L10n.of(context).sendTypingNotificationsDescription,
+                  SettingsCardSwitch(
+                    leading: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(Icons.keyboard_outlined, color: Colors.blue),
+                    ),
+                    title: Text(L10n.of(context).sendTypingNotifications),
+                    subtitle: Text(L10n.of(context).sendTypingNotificationsDescription),
+                    value: AppConfig.sendTypingNotifications,
                     onChanged: (b) => AppConfig.sendTypingNotifications = b,
-                    storeKey: SettingKeys.sendTypingNotifications,
-                    defaultValue: AppConfig.sendTypingNotifications,
+                    position: CardPosition.first,
                   ),
-                  SettingsSwitchListTile.adaptive(
-                    title: L10n.of(context).sendReadReceipts,
-                    subtitle: L10n.of(context).sendReadReceiptsDescription,
+                  SettingsCardSwitch(
+                    leading: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.green.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(Icons.done_all_outlined, color: Colors.green),
+                    ),
+                    title: Text(L10n.of(context).sendReadReceipts),
+                    subtitle: Text(L10n.of(context).sendReadReceiptsDescription),
+                    value: AppConfig.sendPublicReadReceipts,
                     onChanged: (b) => AppConfig.sendPublicReadReceipts = b,
-                    storeKey: SettingKeys.sendPublicReadReceipts,
-                    defaultValue: AppConfig.sendPublicReadReceipts,
+                    position: CardPosition.last,
                   ),
 
                   SettingsCardTile(
@@ -114,16 +132,25 @@ class SettingsSecurityView extends StatelessWidget {
                         position: CardPosition.last,
                       ),
                   },
-                  Divider(color: theme.dividerColor),
-                  ListTile(
-                    title: Text(
-                      L10n.of(context).shareKeysWith,
+                  const SizedBox(height: 16),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 12),
+                    child: Text(
+                      L10n.of(context).shareKeysWith.toUpperCase(),
                       style: TextStyle(
-                        color: theme.colorScheme.secondary,
+                        fontSize: 12,
                         fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.primary.withOpacity(0.7),
+                        letterSpacing: 1.2,
                       ),
                     ),
-                    subtitle: Text(L10n.of(context).shareKeysWithDescription),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      L10n.of(context).shareKeysWithDescription,
+                      style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
+                    ),
                   ),
                   ListTile(
                     title: Material(
@@ -149,13 +176,16 @@ class SettingsSecurityView extends StatelessWidget {
                       ),
                     ),
                   ),
-                  Divider(color: theme.dividerColor),
-                  ListTile(
-                    title: Text(
-                      L10n.of(context).account,
+                  const SizedBox(height: 16),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 12),
+                    child: Text(
+                      L10n.of(context).account.toUpperCase(),
                       style: TextStyle(
-                        color: theme.colorScheme.secondary,
+                        fontSize: 12,
                         fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.primary.withOpacity(0.7),
+                        letterSpacing: 1.2,
                       ),
                     ),
                   ),

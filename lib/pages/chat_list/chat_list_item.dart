@@ -4,7 +4,6 @@ import 'package:matrix/matrix.dart';
 
 import 'package:quikxchat/config/app_config.dart';
 import 'package:quikxchat/widgets/settings_card_tile.dart';
-import 'package:quikxchat/widgets/tap_scale_animation.dart';
 import 'package:quikxchat/l10n/l10n.dart';
 import 'package:quikxchat/utils/matrix_sdk_extensions/matrix_locals.dart';
 import 'package:quikxchat/utils/room_status_extension.dart';
@@ -45,14 +44,29 @@ class ChatListItem extends StatefulWidget {
   State<ChatListItem> createState() => _ChatListItemState();
 }
 
-class _ChatListItemState extends State<ChatListItem> {
+class _ChatListItemState extends State<ChatListItem> with SingleTickerProviderStateMixin {
+  late AnimationController _animationController;
+  late Animation<double> _scaleAnimation;
+
   @override
   void initState() {
     super.initState();
-    // Асинхронная предзагрузка профилей и аватаров
+    _animationController = AnimationController(
+      duration: const Duration(milliseconds: 200),
+      vsync: this,
+    );
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.97).animate(
+      CurvedAnimation(parent: _animationController, curve: Curves.easeInOut),
+    );
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _preloadProfiles();
     });
+  }
+
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
   }
 
   Future<void> _preloadProfiles() async {
@@ -62,15 +76,14 @@ class _ChatListItemState extends State<ChatListItem> {
       final room = widget.room;
       final client = room.client;
 
-      // Предзагружаем аватар комнаты
       if (room.avatar != null) {
         precacheImage(
           NetworkImage(
             room.avatar!
                 .getThumbnail(
                   client,
-                  width: 44,
-                  height: 44,
+                  width: 56,
+                  height: 56,
                 )
                 .toString(),
           ),
@@ -78,7 +91,6 @@ class _ChatListItemState extends State<ChatListItem> {
         ).catchError((_) {});
       }
 
-      // Предзагружаем профиль для прямых чатов
       final directChatMatrixId = room.directChatMatrixID;
       if (directChatMatrixId != null) {
         try {
@@ -89,21 +101,18 @@ class _ChatListItemState extends State<ChatListItem> {
                 profile.avatarUrl!
                     .getThumbnail(
                       client,
-                      width: 44,
-                      height: 44,
+                      width: 56,
+                      height: 56,
                     )
                     .toString(),
               ),
               context,
             ).catchError((_) {});
           }
-          if (mounted) setState(() {}); // Обновляем UI с новыми данными
-        } catch (e) {
-          // Игнорируем ошибки загрузки профиля
-        }
+          if (mounted) setState(() {});
+        } catch (e) {}
       }
 
-      // Предзагружаем аватар пространства если есть
       final space = widget.space;
       if (space?.avatar != null && mounted) {
         precacheImage(
@@ -111,17 +120,15 @@ class _ChatListItemState extends State<ChatListItem> {
             space!.avatar!
                 .getThumbnail(
                   client,
-                  width: 33,
-                  height: 33,
+                  width: 36,
+                  height: 36,
                 )
                 .toString(),
           ),
           context,
         ).catchError((_) {});
       }
-    } catch (e) {
-      // Игнорируем ошибки предзагрузки
-    }
+    } catch (e) {}
   }
 
   @override
@@ -137,12 +144,10 @@ class _ChatListItemState extends State<ChatListItem> {
     final isDirectChat = directChatMatrixId != null;
     final unreadBubbleSize = unread || widget.room.hasNewMessages
         ? widget.room.notificationCount > 0
-            ? 20.0
-            : 14.0
+            ? 24.0
+            : 16.0
         : 0.0;
     final hasNotifications = widget.room.notificationCount > 0;
-    final backgroundColor =
-        widget.activeChat ? theme.colorScheme.secondaryContainer : null;
     final displayname = widget.room.getLocalizedDisplayname(
       MatrixLocals(L10n.of(context)),
     );
@@ -152,379 +157,377 @@ class _ChatListItemState extends State<ChatListItem> {
     }
 
     final space = widget.space;
-
     final borderRadius = _getBorderRadius();
     final margin = _getMargin();
 
-    return Container(
-      margin: margin,
-      decoration: BoxDecoration(
-        color: widget.activeChat
-            ? theme.colorScheme.primaryContainer.withOpacity(0.5)
-            : theme.colorScheme.surfaceContainerLow,
-        borderRadius: borderRadius,
-      ),
-      child: Material(
-        color: Colors.transparent,
-        borderRadius: borderRadius,
-        clipBehavior: Clip.hardEdge,
-        child: HoverBuilder(
-          builder: (context, listTileHovered) => ListTile(
-            visualDensity: const VisualDensity(vertical: -2),
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            onLongPress: () => widget.onLongPress?.call(context),
-            leading: HoverBuilder(
-              builder: (context, hovered) => AnimatedScale(
-                duration: QuikxChatThemes.animationDuration,
-                curve: QuikxChatThemes.animationCurve,
-                scale: hovered ? 1.1 : 1.0,
-                child: Container(
-                  width: Avatar.defaultSize,
-                  height: Avatar.defaultSize,
-                  child: Stack(
-                    alignment: Alignment.center,
-                    children: [
-                      if (space != null)
-                        Positioned(
-                          top: 0,
-                          left: 0,
-                          child: Avatar(
-                            border: BorderSide(
-                              width: 2,
-                              color:
-                                  backgroundColor ?? theme.colorScheme.surface,
-                            ),
-                            borderRadius: BorderRadius.circular(
-                              AppConfig.borderRadius / 4,
-                            ),
-                            mxContent: space.avatar,
-                            size: Avatar.defaultSize * 0.75,
-                            name: space.getLocalizedDisplayname(),
-                            client: widget.room.client,
-                            onTap: () => widget.onLongPress?.call(context),
-                          ),
-                        ),
-                      // Центрируем основную аватарку
-                      Align(
-                        alignment: Alignment.center,
-                        child: Avatar(
-                          border: space == null
-                              ? widget.room.isSpace
-                                  ? BorderSide(
-                                      width: 1,
-                                      color: theme.dividerColor,
-                                    )
-                                  : null
-                              : BorderSide(
-                                  width: 2,
-                                  color: backgroundColor ??
-                                      theme.colorScheme.surface,
-                                ),
-                          borderRadius: widget.room.isSpace
-                              ? BorderRadius.circular(
-                                  AppConfig.borderRadius / 4,
-                                )
-                              : null,
-                          mxContent: widget.room.avatar,
-                          size: space != null
-                              ? Avatar.defaultSize * 0.75
-                              : Avatar.defaultSize,
-                          name: displayname,
-                          client: widget.room.client,
-                          presenceUserId: directChatMatrixId,
-                          presenceBackgroundColor: backgroundColor,
-                          onTap: () => widget.onLongPress?.call(context),
-                        ),
+    return GestureDetector(
+      onTapDown: (_) => _animationController.forward(),
+      onTapUp: (_) => _animationController.reverse(),
+      onTapCancel: () => _animationController.reverse(),
+      child: ScaleTransition(
+        scale: _scaleAnimation,
+        child: Container(
+          margin: margin,
+          decoration: BoxDecoration(
+            color: widget.activeChat
+                ? theme.colorScheme.primaryContainer.withOpacity(0.3)
+                : theme.colorScheme.surface,
+            borderRadius: borderRadius,
+            border: Border.all(
+              color: widget.activeChat
+                  ? theme.colorScheme.primary.withOpacity(0.3)
+                  : theme.colorScheme.outlineVariant.withOpacity(0.5),
+              width: 1,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: theme.colorScheme.shadow.withOpacity(0.05),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Material(
+            color: Colors.transparent,
+            borderRadius: borderRadius,
+            clipBehavior: Clip.hardEdge,
+            child: InkWell(
+              onTap: widget.onTap,
+              onLongPress: () => widget.onLongPress?.call(context),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                child: Row(
+                  children: [
+                    _buildAvatar(theme, space, directChatMatrixId, displayname),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildTitle(theme, displayname, isMuted, hasNotifications, lastEvent),
+                          const SizedBox(height: 4),
+                          _buildSubtitle(theme, typingText, ownMessage, lastEvent, isDirectChat, directChatMatrixId, unread),
+                        ],
                       ),
-                      Positioned(
-                        top: 0,
-                        right: 0,
-                        child: GestureDetector(
-                          onTap: () => widget.onLongPress?.call(context),
-                          child: AnimatedScale(
-                            duration: QuikxChatThemes.animationDuration,
-                            curve: QuikxChatThemes.animationCurve,
-                            scale: listTileHovered ? 1.0 : 0.0,
-                            child: Material(
-                              color: backgroundColor,
-                              borderRadius: BorderRadius.circular(16),
-                              child: const Icon(
-                                Icons.arrow_drop_down_circle_outlined,
-                                size: 18,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                    const SizedBox(width: 8),
+                    _buildTrailing(theme, unreadBubbleSize, hasNotifications),
+                  ],
                 ),
               ),
             ),
-            title: Row(
-              children: <Widget>[
-                Expanded(
-                  child: Text(
-                    displayname,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    softWrap: false,
-                    style: TextStyle(
-                      fontWeight: unread || widget.room.hasNewMessages
-                          ? FontWeight.w600
-                          : FontWeight.w500,
-                      fontSize: 15,
-                    ),
-                  ),
-                ),
-                if (isMuted)
-                  const Padding(
-                    padding: EdgeInsets.only(left: 4.0),
-                    child: Icon(
-                      Icons.notifications_off_outlined,
-                      size: 16,
-                    ),
-                  ),
-                if (widget.room.isFavourite)
-                  Padding(
-                    padding: EdgeInsets.only(
-                      right: hasNotifications ? 4.0 : 0.0,
-                    ),
-                    child: Icon(
-                      Icons.push_pin,
-                      size: 16,
-                      color: theme.colorScheme.primary,
-                    ),
-                  ),
-                if (!widget.room.isSpace &&
-                    lastEvent != null &&
-                    widget.room.membership != Membership.invite)
-                  Padding(
-                    padding: const EdgeInsets.only(left: 4.0),
-                    child: Text(
-                      lastEvent.originServerTs.localizedTimeShort(context),
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: theme.colorScheme.outline,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-            subtitle: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                if (typingText.isEmpty &&
-                    ownMessage &&
-                    widget.room.lastEvent!.status.isSending) ...[
-                  const AnimatedLoadingIndicator(size: 16),
-                  const SizedBox(width: 4),
-                ] else if (typingText.isEmpty &&
-                    ownMessage &&
-                    lastEvent != null) ...[
-                  // Показываем статус последнего сообщения в списке чатов
-                  Icon(
-                    MessageStatusHelper.isMessageRead(lastEvent)
-                        ? Icons.done_all
-                        : Icons.done,
-                    size: 14,
-                    color: MessageStatusHelper.isMessageRead(lastEvent)
-                        ? const Color(0xFF4CAF50)
-                        : theme.colorScheme.outline,
-                  ),
-                  const SizedBox(width: 4),
-                ],
-                AnimatedContainer(
-                  width: typingText.isEmpty ? 0 : 18,
-                  clipBehavior: Clip.hardEdge,
-                  decoration: const BoxDecoration(),
-                  duration: QuikxChatThemes.animationDuration,
-                  curve: QuikxChatThemes.animationCurve,
-                  padding: const EdgeInsets.only(right: 4),
-                  child: Icon(
-                    Icons.edit_outlined,
-                    color: theme.colorScheme.secondary,
-                    size: 14,
-                  ),
-                ),
-                Expanded(
-                  child: widget.room.isSpace &&
-                          widget.room.membership == Membership.join
-                      ? Text(
-                          L10n.of(context).countChatsAndCountParticipants(
-                            widget.room.spaceChildren.length,
-                            (widget.room.summary.mJoinedMemberCount ?? 1),
-                          ),
-                          style: TextStyle(color: theme.colorScheme.outline),
-                        )
-                      : typingText.isNotEmpty
-                          ? Text(
-                              typingText,
-                              style: TextStyle(
-                                color: theme.colorScheme.primary,
-                              ),
-                              maxLines: 1,
-                              softWrap: false,
-                            )
-                          : Text(
-                              widget.room.membership == Membership.invite
-                                  ? widget.room
-                                          .getState(
-                                            EventTypes.RoomMember,
-                                            widget.room.client.userID!,
-                                          )
-                                          ?.content
-                                          .tryGet<String>('reason') ??
-                                      (isDirectChat
-                                          ? L10n.of(context).newChatRequest
-                                          : L10n.of(context).inviteGroupChat)
-                                  : lastEvent?.calcLocalizedBodyFallback(
-                                        MatrixLocals(L10n.of(context)),
-                                        hideReply: true,
-                                        hideEdit: true,
-                                        plaintextBody: true,
-                                        removeMarkdown: true,
-                                        withSenderNamePrefix: (!isDirectChat ||
-                                            directChatMatrixId !=
-                                                widget
-                                                    .room.lastEvent?.senderId),
-                                      ) ??
-                                      L10n.of(context).emptyChat,
-                              softWrap: false,
-                              maxLines:
-                                  widget.room.notificationCount >= 1 ? 2 : 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: unread || widget.room.hasNewMessages
-                                    ? theme.colorScheme.onSurface
-                                    : theme.colorScheme.outline,
-                                decoration:
-                                    widget.room.lastEvent?.redacted == true
-                                        ? TextDecoration.lineThrough
-                                        : null,
-                              ),
-                            ),
-                ),
-                const SizedBox(width: 8),
-                AnimatedContainer(
-                  duration: QuikxChatThemes.animationDuration,
-                  curve: QuikxChatThemes.animationCurve,
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.symmetric(horizontal: 7),
-                  height: unreadBubbleSize,
-                  width: !hasNotifications &&
-                          !unread &&
-                          !widget.room.hasNewMessages
-                      ? 0
-                      : (unreadBubbleSize - 9) *
-                              widget.room.notificationCount.toString().length +
-                          9,
-                  decoration: BoxDecoration(
-                    gradient: widget.room.highlightCount > 0
-                        ? LinearGradient(
-                            colors: [
-                              Color.lerp(
-                                  theme.colorScheme.error, Colors.white, 0.1)!,
-                              Color.lerp(
-                                  theme.colorScheme.error, Colors.black, 0.3)!,
-                            ],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          )
-                        : hasNotifications || widget.room.markedUnread
-                            ? LinearGradient(
-                                colors: [
-                                  Color.lerp(theme.colorScheme.primary,
-                                      Colors.white, 0.1)!,
-                                  Color.lerp(theme.colorScheme.primary,
-                                      Colors.black, 0.3)!,
-                                ],
-                                begin: Alignment.topLeft,
-                                end: Alignment.bottomRight,
-                              )
-                            : null,
-                    color: !hasNotifications && !widget.room.markedUnread
-                        ? theme.colorScheme.primaryContainer
-                        : null,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: hasNotifications
-                        ? [
-                            BoxShadow(
-                              color: (widget.room.highlightCount > 0
-                                      ? theme.colorScheme.error
-                                      : theme.colorScheme.primary)
-                                  .withOpacity(0.4),
-                              blurRadius: 6,
-                              offset: const Offset(0, 2),
-                            ),
-                          ]
-                        : null,
-                  ),
-                  child: hasNotifications
-                      ? Text(
-                          widget.room.notificationCount.toString(),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                          ),
-                          textAlign: TextAlign.center,
-                        )
-                      : const SizedBox.shrink(),
-                ),
-              ],
-            ),
-            onTap: widget.onTap,
-            trailing: widget.onForget == null
-                ? widget.room.membership == Membership.invite
-                    ? IconButton(
-                        tooltip: L10n.of(context).declineInvitation,
-                        icon: const Icon(Icons.delete_forever_outlined),
-                        color: theme.colorScheme.error,
-                        onPressed: () async {
-                          final consent = await showOkCancelAlertDialog(
-                            context: context,
-                            title: L10n.of(context).declineInvitation,
-                            message: L10n.of(context).areYouSure,
-                            okLabel: L10n.of(context).yes,
-                            isDestructive: true,
-                          );
-                          if (consent != OkCancelResult.ok) return;
-                          if (!context.mounted) return;
-                          await showFutureLoadingDialog(
-                            context: context,
-                            future: widget.room.leave,
-                          );
-                        },
-                      )
-                    : null
-                : IconButton(
-                    icon: const Icon(Icons.delete_outlined),
-                    onPressed: widget.onForget,
-                  ),
           ),
         ),
       ),
     );
   }
 
+  Widget _buildAvatar(ThemeData theme, Room? space, String? directChatMatrixId, String displayname) {
+    return HoverBuilder(
+      builder: (context, hovered) => AnimatedScale(
+        duration: QuikxChatThemes.animationDuration,
+        curve: QuikxChatThemes.animationCurve,
+        scale: hovered ? 1.08 : 1.0,
+        child: SizedBox(
+          width: 56,
+          height: 56,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              if (space != null)
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  child: Avatar(
+                    border: BorderSide(
+                      width: 2,
+                      color: theme.colorScheme.surface,
+                    ),
+                    borderRadius: BorderRadius.circular(AppConfig.borderRadius / 4),
+                    mxContent: space.avatar,
+                    size: 36,
+                    name: space.getLocalizedDisplayname(),
+                    client: widget.room.client,
+                    onTap: () => widget.onLongPress?.call(context),
+                  ),
+                ),
+              Avatar(
+                border: space == null
+                    ? widget.room.isSpace
+                        ? BorderSide(width: 1, color: theme.dividerColor)
+                        : null
+                    : BorderSide(width: 2, color: theme.colorScheme.surface),
+                borderRadius: widget.room.isSpace
+                    ? BorderRadius.circular(AppConfig.borderRadius / 4)
+                    : null,
+                mxContent: widget.room.avatar,
+                size: space != null ? 36 : 56,
+                name: displayname,
+                client: widget.room.client,
+                presenceUserId: directChatMatrixId,
+                presenceBackgroundColor: theme.colorScheme.surface,
+                onTap: () => widget.onLongPress?.call(context),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTitle(ThemeData theme, String displayname, bool isMuted, bool hasNotifications, Event? lastEvent) {
+    return Row(
+      children: [
+        Expanded(
+          child: Text(
+            displayname,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontWeight: widget.room.isUnread || widget.room.hasNewMessages
+                  ? FontWeight.w700
+                  : FontWeight.w600,
+              fontSize: 16,
+              letterSpacing: 0.2,
+            ),
+          ),
+        ),
+        if (isMuted)
+          Container(
+            margin: const EdgeInsets.only(left: 6),
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: theme.colorScheme.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Icon(
+              Icons.notifications_off_rounded,
+              size: 14,
+              color: theme.colorScheme.outline,
+            ),
+          ),
+        if (widget.room.isFavourite)
+          Container(
+            margin: const EdgeInsets.only(left: 6),
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  theme.colorScheme.primary.withOpacity(0.2),
+                  theme.colorScheme.primary.withOpacity(0.1),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Icon(
+              Icons.push_pin_rounded,
+              size: 14,
+              color: theme.colorScheme.primary,
+            ),
+          ),
+        if (!widget.room.isSpace && lastEvent != null && widget.room.membership != Membership.invite)
+          Padding(
+            padding: const EdgeInsets.only(left: 6),
+            child: Text(
+              lastEvent.originServerTs.localizedTimeShort(context),
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w500,
+                color: theme.colorScheme.outline,
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildSubtitle(ThemeData theme, String typingText, bool ownMessage, Event? lastEvent, bool isDirectChat, String? directChatMatrixId, bool unread) {
+    return Row(
+      children: [
+        if (typingText.isEmpty && ownMessage && widget.room.lastEvent!.status.isSending) ...[
+          const AnimatedLoadingIndicator(size: 16),
+          const SizedBox(width: 6),
+        ] else if (typingText.isEmpty && ownMessage && lastEvent != null) ...[
+          Icon(
+            MessageStatusHelper.isMessageRead(lastEvent) ? Icons.done_all_rounded : Icons.done_rounded,
+            size: 16,
+            color: MessageStatusHelper.isMessageRead(lastEvent)
+                ? const Color(0xFF4CAF50)
+                : theme.colorScheme.outline,
+          ),
+          const SizedBox(width: 6),
+        ],
+        if (typingText.isNotEmpty)
+          Padding(
+            padding: const EdgeInsets.only(right: 6),
+            child: Icon(
+              Icons.edit_rounded,
+              color: theme.colorScheme.primary,
+              size: 16,
+            ),
+          ),
+        Expanded(
+          child: widget.room.isSpace && widget.room.membership == Membership.join
+              ? Text(
+                  L10n.of(context).countChatsAndCountParticipants(
+                    widget.room.spaceChildren.length,
+                    (widget.room.summary.mJoinedMemberCount ?? 1),
+                  ),
+                  style: TextStyle(
+                    color: theme.colorScheme.outline,
+                    fontSize: 13,
+                  ),
+                )
+              : typingText.isNotEmpty
+                  ? Text(
+                      typingText,
+                      style: TextStyle(
+                        color: theme.colorScheme.primary,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 13,
+                      ),
+                      maxLines: 1,
+                    )
+                  : Text(
+                      widget.room.membership == Membership.invite
+                          ? widget.room
+                                  .getState(EventTypes.RoomMember, widget.room.client.userID!)
+                                  ?.content
+                                  .tryGet<String>('reason') ??
+                              (isDirectChat
+                                  ? L10n.of(context).newChatRequest
+                                  : L10n.of(context).inviteGroupChat)
+                          : lastEvent?.calcLocalizedBodyFallback(
+                                MatrixLocals(L10n.of(context)),
+                                hideReply: true,
+                                hideEdit: true,
+                                plaintextBody: true,
+                                removeMarkdown: true,
+                                withSenderNamePrefix: (!isDirectChat || directChatMatrixId != widget.room.lastEvent?.senderId),
+                              ) ??
+                              L10n.of(context).emptyChat,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: unread || widget.room.hasNewMessages
+                            ? theme.colorScheme.onSurface.withOpacity(0.8)
+                            : theme.colorScheme.outline,
+                        fontSize: 13,
+                        decoration: widget.room.lastEvent?.redacted == true ? TextDecoration.lineThrough : null,
+                      ),
+                    ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTrailing(ThemeData theme, double unreadBubbleSize, bool hasNotifications) {
+    if (widget.onForget != null) {
+      return IconButton(
+        icon: const Icon(Icons.delete_outline_rounded),
+        onPressed: widget.onForget,
+      );
+    }
+
+    if (widget.room.membership == Membership.invite) {
+      return IconButton(
+        tooltip: L10n.of(context).declineInvitation,
+        icon: const Icon(Icons.delete_forever_rounded),
+        color: theme.colorScheme.error,
+        onPressed: () async {
+          final consent = await showOkCancelAlertDialog(
+            context: context,
+            title: L10n.of(context).declineInvitation,
+            message: L10n.of(context).areYouSure,
+            okLabel: L10n.of(context).yes,
+            isDestructive: true,
+          );
+          if (consent != OkCancelResult.ok) return;
+          if (!context.mounted) return;
+          await showFutureLoadingDialog(
+            context: context,
+            future: widget.room.leave,
+          );
+        },
+      );
+    }
+
+    return AnimatedContainer(
+      duration: QuikxChatThemes.animationDuration,
+      curve: QuikxChatThemes.animationCurve,
+      alignment: Alignment.center,
+      padding: const EdgeInsets.symmetric(horizontal: 8),
+      height: unreadBubbleSize,
+      constraints: BoxConstraints(
+        minWidth: unreadBubbleSize,
+      ),
+      decoration: BoxDecoration(
+        gradient: widget.room.highlightCount > 0
+            ? LinearGradient(
+                colors: [
+                  Color.lerp(theme.colorScheme.error, Colors.white, 0.15)!,
+                  theme.colorScheme.error,
+                  Color.lerp(theme.colorScheme.error, Colors.black, 0.2)!,
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              )
+            : hasNotifications || widget.room.markedUnread
+                ? LinearGradient(
+                    colors: [
+                      Color.lerp(theme.colorScheme.primary, Colors.white, 0.15)!,
+                      theme.colorScheme.primary,
+                      Color.lerp(theme.colorScheme.primary, Colors.black, 0.2)!,
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  )
+                : null,
+        color: !hasNotifications && !widget.room.markedUnread && (widget.room.isUnread || widget.room.hasNewMessages)
+            ? theme.colorScheme.primaryContainer
+            : null,
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: hasNotifications
+            ? [
+                BoxShadow(
+                  color: (widget.room.highlightCount > 0 ? theme.colorScheme.error : theme.colorScheme.primary)
+                      .withOpacity(0.5),
+                  blurRadius: 10,
+                  spreadRadius: 1,
+                  offset: const Offset(0, 3),
+                ),
+              ]
+            : null,
+      ),
+      child: hasNotifications
+          ? Text(
+              widget.room.notificationCount.toString(),
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+              ),
+              textAlign: TextAlign.center,
+            )
+          : const SizedBox.shrink(),
+    );
+  }
+
   BorderRadius _getBorderRadius() {
     switch (widget.position) {
       case CardPosition.single:
-        return BorderRadius.circular(12);
+        return BorderRadius.circular(16);
       case CardPosition.first:
         return const BorderRadius.only(
-          topLeft: Radius.circular(12),
-          topRight: Radius.circular(12),
+          topLeft: Radius.circular(16),
+          topRight: Radius.circular(16),
         );
       case CardPosition.middle:
         return BorderRadius.zero;
       case CardPosition.last:
         return const BorderRadius.only(
-          bottomLeft: Radius.circular(12),
-          bottomRight: Radius.circular(12),
+          bottomLeft: Radius.circular(16),
+          bottomRight: Radius.circular(16),
         );
     }
   }
@@ -532,13 +535,13 @@ class _ChatListItemState extends State<ChatListItem> {
   EdgeInsets _getMargin() {
     switch (widget.position) {
       case CardPosition.single:
-        return const EdgeInsets.symmetric(horizontal: 16, vertical: 4);
+        return const EdgeInsets.symmetric(horizontal: 12, vertical: 6);
       case CardPosition.first:
-        return const EdgeInsets.only(left: 16, right: 16, top: 4, bottom: 0);
+        return const EdgeInsets.only(left: 12, right: 12, top: 6, bottom: 1);
       case CardPosition.middle:
-        return const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 0);
+        return const EdgeInsets.only(left: 12, right: 12, top: 1, bottom: 1);
       case CardPosition.last:
-        return const EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 4);
+        return const EdgeInsets.only(left: 12, right: 12, top: 1, bottom: 6);
     }
   }
 }

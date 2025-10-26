@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:quikxchat/config/app_config.dart';
 import 'package:quikxchat/config/app_version.dart';
 import 'package:quikxchat/l10n/l10n.dart';
+import '../about_app_dialog.dart';
 
 class DrawerDialogs {
   static void showUpdateDialog(BuildContext context, Map<String, dynamic> data) {
@@ -63,20 +63,6 @@ class DrawerDialogs {
   }
 
   static void showAboutDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AboutDialog(
-        applicationName: AppConfig.applicationName,
-        applicationVersion: AppVersion.version,
-        applicationIcon: Image.asset('assets/logo.png', width: 64, height: 64),
-        children: [
-          Text(L10n.of(context).simpleSecureMessaging),
-          const SizedBox(height: 16),
-          Text(L10n.of(context).developerIquxae),
-          const SizedBox(height: 8),
-          Text(L10n.of(context).builtWithFlutter),
-        ],
-      ),
-    ).then((_) => Navigator.of(context).pop());
+    AboutAppDialog.show(context);
   }
 }

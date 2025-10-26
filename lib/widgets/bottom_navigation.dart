@@ -14,49 +14,91 @@ class BottomNavigation extends StatefulWidget {
   State<BottomNavigation> createState() => _BottomNavigationState();
 }
 
-class _BottomNavigationState extends State<BottomNavigation>
-    with SingleTickerProviderStateMixin {
+class _BottomNavigationState extends State<BottomNavigation> {
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.1),
+            blurRadius: 8,
+            offset: const Offset(0, -2),
+          ),
+        ],
+      ),
+      child: SafeArea(
+        child: SizedBox(
+          height: 64,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            children: [
+              _NavItem(
+                icon: Icons.forum_rounded,
+                label: L10n.of(context).chats,
+                isActive: widget.currentIndex == 0,
+                onTap: () => context.go('/rooms'),
+              ),
+              _NavItem(
+                icon: Icons.settings_rounded,
+                label: L10n.of(context).settings,
+                isActive: widget.currentIndex == 1,
+                onTap: () => context.go('/rooms/settings'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _NavItem extends StatefulWidget {
+  final IconData icon;
+  final String label;
+  final bool isActive;
+  final VoidCallback onTap;
+
+  const _NavItem({
+    required this.icon,
+    required this.label,
+    required this.isActive,
+    required this.onTap,
+  });
+
+  @override
+  State<_NavItem> createState() => _NavItemState();
+}
+
+class _NavItemState extends State<_NavItem> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  late Animation<Offset> _slideAnimation;
-  int _previousIndex = 0;
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _iconScaleAnimation;
 
   @override
   void initState() {
     super.initState();
-    _previousIndex = widget.currentIndex;
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 150),
       vsync: this,
     );
-    _slideAnimation = Tween<Offset>(
-      begin: Offset.zero,
-      end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    ));
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.92).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+    _iconScaleAnimation = Tween<double>(begin: 1.0, end: 1.2).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeOutBack),
+    );
   }
 
   @override
-  void didUpdateWidget(BottomNavigation oldWidget) {
+  void didUpdateWidget(_NavItem oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.currentIndex != widget.currentIndex) {
-      _animateTransition(oldWidget.currentIndex, widget.currentIndex);
+    if (widget.isActive && !oldWidget.isActive) {
+      _controller.forward().then((_) => _controller.reverse());
     }
-  }
-
-  void _animateTransition(int from, int to) {
-    setState(() {
-      _slideAnimation = Tween<Offset>(
-        begin: Offset(from < to ? -1.0 : 1.0, 0.0),
-        end: Offset.zero,
-      ).animate(CurvedAnimation(
-        parent: _controller,
-        curve: Curves.easeInOut,
-      ));
-      _previousIndex = from;
-    });
-    _controller.forward(from: 0.0);
   }
 
   @override
@@ -69,107 +111,65 @@ class _BottomNavigationState extends State<BottomNavigation>
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     
-    return Container(
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 8,
-            offset: const Offset(0, -2),
-          ),
-        ],
-      ),
-      child: SafeArea(
-        child: SizedBox(
-          height: 60,
-          child: Stack(
-            children: [
-              AnimatedBuilder(
-                animation: _slideAnimation,
-                builder: (context, child) {
-                  return Transform.translate(
-                    offset: Offset(
-                      _slideAnimation.value.dx * MediaQuery.of(context).size.width,
-                      0,
-                    ),
-                    child: child,
-                  );
-                },
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    _buildNavItem(
-                      context,
-                      icon: Icons.chat_bubble_rounded,
-                      label: L10n.of(context).chats,
-                      index: 0,
-                      onTap: () => context.go('/rooms'),
-                    ),
-                    _buildNavItem(
-                      context,
-                      icon: Icons.settings_rounded,
-                      label: L10n.of(context).settings,
-                      index: 1,
-                      onTap: () => context.go('/rooms/settings'),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildNavItem(
-    BuildContext context, {
-    required IconData icon,
-    required String label,
-    required int index,
-    required VoidCallback onTap,
-  }) {
-    final theme = Theme.of(context);
-    final isActive = widget.currentIndex == index;
-    
     return Expanded(
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-                decoration: BoxDecoration(
-                  color: isActive
-                      ? theme.colorScheme.primary.withValues(alpha: 0.15)
-                      : Colors.transparent,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Icon(
-                  icon,
-                  color: isActive
-                      ? theme.colorScheme.primary
-                      : theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                  size: 26,
-                ),
+      child: ScaleTransition(
+        scale: _scaleAnimation,
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () {
+              _controller.forward().then((_) => _controller.reverse());
+              widget.onTap();
+            },
+            borderRadius: BorderRadius.circular(16),
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeOutBack,
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      gradient: widget.isActive
+                          ? LinearGradient(
+                              colors: [
+                                theme.colorScheme.primary.withOpacity(0.2),
+                                theme.colorScheme.primary.withOpacity(0.1),
+                              ],
+                              begin: Alignment.topLeft,
+                              end: Alignment.bottomRight,
+                            )
+                          : null,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: ScaleTransition(
+                      scale: _iconScaleAnimation,
+                      child: Icon(
+                        widget.icon,
+                        color: widget.isActive
+                            ? theme.colorScheme.primary
+                            : theme.colorScheme.onSurface.withOpacity(0.6),
+                        size: 28,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  AnimatedDefaultTextStyle(
+                    duration: const Duration(milliseconds: 200),
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: widget.isActive ? FontWeight.w700 : FontWeight.w500,
+                      color: widget.isActive
+                          ? theme.colorScheme.primary
+                          : theme.colorScheme.onSurface.withOpacity(0.6),
+                    ),
+                    child: Text(widget.label),
+                  ),
+                ],
               ),
-              const SizedBox(height: 4),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
-                  color: isActive
-                      ? theme.colorScheme.primary
-                      : theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                ),
-              ),
-            ],
+            ),
           ),
         ),
       ),

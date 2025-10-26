@@ -209,7 +209,7 @@ class _SettingsCardSwitchState extends State<SettingsCardSwitch> {
           ),
           subtitle: widget.subtitle,
           value: widget.value,
-          onChanged: null,
+          onChanged: widget.onChanged,
           controlAffinity: ListTileControlAffinity.trailing,
           shape: RoundedRectangleBorder(
             borderRadius: _getBorderRadius(),

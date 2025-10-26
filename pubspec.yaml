@@ -2,7 +2,7 @@ name: quikxchat
 description: Simple and secure messaging app.
 publish_to: none
 # On version bump also increase the build number for F-Droid
-version: 0.2.3+4
+version: 0.2.3+4 # Sync with lib/config/app_version.dart
 
 environment:
   sdk: ">=3.0.0 <4.0.0"

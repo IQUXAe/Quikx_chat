@@ -5,7 +5,6 @@ import 'package:matrix/matrix.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import 'package:quikxchat/config/app_config.dart';
-import 'package:quikxchat/config/app_version.dart';
 import 'package:quikxchat/config/themes.dart';
 import 'package:quikxchat/l10n/l10n.dart';
 import 'package:quikxchat/utils/fluffy_share.dart';
@@ -15,29 +14,14 @@ import 'package:quikxchat/widgets/navigation_rail.dart';
 import 'package:quikxchat/widgets/settings_card_tile.dart';
 import '../../widgets/mxc_image_viewer.dart';
 import 'settings.dart';
+import '../../widgets/about_app_dialog.dart';
 
 class SettingsView extends StatelessWidget {
   final SettingsController controller;
 
   const SettingsView(this.controller, {super.key});
 
-  void _showAboutDialog(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) => AboutDialog(
-        applicationName: AppConfig.applicationName,
-        applicationVersion: AppVersion.version,
-        applicationIcon: Image.asset('assets/logo.png', width: 64, height: 64),
-        children: [
-          Text(L10n.of(context).simpleSecureMessaging),
-          const SizedBox(height: 16),
-          Text(L10n.of(context).developerIquxae),
-          const SizedBox(height: 8),
-          Text(L10n.of(context).builtWithFlutter),
-        ],
-      ),
-    );
-  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -85,8 +69,8 @@ class SettingsView extends StatelessWidget {
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: [
-                                theme.colorScheme.primary,
-                                theme.colorScheme.secondary,
+                                Color.lerp(theme.colorScheme.primary, Colors.black, 0.2)!,
+                                Color.lerp(theme.colorScheme.secondary, Colors.black, 0.2)!,
                               ],
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
@@ -378,7 +362,7 @@ class SettingsView extends StatelessWidget {
                             ),
                             title: Text(L10n.of(context).about),
                             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                            onTap: () => _showAboutDialog(context),
+                            onTap: () => AboutAppDialog.show(context),
                             position: CardPosition.last,
                           ),
                         ],

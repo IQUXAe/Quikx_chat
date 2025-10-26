@@ -99,7 +99,12 @@ class ChatListSearchController {
     roomSearchResult = null;
     userSearchResult = null;
     isSearching = false;
-    if (unfocus) focusNode.unfocus();
+    if (unfocus) {
+      focusNode.unfocus();
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        focusNode.unfocus();
+      });
+    }
     onUpdate();
   }
   

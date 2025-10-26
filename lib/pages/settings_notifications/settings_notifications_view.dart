@@ -52,71 +52,70 @@ class SettingsNotificationsView extends StatelessWidget {
                   if (pushRules != null)
                     for (final category in pushCategories) ...[
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                        padding: const EdgeInsets.fromLTRB(24, 16, 24, 12),
                         child: Text(
-                          category.kind.localized(L10n.of(context)),
+                          category.kind.localized(L10n.of(context)).toUpperCase(),
                           style: TextStyle(
-                            color: theme.colorScheme.secondary,
+                            fontSize: 12,
                             fontWeight: FontWeight.bold,
+                            color: theme.colorScheme.primary.withOpacity(0.7),
+                            letterSpacing: 1.2,
                           ),
                         ),
                       ),
-                      for (final rule in category.rules)
-                        Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                          decoration: BoxDecoration(
-                            color: theme.colorScheme.surfaceContainerLow,
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: ListTile(
-                            title: Text(rule.getPushRuleName(L10n.of(context))),
-                            subtitle: Text.rich(
-                              TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text: rule.getPushRuleDescription(
-                                      L10n.of(context),
+                      for (var i = 0; i < category.rules.length; i++)
+                        Builder(
+                          builder: (context) {
+                            final rule = category.rules[i];
+                            final position = category.rules.length == 1 ? CardPosition.single :
+                                           i == 0 ? CardPosition.first :
+                                           i == category.rules.length - 1 ? CardPosition.last : CardPosition.middle;
+                            return SettingsCardSwitch(
+                              leading: Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  color: theme.colorScheme.primaryContainer.withOpacity(0.3),
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                child: Icon(
+                                  Icons.notifications_outlined,
+                                  color: theme.colorScheme.primary,
+                                ),
+                              ),
+                              title: Text(rule.getPushRuleName(L10n.of(context))),
+                              subtitle: Text.rich(
+                                TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: rule.getPushRuleDescription(L10n.of(context)),
                                     ),
-                                  ),
-                                  const TextSpan(text: ' '),
-                                  WidgetSpan(
-                                    child: InkWell(
-                                      onTap: () => controller.editPushRule(
-                                        rule,
-                                        category.kind,
-                                      ),
-                                      child: Text(
-                                        L10n.of(context).more,
-                                        style: TextStyle(
-                                          color: theme.colorScheme.primary,
-                                          decoration: TextDecoration.underline,
-                                          decorationColor:
-                                              theme.colorScheme.primary,
+                                    const TextSpan(text: ' '),
+                                    WidgetSpan(
+                                      child: InkWell(
+                                        onTap: () => controller.editPushRule(rule, category.kind),
+                                        child: Text(
+                                          L10n.of(context).more,
+                                          style: TextStyle(
+                                            color: theme.colorScheme.primary,
+                                            decoration: TextDecoration.underline,
+                                            decorationColor: theme.colorScheme.primary,
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
-                            ),
-                            trailing: Switch.adaptive(
                               value: rule.enabled,
                               onChanged: controller.isLoading
                                   ? null
                                   : rule.ruleId != '.m.rule.master' &&
-                                          Matrix.of(context)
-                                              .client
-                                              .allPushNotificationsMuted
+                                          Matrix.of(context).client.allPushNotificationsMuted
                                       ? null
-                                      : (_) => controller.togglePushRule(
-                                            category.kind,
-                                            rule,
-                                          ),
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
+                                      : (_) => controller.togglePushRule(category.kind, rule),
+                              position: position,
+                            );
+                          },
                         ),
                       const SizedBox(height: 16),
                     ],
@@ -218,12 +217,14 @@ class SettingsNotificationsView extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 12),
                     child: Text(
-                      L10n.of(context).devices,
+                      L10n.of(context).devices.toUpperCase(),
                       style: TextStyle(
-                        color: theme.colorScheme.secondary,
+                        fontSize: 12,
                         fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.primary.withOpacity(0.7),
+                        letterSpacing: 1.2,
                       ),
                     ),
                   ),

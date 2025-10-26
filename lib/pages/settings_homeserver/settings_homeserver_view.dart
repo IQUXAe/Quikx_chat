@@ -39,12 +39,63 @@ class SettingsHomeserverView extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              ListTile(
-                title: Text(
-                  L10n.of(context).serverInformation,
+              Container(
+                margin: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      theme.colorScheme.primaryContainer,
+                      theme.colorScheme.secondaryContainer,
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: theme.colorScheme.primary.withOpacity(0.2),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    Icon(
+                      Icons.dns_rounded,
+                      size: 64,
+                      color: theme.colorScheme.primary,
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      client.userID?.domain ?? 'Homeserver',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: theme.colorScheme.onPrimaryContainer,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      L10n.of(context).serverInformation,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: theme.colorScheme.onPrimaryContainer.withOpacity(0.7),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 16, 24, 12),
+                child: Text(
+                  'SUPPORT'.toUpperCase(),
                   style: TextStyle(
-                    color: theme.colorScheme.secondary,
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.primary.withOpacity(0.7),
+                    letterSpacing: 1.2,
                   ),
                 ),
               ),
@@ -219,12 +270,15 @@ class SettingsHomeserverView extends StatelessWidget {
                   return Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      ListTile(
-                        title: Text(
-                          'Client-Well-Known Information:',
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(24, 16, 24, 12),
+                        child: Text(
+                          'CLIENT-WELL-KNOWN INFORMATION',
                           style: TextStyle(
-                            color: theme.colorScheme.secondary,
+                            fontSize: 12,
                             fontWeight: FontWeight.bold,
+                            color: theme.colorScheme.primary.withOpacity(0.7),
+                            letterSpacing: 1.2,
                           ),
                         ),
                       ),

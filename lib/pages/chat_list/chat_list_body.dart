@@ -20,6 +20,21 @@ import '../../widgets/adaptive_dialogs/user_dialog.dart';
 import '../../widgets/matrix.dart';
 import 'chat_list_header.dart';
 
+IconData _getFilterIcon(ActiveFilter filter) {
+  switch (filter) {
+    case ActiveFilter.allChats:
+      return Icons.chat_bubble_rounded;
+    case ActiveFilter.messages:
+      return Icons.message_rounded;
+    case ActiveFilter.groups:
+      return Icons.group_rounded;
+    case ActiveFilter.unread:
+      return Icons.mark_chat_unread_rounded;
+    case ActiveFilter.spaces:
+      return Icons.workspaces_rounded;
+  }
+}
+
 class ChatListViewBody extends StatelessWidget {
   final ChatListController controller;
 
@@ -149,13 +164,11 @@ class ChatListViewBody extends StatelessWidget {
                       ),
                     ),
                     if (client.rooms.isNotEmpty && !controller.isSearchMode)
-                      SizedBox(
-                        height: 64,
+                      Container(
+                        height: 52,
+                        margin: const EdgeInsets.symmetric(vertical: 8),
                         child: ListView(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 12.0,
-                            vertical: 12.0,
-                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
                           shrinkWrap: true,
                           scrollDirection: Axis.horizontal,
                           children: [
@@ -172,15 +185,12 @@ class ChatListViewBody extends StatelessWidget {
                           ]
                               .map(
                                 (filter) => Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 4.0,
-                                  ),
-                                  child: FilterChip(
+                                  padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                                  child: _ModernFilterChip(
+                                    label: filter.toLocalizedString(context),
                                     selected: filter == controller.activeFilter,
-                                    onSelected: (_) =>
-                                        controller.setActiveFilter(filter),
-                                    label:
-                                        Text(filter.toLocalizedString(context)),
+                                    onTap: () => controller.setActiveFilter(filter),
+                                    icon: _getFilterIcon(filter),
                                   ),
                                 ),
                               )
@@ -374,4 +384,60 @@ class _SearchItem extends StatelessWidget {
           ),
         ),
       );
+}
+
+class _ModernFilterChip extends StatelessWidget {
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+  final IconData icon;
+
+  const _ModernFilterChip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+    required this.icon,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.easeInOut,
+      decoration: BoxDecoration(
+        color: selected ? theme.colorScheme.primary : theme.colorScheme.surfaceContainerHighest.withOpacity(0.5),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(16),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  icon,
+                  size: 18,
+                  color: selected ? Colors.white : theme.colorScheme.onSurface,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+                    color: selected ? Colors.white : theme.colorScheme.onSurface,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }

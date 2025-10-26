@@ -361,32 +361,58 @@ class SettingsStyleView extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 12),
               child: Text(
-                L10n.of(context).overview,
+                L10n.of(context).overview.toUpperCase(),
                 style: TextStyle(
-                  color: theme.colorScheme.secondary,
+                  fontSize: 12,
                   fontWeight: FontWeight.bold,
+                  color: theme.colorScheme.primary.withOpacity(0.7),
+                  letterSpacing: 1.2,
                 ),
               ),
             ),
-            SettingsSwitchListTile.adaptive(
-              title: L10n.of(context).presencesToggle,
+            SettingsCardSwitch(
+              leading: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.green.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.visibility_outlined, color: Colors.green),
+              ),
+              title: Text(L10n.of(context).presencesToggle),
+              value: AppConfig.showPresences,
               onChanged: (b) => AppConfig.showPresences = b,
-              storeKey: SettingKeys.showPresences,
-              defaultValue: AppConfig.showPresences,
+              position: CardPosition.first,
             ),
-            SettingsSwitchListTile.adaptive(
-              title: L10n.of(context).separateChatTypes,
+            SettingsCardSwitch(
+              leading: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.blue.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.category_outlined, color: Colors.blue),
+              ),
+              title: Text(L10n.of(context).separateChatTypes),
+              value: AppConfig.separateChatTypes,
               onChanged: (b) => AppConfig.separateChatTypes = b,
-              storeKey: SettingKeys.separateChatTypes,
-              defaultValue: AppConfig.separateChatTypes,
+              position: CardPosition.middle,
             ),
-            SettingsSwitchListTile.adaptive(
-              title: L10n.of(context).displayNavigationRail,
+            SettingsCardSwitch(
+              leading: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: Colors.purple.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(Icons.view_sidebar_outlined, color: Colors.purple),
+              ),
+              title: Text(L10n.of(context).displayNavigationRail),
+              value: AppConfig.displayNavigationRail,
               onChanged: (b) => AppConfig.displayNavigationRail = b,
-              storeKey: SettingKeys.displayNavigationRail,
-              defaultValue: AppConfig.displayNavigationRail,
+              position: CardPosition.last,
             ),
           ],
         ),

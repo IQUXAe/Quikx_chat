@@ -62,19 +62,16 @@ class DevicesSettingsView extends StatelessWidget {
                           ),
                         ),
                       if (controller.thisDevice != null) ...[
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16.0,
-                            vertical: 8.0,
-                          ),
-                          alignment: Alignment.centerLeft,
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(24, 16, 24, 12),
                           child: Text(
-                            L10n.of(context).thisDevice,
+                            L10n.of(context).thisDevice.toUpperCase(),
                             style: TextStyle(
+                              fontSize: 12,
                               fontWeight: FontWeight.bold,
-                              color: theme.colorScheme.primary,
+                              color: theme.colorScheme.primary.withOpacity(0.7),
+                              letterSpacing: 1.2,
                             ),
-                            textAlign: TextAlign.left,
                           ),
                         ),
                         UserDeviceListItem(

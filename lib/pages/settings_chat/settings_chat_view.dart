@@ -62,62 +62,137 @@ class _SettingsChatViewState extends State<SettingsChatView> {
         child: MaxWidthBody(
           child: Column(
             children: [
-              SettingsSwitchListTile.adaptive(
-                title: L10n.of(context).formattedMessages,
-                subtitle: L10n.of(context).formattedMessagesDescription,
+              Padding(
+                padding: const EdgeInsets.fromLTRB(24, 16, 24, 12),
+                child: Text(
+                  L10n.of(context).chat.toUpperCase(),
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.primary.withOpacity(0.7),
+                    letterSpacing: 1.2,
+                  ),
+                ),
+              ),
+              SettingsCardSwitch(
+                leading: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(Icons.format_bold_outlined, color: Colors.blue),
+                ),
+                title: Text(L10n.of(context).formattedMessages),
+                subtitle: Text(L10n.of(context).formattedMessagesDescription),
+                value: AppConfig.renderHtml,
                 onChanged: (b) => AppConfig.renderHtml = b,
-                storeKey: SettingKeys.renderHtml,
-                defaultValue: AppConfig.renderHtml,
+                position: CardPosition.first,
               ),
-              SettingsSwitchListTile.adaptive(
-                title: L10n.of(context).hideRedactedMessages,
-                subtitle: L10n.of(context).hideRedactedMessagesBody,
+              SettingsCardSwitch(
+                leading: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.red.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(Icons.visibility_off_outlined, color: Colors.red),
+                ),
+                title: Text(L10n.of(context).hideRedactedMessages),
+                subtitle: Text(L10n.of(context).hideRedactedMessagesBody),
+                value: AppConfig.hideRedactedEvents,
                 onChanged: (b) => AppConfig.hideRedactedEvents = b,
-                storeKey: SettingKeys.hideRedactedEvents,
-                defaultValue: AppConfig.hideRedactedEvents,
+                position: CardPosition.middle,
               ),
-              SettingsSwitchListTile.adaptive(
-                title: L10n.of(context).hideInvalidOrUnknownMessageFormats,
+              SettingsCardSwitch(
+                leading: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(Icons.block_outlined, color: Colors.orange),
+                ),
+                title: Text(L10n.of(context).hideInvalidOrUnknownMessageFormats),
+                value: AppConfig.hideUnknownEvents,
                 onChanged: (b) => AppConfig.hideUnknownEvents = b,
-                storeKey: SettingKeys.hideUnknownEvents,
-                defaultValue: AppConfig.hideUnknownEvents,
+                position: PlatformInfos.isMobile ? CardPosition.middle : CardPosition.middle,
               ),
               if (PlatformInfos.isMobile)
-                SettingsSwitchListTile.adaptive(
-                  title: L10n.of(context).autoplayImages,
+                SettingsCardSwitch(
+                  leading: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.purple.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(Icons.image_outlined, color: Colors.purple),
+                  ),
+                  title: Text(L10n.of(context).autoplayImages),
+                  value: AppConfig.autoplayImages,
                   onChanged: (b) => AppConfig.autoplayImages = b,
-                  storeKey: SettingKeys.autoplayImages,
-                  defaultValue: AppConfig.autoplayImages,
+                  position: CardPosition.middle,
                 ),
-              SettingsSwitchListTile.adaptive(
-                title: L10n.of(context).sendOnEnter,
+              SettingsCardSwitch(
+                leading: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.green.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(Icons.keyboard_return_outlined, color: Colors.green),
+                ),
+                title: Text(L10n.of(context).sendOnEnter),
+                value: AppConfig.sendOnEnter ?? !PlatformInfos.isMobile,
                 onChanged: (b) => AppConfig.sendOnEnter = b,
-                storeKey: SettingKeys.sendOnEnter,
-                defaultValue: AppConfig.sendOnEnter ?? !PlatformInfos.isMobile,
+                position: CardPosition.middle,
               ),
-              SettingsSwitchListTile.adaptive(
-                title: L10n.of(context).swipeRightToLeftToReply,
+              SettingsCardSwitch(
+                leading: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.teal.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(Icons.swipe_outlined, color: Colors.teal),
+                ),
+                title: Text(L10n.of(context).swipeRightToLeftToReply),
+                value: AppConfig.swipeRightToLeftToReply,
                 onChanged: (b) => AppConfig.swipeRightToLeftToReply = b,
-                storeKey: SettingKeys.swipeRightToLeftToReply,
-                defaultValue: AppConfig.swipeRightToLeftToReply,
+                position: CardPosition.middle,
               ),
-              SettingsSwitchListTile.adaptive(
-                title: L10n.of(context).linkPreviews,
-                subtitle: L10n.of(context).linkPreviewsDescription,
+              SettingsCardSwitch(
+                leading: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.indigo.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(Icons.link_outlined, color: Colors.indigo),
+                ),
+                title: Text(L10n.of(context).linkPreviews),
+                subtitle: Text(L10n.of(context).linkPreviewsDescription),
+                value: AppSettings.showLinkPreviews.getItem(Matrix.of(context).store),
                 onChanged: (b) async {
                   AppConfig.showLinkPreviews = b;
                   await AppSettings.showLinkPreviews.setItem(Matrix.of(context).store, b);
                 },
-                storeKey: SettingKeys.showLinkPreviews,
-                defaultValue: AppSettings.showLinkPreviews.getItem(Matrix.of(context).store),
+                position: CardPosition.middle,
               ),
-              SettingsSwitchListTile.adaptive(
-                title: L10n.of(context).use24HourTimeFormat,
-                subtitle: L10n.of(context).use24HourTimeFormatDescription,
-                onChanged: (b) =>
-                    Matrix.of(context).store.setBool('use24HourFormat', b),
-                storeKey: 'use24HourFormat',
-                defaultValue: true,
+              SettingsCardSwitch(
+                leading: Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.cyan.withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: const Icon(Icons.access_time_outlined, color: Colors.cyan),
+                ),
+                title: Text(L10n.of(context).use24HourTimeFormat),
+                subtitle: Text(L10n.of(context).use24HourTimeFormatDescription),
+                value: true,
+                onChanged: (b) => Matrix.of(context).store.setBool('use24HourFormat', b),
+                position: CardPosition.last,
               ),
 
               

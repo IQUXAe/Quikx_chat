@@ -1,7 +1,7 @@
 name: quikxchat
 title: QuikxChat
 base: core24
-version: 0.2.3
+version: 0.2.3 # Sync with lib/config/app_version.dart
 license: AGPL-3.0
 summary: Simple and secure messaging app
 description: |

@@ -979,14 +979,43 @@ class BubblePainter extends CustomPainter {
     final origin =
         bubbleBox.localToGlobal(Offset.zero, ancestor: scrollableBox);
     
-    final lightColors = colors.map((c) => Color.lerp(c, Colors.white, 0.1)!).toList();
-    final darkColors = colors.map((c) => Color.lerp(c, Colors.black, 0.3)!).toList();
+    final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    
+    // Используем цвета из темы для создания градиента
+    final List<Color> gradientColors;
+    if (colors.length >= 2) {
+      final primaryColor = colors[1]; // bubbleColor (primary)
+      final secondaryColor = colors[0]; // secondaryBubbleColor
+      
+      if (isDark) {
+        // Для темной темы: от светлого оттенка к темному
+        gradientColors = [
+          Color.lerp(primaryColor, Colors.white, 0.1)!,
+          Color.lerp(primaryColor, Colors.black, 0.2)!,
+        ];
+      } else {
+        // Для светлой темы: от основного цвета к светлому оттенку
+        gradientColors = [
+          primaryColor,
+          Color.lerp(primaryColor, Colors.white, 0.4)!,
+        ];
+      }
+    } else {
+      // Fallback: используем цвета темы
+      gradientColors = [
+        theme.colorScheme.primary,
+        isDark 
+          ? Color.lerp(theme.colorScheme.primary, Colors.black, 0.3)!
+          : Color.lerp(theme.colorScheme.primary, Colors.white, 0.4)!,
+      ];
+    }
     
     final paint = Paint()
       ..shader = ui.Gradient.linear(
         scrollableRect.topCenter,
         scrollableRect.bottomCenter,
-        [lightColors[0], darkColors[1]],
+        gradientColors,
         [0.0, 1.0],
         TileMode.clamp,
         Matrix4.translationValues(-origin.dx, -origin.dy, 0.0).storage,
