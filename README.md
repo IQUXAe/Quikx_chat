@@ -1,6 +1,6 @@
 # QuikxChat
 
-Modern Matrix messenger based on FluffyChat codebase.
+Modern Matrix messenger based on [FluffyChat](https://github.com/krille-chan/fluffychat) codebase.
 
 ## About
 
@@ -18,7 +18,7 @@ QuikxChat is a fork of FluffyChat with redesigned UI and additional features. Bu
 - **Translation**: Built-in message translation (beta)
 - **Multi-account**: Support for multiple Matrix accounts
 - **Notifications**: UnifiedPush integration for privacy-focused notifications
-- **Cross-platform**: Android, Linux, Web support
+- **Cross-platform**: Android, Linux, Windows, Web support
 
 ## Platform Support
 
