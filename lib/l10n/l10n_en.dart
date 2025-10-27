@@ -1869,7 +1869,7 @@ class L10nEn extends L10n {
 
   @override
   String get appearOnTopDetails =>
-      'Allows the app to appear on top (not needed if you already have Simple Messenger setup as a calling account)';
+      'Allows the app to appear on top (not needed if you already have QuikxChat setup as a calling account)';
 
   @override
   String get otherCallingPermissions =>

@@ -2649,7 +2649,7 @@
   "@callingAccountDetails": {},
   "appearOnTop": "Appear on top",
   "@appearOnTop": {},
-  "appearOnTopDetails": "Allows the app to appear on top (not needed if you already have Simple Messenger setup as a calling account)",
+  "appearOnTopDetails": "Allows the app to appear on top (not needed if you already have QuikxChat setup as a calling account)",
   "@appearOnTopDetails": {},
   "otherCallingPermissions": "Microphone, camera and other QuikxChat permissions",
   "@otherCallingPermissions": {},
