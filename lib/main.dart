@@ -35,9 +35,9 @@ void main() async {
   Logs().nativeColors = true;
   
   final initFutures = <Future>[
-    FileLogger.init(),
+    if (!PlatformInfos.isWeb) FileLogger.init(),
     SharedPreferences.getInstance(),
-    vod.init(wasmPath: './assets/assets/vodozemac/'),
+    if (!PlatformInfos.isWeb) vod.init(wasmPath: 'assets/assets/vodozemac/'),
   ];
   
   // WebRTC инициализируем асинхронно, не блокируя старт
@@ -51,7 +51,7 @@ void main() async {
   ImageCacheManager().configure();
   
   final results = await Future.wait(initFutures);
-  final store = results[1] as SharedPreferences;
+  final store = results[PlatformInfos.isWeb ? 0 : 1] as SharedPreferences;
   final clients = await ClientManager.getClients(store: store);
 
   // If the app starts in detached mode, we assume that it is in

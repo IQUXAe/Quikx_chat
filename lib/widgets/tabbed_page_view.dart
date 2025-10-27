@@ -42,8 +42,8 @@ class _TabbedPageViewState extends State<TabbedPageView> {
   void _onTabTapped(int index) {
     _pageController.animateToPage(
       index,
-      duration: const Duration(milliseconds: 400),
-      curve: Curves.easeInOutCubic,
+      duration: const Duration(milliseconds: 200),
+      curve: Curves.easeOut,
     );
   }
 

@@ -16,8 +16,8 @@ class AboutPage extends StatelessWidget {
         decoration: BoxDecoration(
           gradient: LinearGradient(
             colors: [
-              theme.colorScheme.primary,
-              theme.colorScheme.secondary,
+              Color.lerp(theme.colorScheme.primary, Colors.black, 0.3)!,
+              Color.lerp(theme.colorScheme.secondary, Colors.black, 0.3)!,
             ],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,

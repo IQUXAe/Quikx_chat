@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:quikxchat/utils/platform_infos.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:matrix/matrix.dart';
@@ -41,7 +43,7 @@ class NotificationService {
   Future<void> initialize() async {
     _statusController = StreamController<PushNotificationStatus>.broadcast();
 
-    if (Platform.isAndroid) {
+    if (PlatformInfos.isAndroid) {
       await _initializeAndroid();
     }
 
@@ -126,7 +128,7 @@ class NotificationService {
   Future<PushNotificationStatus> checkStatus() async {
     try {
       // Проверяем разрешения
-      if (Platform.isAndroid) {
+      if (PlatformInfos.isAndroid) {
         final permission = await Permission.notification.status;
         if (permission.isDenied) {
           return PushNotificationStatus.permissionDenied;
@@ -134,7 +136,7 @@ class NotificationService {
       }
 
       // Проверяем UnifiedPush
-      if (Platform.isAndroid) {
+      if (PlatformInfos.isAndroid) {
         try {
           if (!await UnifiedPushHelper.isAvailable()) {
             return PushNotificationStatus.noDistributor;
@@ -167,7 +169,7 @@ class NotificationService {
   Future<bool> requestPermissions(BuildContext context) async {
     final l10n = L10n.of(context);
 
-    if (Platform.isAndroid) {
+    if (PlatformInfos.isAndroid) {
       final permission = await Permission.notification.request();
       if (permission.isDenied) {
         _showErrorDialog(context, l10n.pushNotificationPermissionDenied);
@@ -212,7 +214,7 @@ class NotificationService {
       Logs().i('[NotificationService] Permissions granted');
 
       // Настраиваем UnifiedPush для Android
-      if (Platform.isAndroid) {
+      if (PlatformInfos.isAndroid) {
         try {
           final success = await _setupUnifiedPush(context, matrix);
           Navigator.of(context).pop();
@@ -475,10 +477,10 @@ class NotificationService {
     final info = <String, dynamic>{};
 
     try {
-      info['platform'] = Platform.operatingSystem;
+      info['platform'] = PlatformInfos.isWeb ? 'web' : Platform.operatingSystem;
       info['timestamp'] = DateTime.now().toIso8601String();
 
-      if (Platform.isAndroid) {
+      if (PlatformInfos.isAndroid) {
         try {
           info['notification_permission'] = (await Permission.notification.status).name;
           info['unified_push_available'] = await UnifiedPushHelper.isAvailable();
@@ -530,7 +532,7 @@ class NotificationService {
     buffer.writeln('Status: ${info['status']} (enabled: ${info['is_enabled']})');
     buffer.writeln();
 
-    if (Platform.isAndroid) {
+    if (PlatformInfos.isAndroid) {
       buffer.writeln('Android Specific:');
       buffer.writeln('  Permission: ${info['notification_permission']}');
       buffer.writeln('  UnifiedPush Available: ${info['unified_push_available']}');
