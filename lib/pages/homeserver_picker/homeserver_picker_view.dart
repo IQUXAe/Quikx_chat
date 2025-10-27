@@ -224,19 +224,19 @@ class HomeserverPickerView extends StatelessWidget {
                                 ? const LinearProgressIndicator()
                                 : Text(L10n.of(context).continueText),
                           ),
-                          const SizedBox(height: 8),
-                          OutlinedButton(
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: theme.colorScheme.primary,
-                              side: BorderSide(color: theme.colorScheme.primary),
-                            ),
-                            onPressed: controller.isLoading
-                                ? null
-                                : () {
-                                    context.push('/server-selection');
-                                  },
-                            child: Text(L10n.of(context).register),
-                          ),
+                          // const SizedBox(height: 8),
+                          // OutlinedButton(
+                          //   style: OutlinedButton.styleFrom(
+                          //     foregroundColor: theme.colorScheme.primary,
+                          //     side: BorderSide(color: theme.colorScheme.primary),
+                          //   ),
+                          //   onPressed: controller.isLoading
+                          //       ? null
+                          //       : () {
+                          //           context.push('/server-selection');
+                          //         },
+                          //   child: Text(L10n.of(context).register),
+                          // ),
                           TextButton(
                             style: TextButton.styleFrom(
                               foregroundColor: theme.colorScheme.secondary,
