@@ -23,11 +23,6 @@ abstract class UpdateNotifier {
             duration: const Duration(seconds: 30),
             showCloseIcon: true,
             content: Text(L10n.of(context).updateInstalled(currentVersion)),
-            action: SnackBarAction(
-              label: L10n.of(context).changelog,
-              onPressed: () => launchUrlString(AppConfig.changelogUrl),
-            ),
-
           ),
         );
       }
