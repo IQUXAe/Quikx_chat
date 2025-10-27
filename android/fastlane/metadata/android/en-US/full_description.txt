@@ -1,4 +1,4 @@
-Simple Messenger is an open source, secure Matrix messenger app for Android, iOS, Linux, macOS and Windows.
+QuikxChat is an open source, secure Matrix messenger app for Android, Linux, Windows and Web.
 
 Open Source
 Open source development where everyone can contribute.
@@ -6,14 +6,14 @@ Open source development where everyone can contribute.
 Secure
 End-to-end encryption by default.
 
-Simple
-Clean design and intuitive interface.
+Modern Design
+Clean Material Design 3 interface with customizable themes.
 
 One-to-one and group chats
 Unlimited groups and direct chats.
 
-Easy
-Simple Messenger is made as simple to use as possible.
+Easy to Use
+QuikxChat is made as simple to use as possible.
 
 Free
 Free to use for everyone without ads.
@@ -25,7 +25,7 @@ Compatible
 Compatible with Element, Nheko, NeoChat and all Matrix messengers.
 
 
-Simple Messenger - Privacy-focused messaging
+QuikxChat - Modern Matrix Messenger
 
 A secure, decentralized messaging app that puts your privacy first.
 No tracking, no ads, just simple and secure communication.

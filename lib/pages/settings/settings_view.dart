@@ -69,8 +69,8 @@ class SettingsView extends StatelessWidget {
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: [
-                                Color.lerp(theme.colorScheme.primary, Colors.black, 0.2)!,
-                                Color.lerp(theme.colorScheme.secondary, Colors.black, 0.2)!,
+                                Color.lerp(theme.colorScheme.primary, Colors.white, 0.1)!,
+                                Color.lerp(theme.colorScheme.secondary, Colors.white, 0.1)!,
                               ],
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
@@ -92,7 +92,7 @@ class SettingsView extends StatelessWidget {
                                             shape: BoxShape.circle,
                                             boxShadow: [
                                               BoxShadow(
-                                                color: Colors.black.withOpacity(0.3),
+                                                color: Colors.black.withValues(alpha: 0.3),
                                                 blurRadius: 20,
                                                 spreadRadius: 5,
                                               ),
@@ -149,7 +149,7 @@ class SettingsView extends StatelessWidget {
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                                     decoration: BoxDecoration(
-                                      color: Colors.white.withOpacity(0.2),
+                                      color: Colors.white.withValues(alpha: 0.2),
                                       borderRadius: BorderRadius.circular(20),
                                     ),
                                     child: Row(
@@ -190,7 +190,7 @@ class SettingsView extends StatelessWidget {
                                 leading: Container(
                                   padding: const EdgeInsets.all(8),
                                   decoration: BoxDecoration(
-                                    color: Colors.cyan.withOpacity(0.1),
+                                    color: Colors.cyan.withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: const Icon(Icons.manage_accounts, color: Colors.cyan),
@@ -205,7 +205,7 @@ class SettingsView extends StatelessWidget {
                                 leading: Container(
                                   padding: const EdgeInsets.all(8),
                                   decoration: BoxDecoration(
-                                    color: Colors.amber.withOpacity(0.1),
+                                    color: Colors.amber.withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: const Icon(Icons.backup, color: Colors.amber),
@@ -223,7 +223,7 @@ class SettingsView extends StatelessWidget {
                                 leading: Container(
                                   padding: const EdgeInsets.all(8),
                                   decoration: BoxDecoration(
-                                    color: Colors.amber.withOpacity(0.1),
+                                    color: Colors.amber.withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: const Icon(Icons.backup, color: Colors.amber),
@@ -243,7 +243,7 @@ class SettingsView extends StatelessWidget {
                             leading: Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: Colors.purple.withOpacity(0.1),
+                                color: Colors.purple.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: const Icon(Icons.palette, color: Colors.purple),
@@ -258,7 +258,7 @@ class SettingsView extends StatelessWidget {
                             leading: Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: Colors.orange.withOpacity(0.1),
+                                color: Colors.orange.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: const Icon(Icons.notifications, color: Colors.orange),
@@ -273,7 +273,7 @@ class SettingsView extends StatelessWidget {
                             leading: Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: Colors.green.withOpacity(0.1),
+                                color: Colors.green.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: const Icon(Icons.devices, color: Colors.green),
@@ -288,7 +288,7 @@ class SettingsView extends StatelessWidget {
                             leading: Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: Colors.blue.withOpacity(0.1),
+                                color: Colors.blue.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: const Icon(Icons.chat_bubble, color: Colors.blue),
@@ -303,7 +303,7 @@ class SettingsView extends StatelessWidget {
                             leading: Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: Colors.red.withOpacity(0.1),
+                                color: Colors.red.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: const Icon(Icons.security, color: Colors.red),
@@ -324,14 +324,14 @@ class SettingsView extends StatelessWidget {
                             leading: Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: Colors.indigo.withOpacity(0.1),
+                                color: Colors.indigo.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: const Icon(Icons.dns, color: Colors.indigo),
                             ),
                             title: Text(L10n.of(context).aboutHomeserver(
                               Matrix.of(context).client.userID?.domain ?? 'homeserver',
-                            )),
+                            ),),
                             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                             onTap: controller.navigateToHomeserver,
                             isActive: activeRoute.startsWith('/rooms/settings/homeserver'),
@@ -341,7 +341,7 @@ class SettingsView extends StatelessWidget {
                             leading: Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: Colors.teal.withOpacity(0.1),
+                                color: Colors.teal.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: const Icon(Icons.privacy_tip, color: Colors.teal),
@@ -355,7 +355,7 @@ class SettingsView extends StatelessWidget {
                             leading: Container(
                               padding: const EdgeInsets.all(8),
                               decoration: BoxDecoration(
-                                color: Colors.blueGrey.withOpacity(0.1),
+                                color: Colors.blueGrey.withValues(alpha: 0.15),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: const Icon(Icons.info, color: Colors.blueGrey),
@@ -397,7 +397,7 @@ class SettingsView extends StatelessWidget {
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.primary.withOpacity(0.7),
+                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.7),
                 letterSpacing: 1.2,
               ),
             ),
@@ -419,7 +419,7 @@ class SettingsView extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.red.withOpacity(0.3),
+            color: Colors.red.withValues(alpha: 0.3),
             blurRadius: 12,
             offset: const Offset(0, 4),
           ),

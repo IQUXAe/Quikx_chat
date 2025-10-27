@@ -69,7 +69,7 @@ class _AnimatedLoadingIndicatorState extends State<AnimatedLoadingIndicator>
             gradient: LinearGradient(
               colors: [
                 widget.color ?? theme.colorScheme.primary,
-                (widget.color ?? theme.colorScheme.primary).withOpacity(0.3),
+                (widget.color ?? theme.colorScheme.primary).withValues(alpha: 0.3),
               ],
               stops: const [0.0, 1.0],
             ),

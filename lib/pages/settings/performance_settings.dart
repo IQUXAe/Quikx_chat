@@ -43,7 +43,7 @@ class _PerformanceSettingsPageState extends State<PerformanceSettingsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Производительность'),
+        title: Text(L10n.of(context).performance),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -210,22 +210,22 @@ class _PerformanceSettingsPageState extends State<PerformanceSettingsPage> {
             
             ListTile(
               leading: const Icon(Icons.clear_all),
-              title: const Text('Очистить кэш изображений'),
-              subtitle: const Text('Освободить память, удалив кэшированные изображения'),
+              title: Text(L10n.of(context).clearImageCache),
+              subtitle: Text(L10n.of(context).clearImageCacheDescription),
               onTap: () => _clearImageCache(),
             ),
             
             ListTile(
               leading: const Icon(Icons.delete_sweep),
-              title: const Text('Очистить все кэши'),
-              subtitle: const Text('Удалить все кэшированные данные'),
+              title: Text(L10n.of(context).clearAllCaches),
+              subtitle: Text(L10n.of(context).clearAllCachesDescription),
               onTap: () => _clearAllCaches(),
             ),
             
             ListTile(
               leading: const Icon(Icons.speed),
-              title: const Text('Оптимизировать память'),
-              subtitle: const Text('Принудительная оптимизация использования памяти'),
+              title: Text(L10n.of(context).optimizeMemory),
+              subtitle: Text(L10n.of(context).optimizeMemoryDescription),
               onTap: () => _optimizeMemory(),
             ),
           ],
@@ -281,7 +281,7 @@ class _PerformanceSettingsPageState extends State<PerformanceSettingsPage> {
           Text(value, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
         ],
       ),
-      backgroundColor: color?.withOpacity(0.1) ?? Theme.of(context).colorScheme.surfaceContainerHighest,
+      backgroundColor: color?.withValues(alpha: 0.1) ?? Theme.of(context).colorScheme.surfaceContainerHighest,
     );
   }
 
@@ -303,7 +303,7 @@ class _PerformanceSettingsPageState extends State<PerformanceSettingsPage> {
   void _clearImageCache() {
     MemoryManager().clearImageCache();
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Кэш изображений очищен')),
+      SnackBar(content: Text(L10n.of(context).imageCacheCleared)),
     );
     _loadStats();
   }
@@ -311,7 +311,7 @@ class _PerformanceSettingsPageState extends State<PerformanceSettingsPage> {
   void _clearAllCaches() {
     MemoryManager().forceOptimization();
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Все кэши очищены')),
+      SnackBar(content: Text(L10n.of(context).allCachesCleared)),
     );
     _loadStats();
   }
@@ -319,7 +319,7 @@ class _PerformanceSettingsPageState extends State<PerformanceSettingsPage> {
   void _optimizeMemory() {
     MemoryManager().optimizeForLowMemory();
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Память оптимизирована')),
+      SnackBar(content: Text(L10n.of(context).memoryOptimized)),
     );
     Future.delayed(const Duration(seconds: 1), () => _loadStats());
   }

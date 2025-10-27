@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:quikxchat/config/setting_keys.dart';
 import 'package:quikxchat/config/themes.dart';
 import 'package:quikxchat/l10n/l10n.dart';
 import 'package:quikxchat/pages/chat/events/state_message.dart';
@@ -16,7 +15,6 @@ import 'package:quikxchat/widgets/layouts/max_width_body.dart';
 import 'package:quikxchat/widgets/matrix.dart';
 import 'package:quikxchat/widgets/mxc_image.dart';
 import '../../config/app_config.dart';
-import '../../widgets/settings_switch_list_tile.dart';
 import '../../widgets/settings_card_tile.dart';
 import 'settings_style.dart';
 
@@ -105,11 +103,24 @@ class SettingsStyleView extends StatelessWidget {
                         child: InkWell(
                           borderRadius: BorderRadius.circular(colorPickerSize),
                           onTap: () => controller.setChatColor(color),
-                          child: Material(
-                            color: color ?? systemColor,
-                            elevation: 6,
-                            borderRadius:
-                                BorderRadius.circular(colorPickerSize),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: color ?? systemColor,
+                              borderRadius: BorderRadius.circular(colorPickerSize),
+                              border: Border.all(
+                                color: controller.currentColor == color
+                                    ? theme.colorScheme.primary
+                                    : theme.colorScheme.outline.withValues(alpha: 0.3),
+                                width: controller.currentColor == color ? 3 : 1.5,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: (color ?? systemColor ?? Colors.grey).withValues(alpha: 0.3),
+                                  blurRadius: 8,
+                                  spreadRadius: controller.currentColor == color ? 2 : 0,
+                                ),
+                              ],
+                            ),
                             child: SizedBox(
                               width: colorPickerSize,
                               height: colorPickerSize,
@@ -118,9 +129,7 @@ class SettingsStyleView extends StatelessWidget {
                                       child: Icon(
                                         Icons.check,
                                         size: 16,
-                                        color: Theme.of(context)
-                                            .colorScheme
-                                            .onPrimary,
+                                        color: Theme.of(context).colorScheme.onPrimary,
                                       ),
                                     )
                                   : null,
@@ -163,8 +172,18 @@ class SettingsStyleView extends StatelessWidget {
                     AnimatedContainer(
                       duration: QuikxChatThemes.animationDuration,
                       curve: QuikxChatThemes.animationCurve,
-                      decoration: const BoxDecoration(),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: theme.colorScheme.shadow.withValues(alpha: 0.1),
+                            blurRadius: 8,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
                       clipBehavior: Clip.hardEdge,
+                      margin: const EdgeInsets.symmetric(horizontal: 16),
                       child: Stack(
                         alignment: Alignment.center,
                         children: [
@@ -186,6 +205,18 @@ class SettingsStyleView extends StatelessWidget {
                                 ),
                               ),
                             ),
+                          Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  theme.colorScheme.surface.withValues(alpha: accountConfig.wallpaperUrl != null ? 0.2 : 0.0),
+                                  theme.colorScheme.surface.withValues(alpha: accountConfig.wallpaperUrl != null ? 0.85 : 0.0),
+                                ],
+                              ),
+                            ),
+                          ),
                           Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -208,31 +239,42 @@ class SettingsStyleView extends StatelessWidget {
                                   padding: EdgeInsets.only(
                                     left: 12 + 12 + Avatar.defaultSize,
                                     right: 12,
-                                    top: accountConfig.wallpaperUrl == null
-                                        ? 0
-                                        : 12,
+                                    top: accountConfig.wallpaperUrl == null ? 0 : 12,
                                     bottom: 12,
                                   ),
-                                  child: DecoratedBox(
+                                  child: Container(
                                     decoration: BoxDecoration(
                                       color: theme.bubbleColor,
-                                      borderRadius: BorderRadius.circular(
-                                        AppConfig.borderRadius,
-                                      ),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 16,
-                                        vertical: 8,
-                                      ),
-                                      child: Text(
-                                        'Hi bro',
-                                        style: TextStyle(
-                                          color: theme.onBubbleColor,
-                                          fontSize: AppConfig.messageFontSize *
-                                              AppConfig.fontSizeFactor,
+                                      borderRadius: BorderRadius.circular(AppConfig.borderRadius),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: theme.colorScheme.shadow.withValues(alpha: 0.08),
+                                          blurRadius: 4,
+                                          offset: const Offset(0, 1),
                                         ),
-                                      ),
+                                      ],
+                                    ),
+                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      children: [
+                                        Text(
+                                          'Hi bro',
+                                          style: TextStyle(
+                                            color: theme.onBubbleColor,
+                                            fontSize: AppConfig.messageFontSize * AppConfig.fontSizeFactor,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 6),
+                                        Text(
+                                          '12:34',
+                                          style: TextStyle(
+                                            color: theme.onBubbleColor.withValues(alpha: 0.6),
+                                            fontSize: 11,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
@@ -243,30 +285,42 @@ class SettingsStyleView extends StatelessWidget {
                                   padding: EdgeInsets.only(
                                     right: 12,
                                     left: 12,
-                                    top: accountConfig.wallpaperUrl == null
-                                        ? 0
-                                        : 12,
+                                    top: accountConfig.wallpaperUrl == null ? 0 : 12,
                                     bottom: 12,
                                   ),
-                                  child: Material(
-                                    color:
-                                        theme.colorScheme.surfaceContainerHigh,
-                                    borderRadius: BorderRadius.circular(
-                                      AppConfig.borderRadius,
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 16,
-                                        vertical: 8,
-                                      ),
-                                      child: Text(
-                                        'Yo',
-                                        style: TextStyle(
-                                          color: theme.colorScheme.onSurface,
-                                          fontSize: AppConfig.messageFontSize *
-                                              AppConfig.fontSizeFactor,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: theme.colorScheme.surfaceContainerHigh,
+                                      borderRadius: BorderRadius.circular(AppConfig.borderRadius),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: theme.colorScheme.shadow.withValues(alpha: 0.08),
+                                          blurRadius: 4,
+                                          offset: const Offset(0, 1),
                                         ),
-                                      ),
+                                      ],
+                                    ),
+                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      children: [
+                                        Text(
+                                          'Yo',
+                                          style: TextStyle(
+                                            color: theme.colorScheme.onSurface,
+                                            fontSize: AppConfig.messageFontSize * AppConfig.fontSizeFactor,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 6),
+                                        Text(
+                                          '12:33',
+                                          style: TextStyle(
+                                            color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+                                            fontSize: 11,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
@@ -276,7 +330,19 @@ class SettingsStyleView extends StatelessWidget {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 24),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(24, 0, 24, 12),
+                      child: Text(
+                        L10n.of(context).setWallpaper.toUpperCase(),
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: theme.colorScheme.primary.withValues(alpha: 0.7),
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                    ),
                     SettingsCardTile(
                       leading: Container(
                         padding: const EdgeInsets.all(8),
@@ -367,52 +433,68 @@ class SettingsStyleView extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
-                  color: theme.colorScheme.primary.withOpacity(0.7),
+                  color: theme.colorScheme.primary.withValues(alpha: 0.7),
                   letterSpacing: 1.2,
                 ),
               ),
             ),
-            SettingsCardSwitch(
-              leading: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.green.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Icon(Icons.visibility_outlined, color: Colors.green),
+            ValueListenableBuilder(
+              valueListenable: controller.settingsNotifier,
+              builder: (context, _, __) => Column(
+                children: [
+                  SettingsCardSwitch(
+                    leading: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.green.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(Icons.visibility_outlined, color: Colors.green),
+                    ),
+                    title: Text(L10n.of(context).presencesToggle),
+                    value: AppConfig.showPresences,
+                    onChanged: (b) {
+                      AppConfig.showPresences = b;
+                      controller.settingsNotifier.value++;
+                    },
+                    position: CardPosition.first,
+                  ),
+                  SettingsCardSwitch(
+                    leading: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.blue.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(Icons.category_outlined, color: Colors.blue),
+                    ),
+                    title: Text(L10n.of(context).separateChatTypes),
+                    value: AppConfig.separateChatTypes,
+                    onChanged: (b) {
+                      AppConfig.separateChatTypes = b;
+                      controller.settingsNotifier.value++;
+                    },
+                    position: CardPosition.middle,
+                  ),
+                  SettingsCardSwitch(
+                    leading: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.purple.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(Icons.view_sidebar_outlined, color: Colors.purple),
+                    ),
+                    title: Text(L10n.of(context).displayNavigationRail),
+                    value: AppConfig.displayNavigationRail,
+                    onChanged: (b) {
+                      AppConfig.displayNavigationRail = b;
+                      controller.settingsNotifier.value++;
+                    },
+                    position: CardPosition.last,
+                  ),
+                ],
               ),
-              title: Text(L10n.of(context).presencesToggle),
-              value: AppConfig.showPresences,
-              onChanged: (b) => AppConfig.showPresences = b,
-              position: CardPosition.first,
-            ),
-            SettingsCardSwitch(
-              leading: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.blue.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Icon(Icons.category_outlined, color: Colors.blue),
-              ),
-              title: Text(L10n.of(context).separateChatTypes),
-              value: AppConfig.separateChatTypes,
-              onChanged: (b) => AppConfig.separateChatTypes = b,
-              position: CardPosition.middle,
-            ),
-            SettingsCardSwitch(
-              leading: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.purple.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: const Icon(Icons.view_sidebar_outlined, color: Colors.purple),
-              ),
-              title: Text(L10n.of(context).displayNavigationRail),
-              value: AppConfig.displayNavigationRail,
-              onChanged: (b) => AppConfig.displayNavigationRail = b,
-              position: CardPosition.last,
             ),
           ],
         ),

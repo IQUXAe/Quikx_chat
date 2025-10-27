@@ -1,13 +1,12 @@
-import 'dart:ui' as ui;
-
 import 'package:flutter/material.dart';
+
+import 'package:quikxchat/config/themes.dart';
 import 'package:flutter/services.dart';
 
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:matrix/matrix.dart';
 import 'package:swipe_to_action/swipe_to_action.dart';
 
-import 'package:quikxchat/config/themes.dart';
 import 'package:quikxchat/l10n/l10n.dart';
 import 'package:quikxchat/pages/chat/events/room_creation_state_event.dart';
 import 'package:quikxchat/utils/adaptive_bottom_sheet.dart';
@@ -18,9 +17,7 @@ import 'package:quikxchat/widgets/avatar.dart';
 import 'package:quikxchat/widgets/matrix.dart';
 import 'package:quikxchat/widgets/member_actions_popup_menu_button.dart';
 import '../../../config/app_config.dart';
-import 'package:quikxchat/widgets/message_status_widget.dart';
 import '../../../utils/message_translator.dart';
-import '../../../utils/message_status_helper.dart';
 import 'message_content.dart';
 import 'message_reactions.dart';
 import 'reply_content.dart';
@@ -126,14 +123,9 @@ class Message extends StatelessWidget {
         previousEvent!.senderId == event.senderId &&
         previousEvent!.originServerTs.sameEnvironment(event.originServerTs);
 
-    final textColor = Colors.white;
-    final textShadows = [
-      const Shadow(
-        offset: Offset(0, 1),
-        blurRadius: 3,
-        color: Colors.black45,
-      ),
-    ];
+    final textColor = ownMessage 
+        ? theme.onBubbleColor
+        : theme.colorScheme.onSurface;
 
     final linkColor = ownMessage
         ? theme.brightness == Brightness.light
@@ -169,7 +161,11 @@ class Message extends StatelessWidget {
             event.numberEmotes <= 3);
 
     if (ownMessage) {
-      color = displayEvent.status.isError ? Colors.redAccent : theme.colorScheme.primary;
+      color = displayEvent.status.isError 
+          ? Colors.redAccent 
+          : theme.bubbleColor;
+    } else {
+      color = theme.colorScheme.surfaceContainerHigh;
     }
 
     final resetAnimateIn = this.resetAnimateIn;
@@ -971,55 +967,8 @@ class BubblePainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final scrollable = _scrollable ??= Scrollable.of(context);
-    final scrollableBox = scrollable.context.findRenderObject() as RenderBox;
-    final scrollableRect = Offset.zero & scrollableBox.size;
-    final bubbleBox = context.findRenderObject() as RenderBox;
-
-    final origin =
-        bubbleBox.localToGlobal(Offset.zero, ancestor: scrollableBox);
-    
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-    
-    // Используем цвета из темы для создания градиента
-    final List<Color> gradientColors;
-    if (colors.length >= 2) {
-      final primaryColor = colors[1]; // bubbleColor (primary)
-      final secondaryColor = colors[0]; // secondaryBubbleColor
-      
-      if (isDark) {
-        // Для темной темы: от светлого оттенка к темному
-        gradientColors = [
-          Color.lerp(primaryColor, Colors.white, 0.1)!,
-          Color.lerp(primaryColor, Colors.black, 0.2)!,
-        ];
-      } else {
-        // Для светлой темы: от основного цвета к светлому оттенку
-        gradientColors = [
-          primaryColor,
-          Color.lerp(primaryColor, Colors.white, 0.4)!,
-        ];
-      }
-    } else {
-      // Fallback: используем цвета темы
-      gradientColors = [
-        theme.colorScheme.primary,
-        isDark 
-          ? Color.lerp(theme.colorScheme.primary, Colors.black, 0.3)!
-          : Color.lerp(theme.colorScheme.primary, Colors.white, 0.4)!,
-      ];
-    }
-    
-    final paint = Paint()
-      ..shader = ui.Gradient.linear(
-        scrollableRect.topCenter,
-        scrollableRect.bottomCenter,
-        gradientColors,
-        [0.0, 1.0],
-        TileMode.clamp,
-        Matrix4.translationValues(-origin.dx, -origin.dy, 0.0).storage,
-      );
+    // Используем цвет из контейнера сообщения
+    final paint = Paint()..color = Colors.transparent;
     canvas.drawRect(Offset.zero & size, paint);
   }
 
@@ -1109,10 +1058,10 @@ class _TranslateButtonState extends State<_TranslateButton> {
       Logs().w('[TranslateButton] Translation error for $eventId: $e');
       if (mounted && e.toString().contains('Translation limit exceeded')) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Лимит переводов превышен. Включите VPN или подождите сброса квоты.'),
+          SnackBar(
+            content: Text(L10n.of(context).translationLimitExceeded),
             backgroundColor: Colors.orange,
-            duration: Duration(seconds: 5),
+            duration: const Duration(seconds: 5),
           ),
         );
       }

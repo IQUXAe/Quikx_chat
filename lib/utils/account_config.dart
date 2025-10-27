@@ -30,7 +30,7 @@ extension ApplicationAccountConfigExtension on Client {
         wallpaperOpacity:
             config.wallpaperOpacity ?? currentConfig.wallpaperOpacity,
         wallpaperBlur: config.wallpaperBlur ?? currentConfig.wallpaperBlur,
-        preloadWallpaper: config.preloadWallpaper ?? currentConfig.preloadWallpaper,
+        preloadWallpaper: config.preloadWallpaper,
       ).toJson(),
     );
   }

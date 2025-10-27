@@ -273,6 +273,22 @@ class ChatView extends StatelessWidget {
                           ),
                         ),
                       ),
+                    if (accountConfig.wallpaperUrl != null)
+                      Positioned.fill(
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment.topCenter,
+                              end: Alignment.bottomCenter,
+                              colors: [
+                                Colors.transparent,
+                                theme.colorScheme.surface.withValues(alpha: 0.95),
+                              ],
+                              stops: const [0.6, 1.0],
+                            ),
+                          ),
+                        ),
+                      ),
                     SafeArea(
                       child: Column(
                         children: <Widget>[

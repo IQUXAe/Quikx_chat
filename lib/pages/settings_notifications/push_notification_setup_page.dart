@@ -284,7 +284,7 @@ class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(L10n.of(context).settings), // Or a more specific key
+        title: Text(L10n.of(context).settings),
         content: Text(L10n.of(context).areYouSure),
         actions: [
           TextButton(
@@ -417,7 +417,6 @@ class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
   }
 
   Widget _buildTroubleshootingCard() {
-    final l10n = L10n.of(context);
     final theme = Theme.of(context);
 
     return Card(
@@ -443,7 +442,7 @@ class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
             OutlinedButton.icon(
               onPressed: _openSystemSettings,
               icon: const Icon(Icons.settings),
-              label: const Text('Открыть системные настройки'),
+              label: Text(L10n.of(context).openSystemSettings),
             ),
           ],
         ),
@@ -481,7 +480,7 @@ class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
                       }
                     },
                     icon: const Icon(Icons.open_in_new),
-                    label: const Text('Открыть документацию'),
+                    label: Text(L10n.of(context).openDocumentation),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -496,7 +495,7 @@ class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
                       }
                     },
                     icon: const Icon(Icons.bug_report),
-                    label: const Text('Создать issue'),
+                    label: Text(L10n.of(context).createIssue),
                   ),
                 ),
               ],
@@ -509,11 +508,9 @@ class _PushNotificationSetupPageState extends State<PushNotificationSetupPage> {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = L10n.of(context);
-
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.pushNotifications),
+        title: Text(L10n.of(context).pushNotifications),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),

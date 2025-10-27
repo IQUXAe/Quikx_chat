@@ -9,8 +9,8 @@ class AboutAppDialog {
       showDialog(
         context: context,
         barrierColor: Colors.black54,
-        builder: (context) => Dialog.fullscreen(
-          child: const AboutPage(),
+        builder: (context) => const Dialog.fullscreen(
+          child: AboutPage(),
         ),
       );
     } else {

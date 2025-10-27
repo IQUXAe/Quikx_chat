@@ -38,17 +38,23 @@ class CustomDrawerHeader extends StatelessWidget {
         children: [
           if (profile?.avatarUrl != null)
             Positioned.fill(
-              child: Opacity(
-                opacity: 0.3,
-                child: Image.network(
-                  profile!.avatarUrl!.getThumbnail(
-                    client,
-                    width: 400,
-                    height: 400,
-                  ).toString(),
-                  fit: BoxFit.cover,
-                  errorBuilder: (_, __, ___) => const SizedBox(),
+              child: FutureBuilder<Uri>(
+                future: profile!.avatarUrl!.getThumbnailUri(
+                  client,
+                  width: 400,
+                  height: 400,
                 ),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) return const SizedBox();
+                  return Opacity(
+                    opacity: 0.3,
+                    child: Image.network(
+                      snapshot.data!.toString(),
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => const SizedBox(),
+                    ),
+                  );
+                },
               ),
             ),
           Container(

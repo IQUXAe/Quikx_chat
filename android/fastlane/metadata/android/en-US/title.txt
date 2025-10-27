@@ -1,1 +1,1 @@
-Simple Messenger
+QuikxChat

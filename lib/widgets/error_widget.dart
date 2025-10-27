@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 
 import 'package:quikxchat/utils/error_reporter.dart';
 
-class FluffyChatErrorWidget extends StatefulWidget {
+class QuikxChatErrorWidget extends StatefulWidget {
   final FlutterErrorDetails details;
-  const FluffyChatErrorWidget(this.details, {super.key});
+  const QuikxChatErrorWidget(this.details, {super.key});
 
   @override
-  State<FluffyChatErrorWidget> createState() => _FluffyChatErrorWidgetState();
+  State<QuikxChatErrorWidget> createState() => _QuikxChatErrorWidgetState();
 }
 
-class _FluffyChatErrorWidgetState extends State<FluffyChatErrorWidget> {
+class _QuikxChatErrorWidgetState extends State<QuikxChatErrorWidget> {
   static final Set<String> knownExceptions = {};
   @override
   void initState() {

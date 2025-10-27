@@ -167,11 +167,11 @@ class ChatAppBarTitle extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Отмена'),
+            child: Text(L10n.of(context).cancel),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Продолжить'),
+            child: Text(L10n.of(context).continueText),
           ),
         ],
       ),
@@ -193,8 +193,8 @@ class ChatAppBarTitle extends StatelessWidget {
         
         if (controller.room.sendingQueue.isNotEmpty) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Не удалось отправить все сообщения. Попробуйте позже.'),
+            SnackBar(
+              content: Text(L10n.of(context).failedToSendAllMessages),
               backgroundColor: Colors.orange,
             ),
           );

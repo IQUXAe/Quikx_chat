@@ -54,7 +54,7 @@ class SettingsHomeserverView extends StatelessWidget {
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: theme.colorScheme.primary.withOpacity(0.2),
+                      color: theme.colorScheme.primary.withValues(alpha: 0.2),
                       blurRadius: 12,
                       offset: const Offset(0, 4),
                     ),
@@ -81,7 +81,7 @@ class SettingsHomeserverView extends StatelessWidget {
                       L10n.of(context).serverInformation,
                       style: TextStyle(
                         fontSize: 14,
-                        color: theme.colorScheme.onPrimaryContainer.withOpacity(0.7),
+                        color: theme.colorScheme.onPrimaryContainer.withValues(alpha: 0.7),
                       ),
                     ),
                   ],
@@ -94,7 +94,7 @@ class SettingsHomeserverView extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
-                    color: theme.colorScheme.primary.withOpacity(0.7),
+                    color: theme.colorScheme.primary.withValues(alpha: 0.7),
                     letterSpacing: 1.2,
                   ),
                 ),
@@ -277,7 +277,7 @@ class SettingsHomeserverView extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
-                            color: theme.colorScheme.primary.withOpacity(0.7),
+                            color: theme.colorScheme.primary.withValues(alpha: 0.7),
                             letterSpacing: 1.2,
                           ),
                         ),

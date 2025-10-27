@@ -342,7 +342,7 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
             await c.fetchOwnProfile();
             // Обновляем профили во всех комнатах
             for (final room in c.rooms) {
-              room.requestParticipants().catchError((_) {});
+              room.requestParticipants().catchError((_) => <User>[]);
             }
           } catch (_) {}
         });
@@ -427,19 +427,7 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
     }
   }
 
-  bool _isVersionLower(String current, String minimum) {
-    final currentParts = current.split('.').map(int.parse).toList();
-    final minimumParts = minimum.split('.').map(int.parse).toList();
-    
-    for (var i = 0; i < 3; i++) {
-      final currentPart = i < currentParts.length ? currentParts[i] : 0;
-      final minimumPart = i < minimumParts.length ? minimumParts[i] : 0;
-      
-      if (currentPart < minimumPart) return true;
-      if (currentPart > minimumPart) return false;
-    }
-    return false;
-  }
+
 
   void _showUpdateNotification(Map<String, dynamic> data) {
     final context = QuikxChatApp.router.routerDelegate.navigatorKey.currentContext;
@@ -587,7 +575,7 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
     );
 
     final exportFileName =
-        'fluffychat-export-${DateFormat(DateFormat.YEAR_MONTH_DAY).format(DateTime.now())}.fluffybackup';
+        'quikxchat-export-${DateFormat(DateFormat.YEAR_MONTH_DAY).format(DateTime.now())}.quikxbackup';
 
     final file = MatrixFile(bytes: exportBytes, name: exportFileName);
     file.save(context);

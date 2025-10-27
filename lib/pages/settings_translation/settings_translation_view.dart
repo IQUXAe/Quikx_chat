@@ -45,7 +45,7 @@ class _SettingsTranslationViewState extends State<SettingsTranslationView> {
                         leading: Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: Colors.blue.withOpacity(0.1),
+                            color: Colors.blue.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: const Icon(Icons.translate, color: Colors.blue),
@@ -120,7 +120,7 @@ class _SettingsTranslationViewState extends State<SettingsTranslationView> {
                                 leading: Container(
                                   padding: const EdgeInsets.all(8),
                                   decoration: BoxDecoration(
-                                    color: isEnabled ? Colors.green.withOpacity(0.1) : Colors.grey.withOpacity(0.1),
+                                    color: isEnabled ? Colors.green.withValues(alpha: 0.1) : Colors.grey.withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Icon(
@@ -184,7 +184,7 @@ class _SettingsTranslationViewState extends State<SettingsTranslationView> {
                 leading: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.red.withOpacity(0.1),
+                    color: Colors.red.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Icon(Icons.clear_all, color: Colors.red),
@@ -315,44 +315,7 @@ class _SettingsTranslationViewState extends State<SettingsTranslationView> {
     );
   }
   
-  void _showEmailDialog(BuildContext context, StateSetter setState) async {
-    final prefs = await SharedPreferences.getInstance();
-    final currentEmail = prefs.getString(SettingKeys.myMemoryEmail) ?? '';
-    final controller = TextEditingController(text: currentEmail);
-    
-    final result = await showDialog<String>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('MyMemory Email'),
-        content: TextField(
-          controller: controller,
-          decoration: const InputDecoration(
-            labelText: 'Email',
-            hintText: 'your@email.com',
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(L10n.of(context).cancel),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, controller.text.trim()),
-            child: const Text('Save'),
-          ),
-        ],
-      ),
-    );
-    
-    if (result != null) {
-      if (result.isEmpty) {
-        await prefs.remove(SettingKeys.myMemoryEmail);
-      } else {
-        await prefs.setString(SettingKeys.myMemoryEmail, result);
-      }
-      setState(() {});
-    }
-  }
+
   
   void _showGoogleApiKeyDialog(BuildContext context, StateSetter setState) async {
     final prefs = await SharedPreferences.getInstance();

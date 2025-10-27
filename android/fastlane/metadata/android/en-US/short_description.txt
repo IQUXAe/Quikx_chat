@@ -1,1 +1,1 @@
-Chat with your friends with Simple Messenger.
+Modern Matrix messenger with end-to-end encryption.

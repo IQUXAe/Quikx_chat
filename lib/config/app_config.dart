@@ -21,31 +21,31 @@ abstract class AppConfig {
   static const Color primaryColor = Color(0xFF3B82F6);
   static const Color primaryColorLight = Color(0xFFDBEAFE);
   static const Color secondaryColor = Color(0xFF06B6D4);
-  static String _privacyUrl = 'https://github.com/iquxae/quikx-chat/blob/main/PRIVACY.md';
+  static String _privacyUrl = 'https://github.com/IQUXAe/Quikx_chat/blob/main/PRIVACY.md';
 
   static const Set<String> defaultReactions = {'👍', '❤️', '😂', '😮', '😢'};
 
   static String get privacyUrl => _privacyUrl;
-  static const String website = 'https://github.com/iquxae/quikx-chat';
+  static const String website = 'https://github.com/IQUXAe/Quikx_chat';
   static const String enablePushTutorial = 'https://unifiedpush.org/users/distributors/';
-  static const String encryptionTutorial = 'https://github.com/iquxae/quikx-chat/wiki/Encryption';
-  static const String startChatTutorial = 'https://github.com/iquxae/quikx-chat/wiki/Getting-Started';
+  static const String encryptionTutorial = 'https://github.com/IQUXAe/Quikx_chat/wiki/Encryption';
+  static const String startChatTutorial = 'https://github.com/IQUXAe/Quikx_chat/wiki/Getting-Started';
   static const String appId = 'com.iquxae.quikxchat';
   static const String appOpenUrlScheme = 'com.iquxae.quikxchat';
   static String _webBaseUrl = '';
 
   static String get webBaseUrl => _webBaseUrl;
   static const String sourceCodeUrl =
-      'https://github.com/iquxae/quikx-chat';
+      'https://github.com/IQUXAe/Quikx_chat';
   static const String supportUrl =
-      'https://github.com/iquxae/quikx-chat/issues';
-  static const String changelogUrl =
-      'https://github.com/iquxae/quikx-chat/blob/main/CHANGELOG.md';
+      'https://github.com/IQUXAe/Quikx_chat/issues';
+  // static const String changelogUrl =
+  //     'https://github.com/IQUXAe/Quikx_chat/blob/main/CHANGELOG.md';
 
   static final Uri newIssueUrl = Uri(
     scheme: 'https',
     host: 'github.com',
-    path: '/iquxae/quikx-chat/issues/new',
+    path: '/IQUXAe/Quikx_chat/issues/new',
   );
   static bool renderHtml = true;
   static bool hideRedactedEvents = false;

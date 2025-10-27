@@ -3004,4 +3004,260 @@ class L10nEn extends L10n {
 
   @override
   String get linkPreviewsDescription => 'Show previews for links in messages';
+
+  @override
+  String get translationLimitExceeded =>
+      'Translation limit exceeded. Enable VPN or wait for quota reset.';
+
+  @override
+  String get openSystemSettings => 'Open system settings';
+
+  @override
+  String get openDocumentation => 'Open documentation';
+
+  @override
+  String get createIssue => 'Create issue';
+
+  @override
+  String get performance => 'Performance';
+
+  @override
+  String get clearImageCache => 'Clear image cache';
+
+  @override
+  String get clearImageCacheDescription =>
+      'Free up memory by deleting cached images';
+
+  @override
+  String get clearAllCaches => 'Clear all caches';
+
+  @override
+  String get clearAllCachesDescription => 'Delete all cached data';
+
+  @override
+  String get optimizeMemory => 'Optimize memory';
+
+  @override
+  String get optimizeMemoryDescription => 'Force memory usage optimization';
+
+  @override
+  String get imageCacheCleared => 'Image cache cleared';
+
+  @override
+  String get allCachesCleared => 'All caches cleared';
+
+  @override
+  String get memoryOptimized => 'Memory optimized';
+
+  @override
+  String get failedToSendAllMessages =>
+      'Failed to send all messages. Try again later.';
+
+  @override
+  String get callsBeta => '🚧 Calls (BETA)';
+
+  @override
+  String get customStickersEmojis => 'Custom Stickers & Emojis';
+
+  @override
+  String get translationSettings => 'Translation Settings (Beta)';
+
+  @override
+  String get federationBaseUrl => 'Federation Base URL';
+
+  @override
+  String get baseUrl => 'Base URL';
+
+  @override
+  String get identityServer => 'Identity Server:';
+
+  @override
+  String get testNotificationSent => 'Test notification sent!';
+
+  @override
+  String get checkLogsForPusher => 'Check logs for pusher details';
+
+  @override
+  String get unifiedPushSetupStarted =>
+      'UnifiedPush setup started! Wait for new endpoint.';
+
+  @override
+  String get checkNotificationPermissions =>
+      '1. Check notification permissions';
+
+  @override
+  String get restartApp => '3. Restart the app';
+
+  @override
+  String get disableBatteryOptimization =>
+      '4. Disable battery optimization for the app';
+
+  @override
+  String get testPushNotification => 'Test Push Notification';
+
+  @override
+  String get testPushNotificationSubtitle =>
+      'Send a test notification to check if push notifications work';
+
+  @override
+  String get debugPushers => 'Debug Pushers';
+
+  @override
+  String get debugPushersSubtitle => 'Show pusher details in logs';
+
+  @override
+  String get setupUnifiedPush => 'Setup UnifiedPush';
+
+  @override
+  String get setupUnifiedPushSubtitle => 'Reconfigure UnifiedPush and pusher';
+
+  @override
+  String get voipPermissionsRequired => 'VoIP permissions required';
+
+  @override
+  String get voipSettings => 'VoIP Settings';
+
+  @override
+  String get enableVoipCalls => '🚧 Enable VoIP calls (BETA)';
+
+  @override
+  String get voipCallsDescription =>
+      'Voice and video calls via Matrix. Feature in beta testing';
+
+  @override
+  String get permissions => 'Permissions';
+
+  @override
+  String get permissionsRequired => 'Required permissions for calls';
+
+  @override
+  String get microphone => 'Microphone';
+
+  @override
+  String get allow => 'Allow';
+
+  @override
+  String get camera => 'Camera';
+
+  @override
+  String get phone => 'Phone';
+
+  @override
+  String get instructions => 'Instructions';
+
+  @override
+  String get tapPhoneIconToCall => 'Tap the phone icon in chat to make a call';
+
+  @override
+  String get serverSelection => 'Server Selection';
+
+  @override
+  String get continueWithServer => 'Continue';
+
+  @override
+  String get universalRegistration => 'Universal Registration';
+
+  @override
+  String get translationProvider => 'Translation Provider';
+
+  @override
+  String get selectTranslationProvider => 'Select Translation Provider';
+
+  @override
+  String get clearTranslationCache => 'Clear Translation Cache';
+
+  @override
+  String get removeAllCachedTranslations => 'Remove all cached translations';
+
+  @override
+  String get clearCache => 'Clear Cache';
+
+  @override
+  String get clearCacheConfirm =>
+      'Are you sure you want to clear all cached translations?';
+
+  @override
+  String get clear => 'Clear';
+
+  @override
+  String get translationCacheCleared => 'Translation cache cleared';
+
+  @override
+  String get translationDisabled => 'Translation Disabled';
+
+  @override
+  String get selectProviderToEnable =>
+      'Select a provider to enable translation';
+
+  @override
+  String get myMemoryConfiguration => 'MyMemory Configuration';
+
+  @override
+  String get freeServiceReady => 'Free service ready to use';
+
+  @override
+  String get googleTranslateConfiguration => 'Google Translate Configuration';
+
+  @override
+  String get apiKey => 'API Key';
+
+  @override
+  String get requiredForGoogleTranslate => 'Required for Google Translate';
+
+  @override
+  String get libreTranslateConfiguration => 'LibreTranslate Configuration';
+
+  @override
+  String get endpointUrl => 'Endpoint URL';
+
+  @override
+  String get serverUrl => 'Server URL';
+
+  @override
+  String get apiKeyOptional => 'API Key (Optional)';
+
+  @override
+  String get optional => 'Optional';
+
+  @override
+  String get googleTranslateApiKey => 'Google Translate API Key';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get libreTranslateEndpoint => 'LibreTranslate Endpoint';
+
+  @override
+  String get libreTranslateApiKey => 'LibreTranslate API Key';
+
+  @override
+  String get selectUnifiedPushDistributor => 'Select UnifiedPush Distributor';
+
+  @override
+  String get diagnosticInfo => 'Diagnostic Info';
+
+  @override
+  String get showDiagnosticInfo => 'Show Diagnostic Info';
+
+  @override
+  String get advancedConfigurations => 'Advanced configurations';
+
+  @override
+  String get callFailedBeta => 'Call failed (BETA)';
+
+  @override
+  String get systemBusySending =>
+      'System busy sending data. Wait 5-10 seconds and try again.';
+
+  @override
+  String get connectionTimeout => 'Connection timeout. Check internet.';
+
+  @override
+  String get failedToSendInvite =>
+      'Failed to send invite. Try restarting the app.';
+
+  @override
+  String get callsFeatureBeta =>
+      'Calls feature is in beta testing. Possible errors and unstable operation. Continue?';
 }

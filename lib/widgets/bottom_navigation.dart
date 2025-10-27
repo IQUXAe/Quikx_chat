@@ -24,7 +24,7 @@ class _BottomNavigationState extends State<BottomNavigation> {
         color: theme.colorScheme.surface,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 8,
             offset: const Offset(0, -2),
           ),
@@ -135,8 +135,8 @@ class _NavItemState extends State<_NavItem> with SingleTickerProviderStateMixin 
                       gradient: widget.isActive
                           ? LinearGradient(
                               colors: [
-                                theme.colorScheme.primary.withOpacity(0.2),
-                                theme.colorScheme.primary.withOpacity(0.1),
+                                theme.colorScheme.primary.withValues(alpha: 0.2),
+                                theme.colorScheme.primary.withValues(alpha: 0.1),
                               ],
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
@@ -150,7 +150,7 @@ class _NavItemState extends State<_NavItem> with SingleTickerProviderStateMixin 
                         widget.icon,
                         color: widget.isActive
                             ? theme.colorScheme.primary
-                            : theme.colorScheme.onSurface.withOpacity(0.6),
+                            : theme.colorScheme.onSurface.withValues(alpha: 0.6),
                         size: 28,
                       ),
                     ),
@@ -163,7 +163,7 @@ class _NavItemState extends State<_NavItem> with SingleTickerProviderStateMixin 
                       fontWeight: widget.isActive ? FontWeight.w700 : FontWeight.w500,
                       color: widget.isActive
                           ? theme.colorScheme.primary
-                          : theme.colorScheme.onSurface.withOpacity(0.6),
+                          : theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
                     child: Text(widget.label),
                   ),

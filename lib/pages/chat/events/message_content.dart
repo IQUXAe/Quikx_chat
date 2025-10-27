@@ -267,7 +267,6 @@ class MessageContent extends StatelessWidget {
                 final bigEmotes = event.onlyEmotes &&
                     event.numberEmotes > 0 &&
                     event.numberEmotes <= 3;
-                final ownMessage = event.senderId == event.room.client.userID;
                 return Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 14,
@@ -275,7 +274,6 @@ class MessageContent extends StatelessWidget {
                   ),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
-                    textDirection: ownMessage ? TextDirection.ltr : TextDirection.rtl,
                     children: [
                       Flexible(
                         child: HtmlMessage(
@@ -301,16 +299,12 @@ class MessageContent extends StatelessWidget {
                           ),
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 2),
-                        child: Text(
-                          event.originServerTs.localizedTimeShort(context),
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: textColor.withAlpha(180),
-                            fontWeight: FontWeight.w500,
-                          ),
+                      const SizedBox(width: 6),
+                      Text(
+                        event.originServerTs.localizedTimeShort(context),
+                        style: TextStyle(
+                          fontSize: 9,
+                          color: textColor.withValues(alpha: 0.6),
                         ),
                       ),
                     ],

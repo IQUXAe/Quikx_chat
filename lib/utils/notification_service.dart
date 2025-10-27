@@ -15,7 +15,7 @@ import 'package:quikxchat/config/setting_keys.dart';
 import 'package:quikxchat/l10n/l10n.dart';
 import 'package:quikxchat/utils/unified_push_helper.dart';
 import 'package:quikxchat/widgets/matrix.dart';
-import 'package:quikxchat/widgets/quikx_chat_app.dart';
+
 
 enum PushNotificationStatus {
   enabled,
@@ -70,60 +70,9 @@ class NotificationService {
         ?.createNotificationChannel(channel);
   }
 
-  void _onNotificationResponse(NotificationResponse response) {
-    try {
-      Logs().i('[NotificationService] Notification response: ${response.actionId}, payload: ${response.payload}');
 
-      if (response.actionId == null) {
-        // Клик по самому уведомлению
-        if (response.payload != null && response.payload!.startsWith('room:')) {
-          final roomId = response.payload!.substring(5);
-          _navigateToRoom(roomId);
-        }
-        return;
-      }
 
-      switch (response.actionId) {
-        case 'reply':
-          if (response.payload != null && response.payload!.startsWith('room:')) {
-            final roomId = response.payload!.substring(5);
-            _navigateToRoom(roomId);
-          }
-          break;
-        case 'mark_read':
-          if (response.payload != null && response.payload!.startsWith('room:')) {
-            final roomId = response.payload!.substring(5);
-            _markRoomAsRead(roomId);
-          }
-          break;
-        case 'test_ok':
-        case 'test_dismiss':
-          Logs().i('[NotificationService] Test notification action: ${response.actionId}');
-          break;
-      }
-    } catch (e) {
-      Logs().e('[NotificationService] Error handling notification response', e);
-    }
-  }
 
-  void _navigateToRoom(String roomId) {
-    try {
-      QuikxChatApp.router.go('/rooms/$roomId');
-      Logs().i('[NotificationService] Navigated to room: $roomId');
-    } catch (e) {
-      Logs().e('[NotificationService] Failed to navigate to room', e);
-    }
-  }
-
-  void _markRoomAsRead(String roomId) {
-    try {
-      // Найдем клиента и комнату
-      // Это будет работать только если приложение уже запущено
-      Logs().i('[NotificationService] Marking room as read: $roomId');
-    } catch (e) {
-      Logs().e('[NotificationService] Failed to mark room as read', e);
-    }
-  }
 
   Future<PushNotificationStatus> checkStatus() async {
     try {

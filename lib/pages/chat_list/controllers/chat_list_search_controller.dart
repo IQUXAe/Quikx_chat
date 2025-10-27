@@ -66,7 +66,7 @@ class ChatListSearchController {
           try {
             final response = await client.getRoomIdByAlias(searchQuery);
             if (response.roomId != null) {
-              roomResult.chunk.add(PublicRoomsChunk(
+              roomResult.chunk.add(PublishedRoomsChunk(
                 name: searchQuery,
                 guestCanJoin: false,
                 numJoinedMembers: 0,

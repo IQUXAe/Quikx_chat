@@ -7,9 +7,7 @@ class MessageTranslator {
   static const String _cachePrefix = 'translation_cache_';
   static const String _enabledKey = 'translation_enabled';
   static const String _targetLanguageKey = 'translation_target_language';
-  static const int _maxConcurrentTranslations = 10;
-  static int _activeTranslations = 0;
-  static final Set<String> _translatingEvents = <String>{};
+
   
   static Future<bool> get isEnabled async {
     final provider = await TranslationProviders.getCurrentProvider();
@@ -131,43 +129,7 @@ class MessageTranslator {
   
 
   
-  static Future<void> _translateEventAsync(String eventId, String text, Function(String, String) onTranslated) async {
-    Logs().i('[AutoTranslator] Processing event $eventId: "$text"');
-    
-    if (_translatingEvents.contains(eventId)) {
-      Logs().i('[AutoTranslator] Event $eventId already translating, skipping');
-      return;
-    }
-    
-    // Ждем свободного слота для перевода
-    while (_activeTranslations >= _maxConcurrentTranslations) {
-      await Future.delayed(const Duration(milliseconds: 50));
-    }
-    
-    _translatingEvents.add(eventId);
-    _activeTranslations++;
-    
-    Logs().i('[AutoTranslator] Starting translation for event $eventId');
-    
-    try {
-      final translation = await translateMessage(text, 'auto');
-      
-      if (translation != null && translation.trim().isNotEmpty) {
-        Logs().i('[AutoTranslator] Translation success for $eventId: "$translation"');
-        messageTranslations[eventId] = translation;
-        notifyTranslationChanged();
-        onTranslated(eventId, translation);
-      } else {
-        Logs().i('[AutoTranslator] No translation for event $eventId');
-      }
-    } catch (e) {
-      Logs().w('Translation failed for event $eventId: $e');
-    } finally {
-      _translatingEvents.remove(eventId);
-      _activeTranslations--;
-      Logs().i('[AutoTranslator] Finished processing event $eventId');
-    }
-  }
+
 
   static String detectLanguage(String text) {
     // Extended language detection

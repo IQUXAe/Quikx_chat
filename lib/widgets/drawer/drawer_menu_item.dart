@@ -70,8 +70,19 @@ class _DrawerMenuItemState extends State<DrawerMenuItem>
                   child: Container(
                     margin: _getMargin(),
                     decoration: BoxDecoration(
-                      color: theme.colorScheme.surfaceContainer,
+                      color: theme.colorScheme.surface,
                       borderRadius: _getBorderRadius(),
+                      border: Border.all(
+                        color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+                        width: 1,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: theme.colorScheme.shadow.withValues(alpha: 0.05),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
                     child: Material(
                       color: Colors.transparent,

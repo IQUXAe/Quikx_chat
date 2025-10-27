@@ -3030,4 +3030,263 @@ class L10nRu extends L10n {
   @override
   String get linkPreviewsDescription =>
       'Показывать предпросмотр ссылок в сообщениях';
+
+  @override
+  String get translationLimitExceeded =>
+      'Лимит переводов превышен. Включите VPN или подождите сброса квоты.';
+
+  @override
+  String get openSystemSettings => 'Открыть системные настройки';
+
+  @override
+  String get openDocumentation => 'Открыть документацию';
+
+  @override
+  String get createIssue => 'Создать issue';
+
+  @override
+  String get performance => 'Производительность';
+
+  @override
+  String get clearImageCache => 'Очистить кэш изображений';
+
+  @override
+  String get clearImageCacheDescription =>
+      'Освободить память, удалив кэшированные изображения';
+
+  @override
+  String get clearAllCaches => 'Очистить все кэши';
+
+  @override
+  String get clearAllCachesDescription => 'Удалить все кэшированные данные';
+
+  @override
+  String get optimizeMemory => 'Оптимизировать память';
+
+  @override
+  String get optimizeMemoryDescription =>
+      'Принудительная оптимизация использования памяти';
+
+  @override
+  String get imageCacheCleared => 'Кэш изображений очищен';
+
+  @override
+  String get allCachesCleared => 'Все кэши очищены';
+
+  @override
+  String get memoryOptimized => 'Память оптимизирована';
+
+  @override
+  String get failedToSendAllMessages =>
+      'Не удалось отправить все сообщения. Попробуйте позже.';
+
+  @override
+  String get callsBeta => '🚧 Звонки (БЕТА)';
+
+  @override
+  String get customStickersEmojis => 'Пользовательские стикеры и эмодзи';
+
+  @override
+  String get translationSettings => 'Настройки перевода (Бета)';
+
+  @override
+  String get federationBaseUrl => 'Базовый URL федерации';
+
+  @override
+  String get baseUrl => 'Базовый URL';
+
+  @override
+  String get identityServer => 'Сервер идентификации:';
+
+  @override
+  String get testNotificationSent => 'Тестовое уведомление отправлено!';
+
+  @override
+  String get checkLogsForPusher => 'Проверьте логи для деталей pusher';
+
+  @override
+  String get unifiedPushSetupStarted =>
+      'Настройка UnifiedPush начата! Ожидайте новую конечную точку.';
+
+  @override
+  String get checkNotificationPermissions =>
+      '1. Проверьте разрешения на уведомления';
+
+  @override
+  String get restartApp => '3. Перезапустите приложение';
+
+  @override
+  String get disableBatteryOptimization =>
+      '4. Отключите оптимизацию батареи для приложения';
+
+  @override
+  String get testPushNotification => 'Тестовое Push-уведомление';
+
+  @override
+  String get testPushNotificationSubtitle =>
+      'Отправить тестовое уведомление для проверки работы push-уведомлений';
+
+  @override
+  String get debugPushers => 'Отладка Pushers';
+
+  @override
+  String get debugPushersSubtitle => 'Показать детали pusher в логах';
+
+  @override
+  String get setupUnifiedPush => 'Настроить UnifiedPush';
+
+  @override
+  String get setupUnifiedPushSubtitle => 'Перенастроить UnifiedPush и pusher';
+
+  @override
+  String get voipPermissionsRequired => 'Требуются разрешения для VoIP';
+
+  @override
+  String get voipSettings => 'Настройки VoIP';
+
+  @override
+  String get enableVoipCalls => '🚧 Включить VoIP звонки (БЕТА)';
+
+  @override
+  String get voipCallsDescription =>
+      'Голосовые и видео звонки через Matrix. Функция в стадии бета-тестирования';
+
+  @override
+  String get permissions => 'Разрешения';
+
+  @override
+  String get permissionsRequired => 'Необходимые разрешения для звонков';
+
+  @override
+  String get microphone => 'Микрофон';
+
+  @override
+  String get allow => 'Разрешить';
+
+  @override
+  String get camera => 'Камера';
+
+  @override
+  String get phone => 'Телефон';
+
+  @override
+  String get instructions => 'Инструкции';
+
+  @override
+  String get tapPhoneIconToCall =>
+      'Нажмите на иконку телефона в чате для звонка';
+
+  @override
+  String get serverSelection => 'Выбор сервера';
+
+  @override
+  String get continueWithServer => 'Продолжить';
+
+  @override
+  String get universalRegistration => 'Универсальная регистрация';
+
+  @override
+  String get translationProvider => 'Провайдер перевода';
+
+  @override
+  String get selectTranslationProvider => 'Выберите провайдера перевода';
+
+  @override
+  String get clearTranslationCache => 'Очистить кэш переводов';
+
+  @override
+  String get removeAllCachedTranslations => 'Удалить все кэшированные переводы';
+
+  @override
+  String get clearCache => 'Очистить кэш';
+
+  @override
+  String get clearCacheConfirm =>
+      'Вы уверены, что хотите очистить все кэшированные переводы?';
+
+  @override
+  String get clear => 'Очистить';
+
+  @override
+  String get translationCacheCleared => 'Кэш переводов очищен';
+
+  @override
+  String get translationDisabled => 'Перевод отключен';
+
+  @override
+  String get selectProviderToEnable =>
+      'Выберите провайдера для включения перевода';
+
+  @override
+  String get myMemoryConfiguration => 'Конфигурация MyMemory';
+
+  @override
+  String get freeServiceReady => 'Бесплатный сервис готов к использованию';
+
+  @override
+  String get googleTranslateConfiguration => 'Конфигурация Google Translate';
+
+  @override
+  String get apiKey => 'API ключ';
+
+  @override
+  String get requiredForGoogleTranslate => 'Требуется для Google Translate';
+
+  @override
+  String get libreTranslateConfiguration => 'Конфигурация LibreTranslate';
+
+  @override
+  String get endpointUrl => 'URL конечной точки';
+
+  @override
+  String get serverUrl => 'URL сервера';
+
+  @override
+  String get apiKeyOptional => 'API ключ (необязательно)';
+
+  @override
+  String get optional => 'Необязательно';
+
+  @override
+  String get googleTranslateApiKey => 'API ключ Google Translate';
+
+  @override
+  String get save => 'Сохранить';
+
+  @override
+  String get libreTranslateEndpoint => 'Конечная точка LibreTranslate';
+
+  @override
+  String get libreTranslateApiKey => 'API ключ LibreTranslate';
+
+  @override
+  String get selectUnifiedPushDistributor =>
+      'Выберите дистрибьютор UnifiedPush';
+
+  @override
+  String get diagnosticInfo => 'Диагностическая информация';
+
+  @override
+  String get showDiagnosticInfo => 'Показать диагностическую информацию';
+
+  @override
+  String get advancedConfigurations => 'Расширенные настройки';
+
+  @override
+  String get callFailedBeta => 'Звонок не удался (БЕТА)';
+
+  @override
+  String get systemBusySending =>
+      'Система занята отправкой данных. Подождите 5-10 секунд и попробуйте снова.';
+
+  @override
+  String get connectionTimeout => 'Таймаут соединения. Проверьте интернет.';
+
+  @override
+  String get failedToSendInvite =>
+      'Не удалось отправить приглашение. Попробуйте перезапустить приложение.';
+
+  @override
+  String get callsFeatureBeta =>
+      'Функция звонков находится в стадии бета-тестирования. Возможны ошибки и нестабильная работа. Продолжить?';
 }

@@ -180,9 +180,9 @@ class _LinkPreviewState extends State<LinkPreview> {
       margin: const EdgeInsets.symmetric(vertical: 4),
       decoration: BoxDecoration(
         border: Border.all(color: Color.fromRGBO(
-          widget.textColor.red,
-          widget.textColor.green,
-          widget.textColor.blue,
+          (widget.textColor.r * 255.0).round() & 0xff,
+          (widget.textColor.g * 255.0).round() & 0xff,
+          (widget.textColor.b * 255.0).round() & 0xff,
           0.3,
         ),),
         borderRadius: BorderRadius.circular(8),
@@ -209,15 +209,15 @@ class _LinkPreviewState extends State<LinkPreview> {
                         fit: BoxFit.cover,
                         errorBuilder: (_, __, ___) => Container(
                           color: Color.fromRGBO(
-                            widget.textColor.red,
-                            widget.textColor.green,
-                            widget.textColor.blue,
+                            (widget.textColor.r * 255.0).round() & 0xff,
+                            (widget.textColor.g * 255.0).round() & 0xff,
+                            (widget.textColor.b * 255.0).round() & 0xff,
                             0.1,
                           ),
                           child: Icon(Icons.image, color: Color.fromRGBO(
-                            widget.textColor.red,
-                            widget.textColor.green,
-                            widget.textColor.blue,
+                            (widget.textColor.r * 255.0).round() & 0xff,
+                            (widget.textColor.g * 255.0).round() & 0xff,
+                            (widget.textColor.b * 255.0).round() & 0xff,
                             0.5,
                           ),),
                         ),
@@ -243,9 +243,9 @@ class _LinkPreviewState extends State<LinkPreview> {
                     _previewData!.description!,
                     style: TextStyle(
                       color: Color.fromRGBO(
-                        widget.textColor.red,
-                        widget.textColor.green,
-                        widget.textColor.blue,
+                        (widget.textColor.r * 255.0).round() & 0xff,
+                        (widget.textColor.g * 255.0).round() & 0xff,
+                        (widget.textColor.b * 255.0).round() & 0xff,
                         0.8,
                       ),
                       fontSize: 12,

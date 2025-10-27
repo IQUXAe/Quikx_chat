@@ -314,7 +314,7 @@ class ChatController extends State<ChatPageWithRoom>
     WidgetsBinding.instance.addObserver(this);
     
     // Подписываемся на обновления комнаты для мгновенного обновления статусов
-    room.onUpdate.stream.listen((_) {
+    sendingClient.onSync.stream.where((sync) => sync.rooms?.join?.containsKey(roomId) == true).listen((_) {
       if (mounted) {
         // Принудительно обновляем UI при любых изменениях в комнате
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -425,7 +425,7 @@ class ChatController extends State<ChatPageWithRoom>
       if (mounted) {
         setState(() {});
         setReadMarker();
-        room.onUpdate.add('status_update');
+        // Обновление статуса через синхронизацию
       }
     });
     
@@ -1343,8 +1343,8 @@ class ChatController extends State<ChatPageWithRoom>
         
         if (room.sendingQueue.isNotEmpty) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Не удалось отправить все сообщения. Попробуйте позже.'),
+            SnackBar(
+              content: Text(L10n.of(context).failedToSendAllMessages),
               backgroundColor: Colors.orange,
             ),
           );

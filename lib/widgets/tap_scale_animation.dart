@@ -36,7 +36,7 @@ class _TapScaleAnimationState extends State<TapScaleAnimation>
     ).animate(CurvedAnimation(
       parent: _controller,
       curve: Curves.easeInOut,
-    ));
+    ),);
   }
 
   @override

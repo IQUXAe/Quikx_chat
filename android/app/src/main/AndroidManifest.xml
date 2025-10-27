@@ -107,7 +107,7 @@
                <data android:scheme="matrix" />
             </intent-filter>
 
-            <!-- App can open com.iquxae.privacymessenger:// uris -->
+            <!-- App can open com.iquxae.quikxchat:// uris -->
             <intent-filter>
                <action android:name="android.intent.action.VIEW" />
                <category android:name="android.intent.category.DEFAULT" />

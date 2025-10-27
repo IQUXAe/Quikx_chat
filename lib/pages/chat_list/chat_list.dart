@@ -836,18 +836,17 @@ class ChatListController extends State<ChatList>
 
         // Предзагружаем аватары комнат
         if (room.avatar != null) {
-          precacheImage(
-            NetworkImage(
-              room.avatar!
-                  .getThumbnail(
-                    client,
-                    width: 44,
-                    height: 44,
-                  )
-                  .toString(),
-            ),
-            context,
-          ).catchError((_) {});
+          final roomUri = await room.avatar!.getThumbnailUri(
+            client,
+            width: 44,
+            height: 44,
+          );
+          if (mounted) {
+            precacheImage(
+              NetworkImage(roomUri.toString()),
+              context,
+            ).catchError((_) {});
+          }
         }
 
         // Предзагружаем профили для прямых чатов
@@ -857,18 +856,17 @@ class ChatListController extends State<ChatList>
             final profile =
                 await client.getProfileFromUserId(directChatMatrixId);
             if (profile.avatarUrl != null && mounted) {
-              precacheImage(
-                NetworkImage(
-                  profile.avatarUrl!
-                      .getThumbnail(
-                        client,
-                        width: 44,
-                        height: 44,
-                      )
-                      .toString(),
-                ),
-                context,
-              ).catchError((_) {});
+              final profileUri = await profile.avatarUrl!.getThumbnailUri(
+                client,
+                width: 44,
+                height: 44,
+              );
+              if (mounted) {
+                precacheImage(
+                  NetworkImage(profileUri.toString()),
+                  context,
+                ).catchError((_) {});
+              }
             }
           } catch (e) {
             // Игнорируем ошибки загрузки профиля

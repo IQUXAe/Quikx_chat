@@ -4,14 +4,12 @@ import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
 import 'package:quikxchat/config/app_config.dart';
-import 'package:quikxchat/config/setting_keys.dart';
 import 'package:quikxchat/config/themes.dart';
 import 'package:quikxchat/l10n/l10n.dart';
 import 'package:quikxchat/utils/beautify_string_extension.dart';
 import 'package:quikxchat/utils/platform_infos.dart';
 import 'package:quikxchat/widgets/layouts/max_width_body.dart';
 import 'package:quikxchat/widgets/matrix.dart';
-import 'package:quikxchat/widgets/settings_switch_list_tile.dart';
 import 'package:quikxchat/widgets/settings_card_tile.dart';
 import 'settings_security.dart';
 
@@ -57,47 +55,59 @@ class SettingsSecurityView extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.primary.withOpacity(0.7),
+                        color: theme.colorScheme.primary.withValues(alpha: 0.7),
                         letterSpacing: 1.2,
                       ),
                     ),
                   ),
-                  SettingsCardSwitch(
-                    leading: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.blue.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
+                  ValueListenableBuilder(
+                    valueListenable: controller.settingsNotifier,
+                    builder: (context, _, __) => SettingsCardSwitch(
+                      leading: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.blue.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(Icons.keyboard_outlined, color: Colors.blue),
                       ),
-                      child: const Icon(Icons.keyboard_outlined, color: Colors.blue),
+                      title: Text(L10n.of(context).sendTypingNotifications),
+                      subtitle: Text(L10n.of(context).sendTypingNotificationsDescription),
+                      value: AppConfig.sendTypingNotifications,
+                      onChanged: (b) {
+                        AppConfig.sendTypingNotifications = b;
+                        controller.settingsNotifier.value++;
+                      },
+                      position: CardPosition.first,
                     ),
-                    title: Text(L10n.of(context).sendTypingNotifications),
-                    subtitle: Text(L10n.of(context).sendTypingNotificationsDescription),
-                    value: AppConfig.sendTypingNotifications,
-                    onChanged: (b) => AppConfig.sendTypingNotifications = b,
-                    position: CardPosition.first,
                   ),
-                  SettingsCardSwitch(
-                    leading: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                        color: Colors.green.withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(8),
+                  ValueListenableBuilder(
+                    valueListenable: controller.settingsNotifier,
+                    builder: (context, _, __) => SettingsCardSwitch(
+                      leading: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: Colors.green.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: const Icon(Icons.done_all_outlined, color: Colors.green),
                       ),
-                      child: const Icon(Icons.done_all_outlined, color: Colors.green),
+                      title: Text(L10n.of(context).sendReadReceipts),
+                      subtitle: Text(L10n.of(context).sendReadReceiptsDescription),
+                      value: AppConfig.sendPublicReadReceipts,
+                      onChanged: (b) {
+                        AppConfig.sendPublicReadReceipts = b;
+                        controller.settingsNotifier.value++;
+                      },
+                      position: CardPosition.last,
                     ),
-                    title: Text(L10n.of(context).sendReadReceipts),
-                    subtitle: Text(L10n.of(context).sendReadReceiptsDescription),
-                    value: AppConfig.sendPublicReadReceipts,
-                    onChanged: (b) => AppConfig.sendPublicReadReceipts = b,
-                    position: CardPosition.last,
                   ),
 
                   SettingsCardTile(
                     leading: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.red.withOpacity(0.1),
+                        color: Colors.red.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: const Icon(Icons.block_outlined, color: Colors.red),
@@ -120,7 +130,7 @@ class SettingsSecurityView extends StatelessWidget {
                         leading: Container(
                           padding: const EdgeInsets.all(8),
                           decoration: BoxDecoration(
-                            color: Colors.orange.withOpacity(0.1),
+                            color: Colors.orange.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: const Icon(Icons.lock_outlined, color: Colors.orange),
@@ -140,7 +150,7 @@ class SettingsSecurityView extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.primary.withOpacity(0.7),
+                        color: theme.colorScheme.primary.withValues(alpha: 0.7),
                         letterSpacing: 1.2,
                       ),
                     ),
@@ -152,27 +162,30 @@ class SettingsSecurityView extends StatelessWidget {
                       style: TextStyle(color: theme.colorScheme.onSurfaceVariant),
                     ),
                   ),
-                  ListTile(
-                    title: Material(
-                      borderRadius:
-                          BorderRadius.circular(AppConfig.borderRadius / 2),
-                      color: theme.colorScheme.onInverseSurface,
-                      child: DropdownButton<ShareKeysWith>(
-                        isExpanded: true,
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                  ValueListenableBuilder(
+                    valueListenable: controller.settingsNotifier,
+                    builder: (context, _, __) => ListTile(
+                      title: Material(
                         borderRadius:
                             BorderRadius.circular(AppConfig.borderRadius / 2),
-                        underline: const SizedBox.shrink(),
-                        value: Matrix.of(context).client.shareKeysWith,
-                        items: ShareKeysWith.values
-                            .map(
-                              (share) => DropdownMenuItem(
-                                value: share,
-                                child: Text(share.localized(L10n.of(context))),
-                              ),
-                            )
-                            .toList(),
-                        onChanged: controller.changeShareKeysWith,
+                        color: theme.colorScheme.onInverseSurface,
+                        child: DropdownButton<ShareKeysWith>(
+                          isExpanded: true,
+                          padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                          borderRadius:
+                              BorderRadius.circular(AppConfig.borderRadius / 2),
+                          underline: const SizedBox.shrink(),
+                          value: Matrix.of(context).client.shareKeysWith,
+                          items: ShareKeysWith.values
+                              .map(
+                                (share) => DropdownMenuItem(
+                                  value: share,
+                                  child: Text(share.localized(L10n.of(context))),
+                                ),
+                              )
+                              .toList(),
+                          onChanged: controller.changeShareKeysWith,
+                        ),
                       ),
                     ),
                   ),
@@ -184,7 +197,7 @@ class SettingsSecurityView extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
-                        color: theme.colorScheme.primary.withOpacity(0.7),
+                        color: theme.colorScheme.primary.withValues(alpha: 0.7),
                         letterSpacing: 1.2,
                       ),
                     ),
@@ -193,7 +206,7 @@ class SettingsSecurityView extends StatelessWidget {
                     leading: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.blue.withOpacity(0.1),
+                        color: Colors.blue.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: const Icon(Icons.vpn_key_outlined, color: Colors.blue),
@@ -212,7 +225,7 @@ class SettingsSecurityView extends StatelessWidget {
                       leading: Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: Colors.green.withOpacity(0.1),
+                          color: Colors.green.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: const Icon(Icons.password_outlined, color: Colors.green),
@@ -230,7 +243,7 @@ class SettingsSecurityView extends StatelessWidget {
                     leading: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.orange.withOpacity(0.1),
+                        color: Colors.orange.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: const Icon(Icons.delete_sweep_outlined, color: Colors.orange),
@@ -246,7 +259,7 @@ class SettingsSecurityView extends StatelessWidget {
                     leading: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: Colors.red.withOpacity(0.1),
+                        color: Colors.red.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: const Icon(Icons.delete_outlined, color: Colors.red),

@@ -216,7 +216,7 @@ class ChatDetailsView extends StatelessWidget {
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.bold,
-                                color: theme.colorScheme.primary.withOpacity(0.7),
+                                color: theme.colorScheme.primary.withValues(alpha: 0.7),
                                 letterSpacing: 1.2,
                               ),
                             ),
@@ -323,7 +323,7 @@ class ChatDetailsView extends StatelessWidget {
                             style: TextStyle(
                               fontSize: 12,
                               fontWeight: FontWeight.bold,
-                              color: theme.colorScheme.primary.withOpacity(0.7),
+                              color: theme.colorScheme.primary.withValues(alpha: 0.7),
                               letterSpacing: 1.2,
                             ),
                           ),

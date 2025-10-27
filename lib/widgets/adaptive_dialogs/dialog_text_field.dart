@@ -38,7 +38,6 @@ class DialogTextField extends StatelessWidget {
     final prefixText = this.prefixText;
     final suffixText = this.suffixText;
     final errorText = this.errorText;
-    final theme = Theme.of(context);
     return TextField(
       controller: controller,
       obscureText: obscureText,

@@ -271,9 +271,9 @@ class HtmlMessage extends StatelessWidget {
                             checkColor: textColor,
                             side: BorderSide(color: textColor),
                             activeColor: Color.fromRGBO(
-                              textColor.red,
-                              textColor.green,
-                              textColor.blue,
+                              (textColor.r * 255.0).round() & 0xff,
+                              (textColor.g * 255.0).round() & 0xff,
+                              (textColor.b * 255.0).round() & 0xff,
                               0.25,
                             ),
                             value:
@@ -350,14 +350,16 @@ class HtmlMessage extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               child: HighlightView(
                 node.text,
-                language: node.className
-                        .split(' ')
-                        .singleWhereOrNull(
-                          (className) => className.startsWith('language-'),
-                        )
-                        ?.split('language-')
-                        .last ??
-                    'md',
+                language: () {
+                  final className = node.className
+                      .split(' ')
+                      .singleWhereOrNull(
+                        (c) => c.startsWith('language-'),
+                      );
+                  if (className == null) return 'md';
+                  final parts = className.split('language-');
+                  return parts.length > 1 ? parts.last : 'md';
+                }(),
                 theme: shadesOfPurpleTheme,
                 padding: EdgeInsets.symmetric(
                   horizontal: 8,
@@ -517,7 +519,7 @@ class HtmlMessage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final element = parser.parse(html).body ?? dom.Element.html('');
-    final plainText = element.text ?? '';
+    final plainText = element.text;
     final links = LinkExtractor.extractLinks(plainText);
     
     final textWidget = Text.rich(

@@ -77,18 +77,17 @@ class _ChatListItemState extends State<ChatListItem> with SingleTickerProviderSt
       final client = room.client;
 
       if (room.avatar != null) {
-        precacheImage(
-          NetworkImage(
-            room.avatar!
-                .getThumbnail(
-                  client,
-                  width: 56,
-                  height: 56,
-                )
-                .toString(),
-          ),
-          context,
-        ).catchError((_) {});
+        final avatarUri = await room.avatar!.getThumbnailUri(
+          client,
+          width: 56,
+          height: 56,
+        );
+        if (mounted) {
+          precacheImage(
+            NetworkImage(avatarUri.toString()),
+            context,
+          ).catchError((e) => Logs().v('Failed to precache avatar: $e'));
+        }
       }
 
       final directChatMatrixId = room.directChatMatrixID;
@@ -96,39 +95,41 @@ class _ChatListItemState extends State<ChatListItem> with SingleTickerProviderSt
         try {
           final profile = await client.getProfileFromUserId(directChatMatrixId);
           if (profile.avatarUrl != null && mounted) {
-            precacheImage(
-              NetworkImage(
-                profile.avatarUrl!
-                    .getThumbnail(
-                      client,
-                      width: 56,
-                      height: 56,
-                    )
-                    .toString(),
-              ),
-              context,
-            ).catchError((_) {});
+            final profileUri = await profile.avatarUrl!.getThumbnailUri(
+              client,
+              width: 56,
+              height: 56,
+            );
+            if (mounted) {
+              precacheImage(
+                NetworkImage(profileUri.toString()),
+                context,
+              ).catchError((e) => Logs().v('Failed to precache profile avatar: $e'));
+            }
           }
           if (mounted) setState(() {});
-        } catch (e) {}
+        } catch (e) {
+          Logs().v('Failed to load profile: $e');
+        }
       }
 
       final space = widget.space;
       if (space?.avatar != null && mounted) {
-        precacheImage(
-          NetworkImage(
-            space!.avatar!
-                .getThumbnail(
-                  client,
-                  width: 36,
-                  height: 36,
-                )
-                .toString(),
-          ),
-          context,
-        ).catchError((_) {});
+        final spaceUri = await space!.avatar!.getThumbnailUri(
+          client,
+          width: 36,
+          height: 36,
+        );
+        if (mounted) {
+          precacheImage(
+            NetworkImage(spaceUri.toString()),
+            context,
+          ).catchError((e) => Logs().v('Failed to precache space avatar: $e'));
+        }
       }
-    } catch (e) {}
+    } catch (e) {
+      Logs().v('Failed to preload profiles: $e');
+    }
   }
 
   @override
@@ -170,18 +171,18 @@ class _ChatListItemState extends State<ChatListItem> with SingleTickerProviderSt
           margin: margin,
           decoration: BoxDecoration(
             color: widget.activeChat
-                ? theme.colorScheme.primaryContainer.withOpacity(0.3)
+                ? theme.colorScheme.primaryContainer.withValues(alpha: 0.3)
                 : theme.colorScheme.surface,
             borderRadius: borderRadius,
             border: Border.all(
               color: widget.activeChat
-                  ? theme.colorScheme.primary.withOpacity(0.3)
-                  : theme.colorScheme.outlineVariant.withOpacity(0.5),
+                  ? theme.colorScheme.primary.withValues(alpha: 0.3)
+                  : theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
               width: 1,
             ),
             boxShadow: [
               BoxShadow(
-                color: theme.colorScheme.shadow.withOpacity(0.05),
+                color: theme.colorScheme.shadow.withValues(alpha: 0.05),
                 blurRadius: 4,
                 offset: const Offset(0, 2),
               ),
@@ -313,8 +314,8 @@ class _ChatListItemState extends State<ChatListItem> with SingleTickerProviderSt
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  theme.colorScheme.primary.withOpacity(0.2),
-                  theme.colorScheme.primary.withOpacity(0.1),
+                  theme.colorScheme.primary.withValues(alpha: 0.2),
+                  theme.colorScheme.primary.withValues(alpha: 0.1),
                 ],
               ),
               borderRadius: BorderRadius.circular(6),
@@ -410,7 +411,7 @@ class _ChatListItemState extends State<ChatListItem> with SingleTickerProviderSt
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: unread || widget.room.hasNewMessages
-                            ? theme.colorScheme.onSurface.withOpacity(0.8)
+                            ? theme.colorScheme.onSurface.withValues(alpha: 0.8)
                             : theme.colorScheme.outline,
                         fontSize: 13,
                         decoration: widget.room.lastEvent?.redacted == true ? TextDecoration.lineThrough : null,
@@ -491,7 +492,7 @@ class _ChatListItemState extends State<ChatListItem> with SingleTickerProviderSt
             ? [
                 BoxShadow(
                   color: (widget.room.highlightCount > 0 ? theme.colorScheme.error : theme.colorScheme.primary)
-                      .withOpacity(0.5),
+                      .withValues(alpha: 0.5),
                   blurRadius: 10,
                   spreadRadius: 1,
                   offset: const Offset(0, 3),

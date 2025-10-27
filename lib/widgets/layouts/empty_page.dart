@@ -8,7 +8,6 @@ class EmptyPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final width = min(MediaQuery.sizeOf(context).width, EmptyPage._width) / 1.5;
-    final theme = Theme.of(context);
     return Scaffold(
       // Add invisible appbar to make status bar on Android tablets bright.
       appBar: AppBar(

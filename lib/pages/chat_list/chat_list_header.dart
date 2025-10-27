@@ -36,8 +36,8 @@ class ChatListHeader extends StatelessWidget implements PreferredSizeWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              theme.colorScheme.primaryContainer.withOpacity(0.3),
-              theme.colorScheme.surface.withOpacity(0.1),
+              theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
+              theme.colorScheme.surface.withValues(alpha: 0.1),
             ],
           ),
         ),
@@ -46,7 +46,7 @@ class ChatListHeader extends StatelessWidget implements PreferredSizeWidget {
         builder: (context) => Container(
           margin: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: theme.colorScheme.primaryContainer.withOpacity(0.5),
+            color: theme.colorScheme.primaryContainer.withValues(alpha: 0.5),
             borderRadius: BorderRadius.circular(12),
           ),
           child: IconButton(
@@ -67,14 +67,14 @@ class ChatListHeader extends StatelessWidget implements PreferredSizeWidget {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  theme.colorScheme.secondaryContainer.withOpacity(0.8),
-                  theme.colorScheme.secondaryContainer.withOpacity(0.6),
+                  theme.colorScheme.secondaryContainer.withValues(alpha: 0.8),
+                  theme.colorScheme.secondaryContainer.withValues(alpha: 0.6),
                 ],
               ),
               borderRadius: BorderRadius.circular(32),
               boxShadow: [
                 BoxShadow(
-                  color: theme.colorScheme.primary.withOpacity(0.1),
+                  color: theme.colorScheme.primary.withValues(alpha: 0.1),
                   blurRadius: 8,
                   offset: const Offset(0, 2),
                 ),
@@ -96,7 +96,7 @@ class ChatListHeader extends StatelessWidget implements PreferredSizeWidget {
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide(
-                    color: theme.colorScheme.outline.withOpacity(0.2),
+                    color: theme.colorScheme.outline.withValues(alpha: 0.2),
                     width: 1,
                   ),
                   borderRadius: BorderRadius.circular(32),
@@ -115,7 +115,7 @@ class ChatListHeader extends StatelessWidget implements PreferredSizeWidget {
                 hintStyle: TextStyle(
                   color: status.error != null
                       ? Colors.orange
-                      : theme.colorScheme.onSecondaryContainer.withOpacity(0.7),
+                      : theme.colorScheme.onSecondaryContainer.withValues(alpha: 0.7),
                   fontWeight: FontWeight.w500,
                 ),
                 prefixIcon: hide
@@ -123,7 +123,7 @@ class ChatListHeader extends StatelessWidget implements PreferredSizeWidget {
                         ? Container(
                             margin: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: theme.colorScheme.primary.withOpacity(0.1),
+                              color: theme.colorScheme.primary.withValues(alpha: 0.1),
                               shape: BoxShape.circle,
                             ),
                             child: IconButton(
@@ -173,7 +173,7 @@ class ChatListHeader extends StatelessWidget implements PreferredSizeWidget {
                         : Container(
                             margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                             decoration: BoxDecoration(
-                              color: theme.colorScheme.primary.withOpacity(0.1),
+                              color: theme.colorScheme.primary.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: TextButton.icon(

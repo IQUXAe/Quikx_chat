@@ -71,18 +71,18 @@ class _SettingsCardTileState extends State<SettingsCardTile> {
         margin: _getMargin(),
         decoration: BoxDecoration(
           color: widget.isActive 
-              ? theme.colorScheme.primaryContainer.withOpacity(0.3)
+              ? theme.colorScheme.primaryContainer.withValues(alpha: 0.3)
               : theme.colorScheme.surface,
           borderRadius: _getBorderRadius(),
           border: Border.all(
             color: widget.isActive
-                ? theme.colorScheme.primary.withOpacity(0.3)
-                : theme.colorScheme.outlineVariant.withOpacity(0.5),
+                ? theme.colorScheme.primary.withValues(alpha: 0.3)
+                : theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
             width: 1,
           ),
           boxShadow: [
             BoxShadow(
-              color: theme.colorScheme.shadow.withOpacity(0.05),
+              color: theme.colorScheme.shadow.withValues(alpha: 0.05),
               blurRadius: 4,
               offset: const Offset(0, 2),
             ),
@@ -173,47 +173,44 @@ class _SettingsCardSwitchState extends State<SettingsCardSwitch> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     
-    return TapScaleAnimation(
-      onTap: widget.onChanged == null ? null : () => widget.onChanged!(!widget.value),
-      child: Container(
-        margin: _getMargin(),
-        decoration: BoxDecoration(
-          color: widget.isActive 
-              ? theme.colorScheme.primaryContainer.withOpacity(0.3)
-              : theme.colorScheme.surface,
-          borderRadius: _getBorderRadius(),
-          border: Border.all(
-            color: widget.isActive
-                ? theme.colorScheme.primary.withOpacity(0.3)
-                : theme.colorScheme.outlineVariant.withOpacity(0.5),
-            width: 1,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: theme.colorScheme.shadow.withOpacity(0.05),
-              blurRadius: 4,
-              offset: const Offset(0, 2),
-            ),
-          ],
+    return Container(
+      margin: _getMargin(),
+      decoration: BoxDecoration(
+        color: widget.isActive 
+            ? theme.colorScheme.primaryContainer.withValues(alpha: 0.3)
+            : theme.colorScheme.surface,
+        borderRadius: _getBorderRadius(),
+        border: Border.all(
+          color: widget.isActive
+              ? theme.colorScheme.primary.withValues(alpha: 0.3)
+              : theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
+          width: 1,
         ),
-        child: SwitchListTile.adaptive(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          secondary: widget.leading,
-          title: DefaultTextStyle(
-            style: TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w500,
-              color: theme.colorScheme.onSurface,
-            ),
-            child: widget.title,
+        boxShadow: [
+          BoxShadow(
+            color: theme.colorScheme.shadow.withValues(alpha: 0.05),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
           ),
-          subtitle: widget.subtitle,
-          value: widget.value,
-          onChanged: widget.onChanged,
-          controlAffinity: ListTileControlAffinity.trailing,
-          shape: RoundedRectangleBorder(
-            borderRadius: _getBorderRadius(),
+        ],
+      ),
+      child: SwitchListTile.adaptive(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        secondary: widget.leading,
+        title: DefaultTextStyle(
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+            color: theme.colorScheme.onSurface,
           ),
+          child: widget.title,
+        ),
+        subtitle: widget.subtitle,
+        value: widget.value,
+        onChanged: widget.onChanged,
+        controlAffinity: ListTileControlAffinity.trailing,
+        shape: RoundedRectangleBorder(
+          borderRadius: _getBorderRadius(),
         ),
       ),
     );

@@ -22,7 +22,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+
 
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
@@ -227,9 +227,7 @@ class BackgroundPush {
 
     for (final pusher in pushers) {
       final shouldRemove = oldTokens.contains(pusher.pushkey) ||
-          (token != null && pusher.pushkey != token && pusher.appId.startsWith(AppConfig.pushNotificationsAppId)) ||
-          // Удаляем все pusher'ы с нашим app ID для перенастройки
-          pusher.appId.startsWith(AppConfig.pushNotificationsAppId);
+          (token != null && pusher.pushkey != token && pusher.appId.startsWith(AppConfig.pushNotificationsAppId));
 
       if (shouldRemove) {
         pushersToRemove.add(pusher);
@@ -270,8 +268,7 @@ class BackgroundPush {
           throw Exception('Invalid token length: ${token.length}');
         }
 
-        final pusherFormat = AppSettings.pushNotificationsPusherFormat.getItem(matrix!.store);
-        final actualFormat = pusherFormat ?? 'event_id_only'; // Падбэк к стандартному формату
+        final actualFormat = AppSettings.pushNotificationsPusherFormat.getItem(matrix!.store);
 
         final newPusher = Pusher(
           pushkey: token,
@@ -417,73 +414,9 @@ class BackgroundPush {
     Logs().i('[BackgroundPush] Push setup completed');
   }
 
-  Future<void> _noUpWarning() async {
-    if (matrix == null) {
-      return;
-    }
-    if ((matrix?.store.getBool(SettingKeys.showNoGoogle) ?? false) == true) {
-      return;
-    }
-    await loadLocale();
-    
-    // Проверяем доступность UnifiedPush перед показом предупреждения
-    try {
-      final distributors = await UnifiedPush.getDistributors([]);
-      if (distributors.isNotEmpty) {
-        return; // UnifiedPush доступен, предупреждение не нужно
-      }
-    } catch (e) {
-      // Игнорируем ошибки проверки UnifiedPush
-    }
-    
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      onFcmError?.call(
-        l10n!.noGoogleServicesWarning,
-        link: Uri.parse(
-          AppConfig.enablePushTutorial,
-        ),
-      );
-    });
-  }
 
-  Future<void> _handleNotificationResponse(NotificationResponse response) async {
-    Logs().i('[Push] HANDLER CALLED: actionId=${response.actionId}, payload=${response.payload}, input=${response.input}');
-    
-    final actionId = response.actionId;
-    final payload = response.payload;
-    final input = response.input;
-    
-    try {
-      if (actionId != null) {
-        if (kDebugMode) {
-          Logs().i('[Push] Processing action: $actionId');
-        }
-        
-        if (actionId.startsWith('reply_')) {
-          final roomId = actionId.substring('reply_'.length);
-          if (kDebugMode) {
-            Logs().i('[Push] Reply to room: $roomId, message: $input');
-          }
-          await handleReplyAction(roomId, input);
-          return;
-        } else if (actionId.startsWith('mark_read_')) {
-          final roomId = actionId.substring('mark_read_'.length);
-          if (kDebugMode) {
-            Logs().i('[Push] Mark read room: $roomId');
-          }
-          await handleMarkAsReadAction(roomId);
-          return;
-        }
-      }
-      
-      if (kDebugMode) {
-        Logs().i('[Push] Opening room: $payload');
-      }
-      await goToRoom(response);
-    } catch (e, s) {
-      Logs().e('[Push] Error handling notification response', e, s);
-    }
-  }
+
+
   
   Future<void> handleReplyAction(String roomId, String? message) async {
     Logs().i('[Push] Handling reply action for room $roomId');
@@ -513,7 +446,7 @@ class BackgroundPush {
       }
       
       // Проверяем состояние синхронизации
-      if (client.onSyncStatus.value == SyncStatus.error) {
+      if (client.onSyncStatus.value?.status == SyncStatus.error) {
         Logs().i('[Push] Sync in error state, attempting one-shot sync');
         await client.oneShotSync().timeout(const Duration(seconds: 15));
       }
@@ -535,7 +468,7 @@ class BackgroundPush {
       }
       
       final finalRoom = client.getRoomById(roomId)!;
-      Logs().i('[Push] Sending reply to room "${finalRoom.displayname}"');
+      Logs().i('[Push] Sending reply to room "${finalRoom.getLocalizedDisplayname()}"');
       
       await finalRoom.sendTextEvent(trimmedMessage).timeout(const Duration(seconds: 20));
       Logs().i('[Push] ✓ Reply sent successfully to room $roomId');
@@ -593,7 +526,7 @@ class BackgroundPush {
         return;
       }
       
-      Logs().i('[Push] Marking room "${room.displayname}" as read');
+      Logs().i('[Push] Marking room "${room.getLocalizedDisplayname()}" as read');
       
       // Отмечаем как прочитанное
       if (room.lastEvent != null) {
@@ -855,7 +788,7 @@ class BackgroundPush {
         matrix?.store.getString(SettingKeys.unifiedPushEndpoint);
     await matrix?.store.setBool(SettingKeys.unifiedPushRegistered, false);
     await matrix?.store.remove(SettingKeys.unifiedPushEndpoint);
-    if (oldEndpoint?.isNotEmpty ?? false) {
+    if (oldEndpoint != null && oldEndpoint.isNotEmpty) {
       // remove the old pusher
       await setupPusher(
         oldTokens: {oldEndpoint},
@@ -908,7 +841,7 @@ class BackgroundPush {
           }
           
           // Легкое переподключение только при ошибках
-          if (client.onSyncStatus.value == SyncStatus.error && attempts > 0) {
+          if (client.onSyncStatus.value?.status == SyncStatus.error && attempts > 0) {
             try {
               await client.checkHomeserver(client.homeserver!).timeout(const Duration(seconds: 8));
             } catch (_) {}
@@ -917,7 +850,7 @@ class BackgroundPush {
           // Оптимизированная синхронизация
           await client.oneShotSync().timeout(const Duration(seconds: 20));
           
-          if (client.onSyncStatus.value == SyncStatus.finished) {
+          if (client.onSyncStatus.value?.status == SyncStatus.finished) {
             return;
           }
         }
@@ -932,7 +865,7 @@ class BackgroundPush {
     }
     
     // Показываем fallback только если это критическая ошибка
-    if (client.onSyncStatus.value == SyncStatus.error) {
+    if (client.onSyncStatus.value?.status == SyncStatus.error) {
       await _showFallbackNotification('Sync failed');
     }
   }

@@ -20,6 +20,8 @@ class SettingsSecurity extends StatefulWidget {
 }
 
 class SettingsSecurityController extends State<SettingsSecurity> {
+  final settingsNotifier = ValueNotifier<int>(0);
+
   void setAppLockAction() async {
     if (AppLock.of(context).isActive) {
       AppLock.of(context).showLockScreen();
@@ -116,7 +118,7 @@ class SettingsSecurityController extends State<SettingsSecurity> {
       shareKeysWith.name,
     );
     Matrix.of(context).client.shareKeysWith = shareKeysWith;
-    setState(() {});
+    settingsNotifier.value++;
   }
 
   @override

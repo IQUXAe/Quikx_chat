@@ -46,17 +46,20 @@ class ChatAccessSettingsPageView extends StatelessWidget {
                   ),
                 ),
                 for (final historyVisibility in HistoryVisibility.values)
-                  RadioListTile<HistoryVisibility>.adaptive(
+                  ListTile(
                     title: Text(
                       historyVisibility
                           .getLocalizedString(MatrixLocals(L10n.of(context))),
                     ),
-                    value: historyVisibility,
-                    groupValue: room.historyVisibility,
-                    onChanged: controller.historyVisibilityLoading ||
+                    leading: Icon(
+                      room.historyVisibility == historyVisibility
+                          ? Icons.radio_button_checked
+                          : Icons.radio_button_unchecked,
+                    ),
+                    onTap: controller.historyVisibilityLoading ||
                             !room.canChangeHistoryVisibility
                         ? null
-                        : controller.setHistoryVisibility,
+                        : () => controller.setHistoryVisibility(historyVisibility),
                   ),
                 Divider(color: theme.dividerColor),
                 ListTile(
@@ -70,16 +73,19 @@ class ChatAccessSettingsPageView extends StatelessWidget {
                 ),
                 for (final joinRule in controller.availableJoinRules)
                   if (joinRule != JoinRules.private)
-                    RadioListTile<JoinRules>.adaptive(
+                    ListTile(
                       title: Text(
                         joinRule.localizedString(L10n.of(context)),
                       ),
-                      value: joinRule,
-                      groupValue: room.joinRules,
-                      onChanged: controller.joinRulesLoading ||
+                      leading: Icon(
+                        room.joinRules == joinRule
+                            ? Icons.radio_button_checked
+                            : Icons.radio_button_unchecked,
+                      ),
+                      onTap: controller.joinRulesLoading ||
                               !room.canChangeJoinRules
                           ? null
-                          : controller.setJoinRule,
+                          : () => controller.setJoinRule(joinRule),
                     ),
                 Divider(color: theme.dividerColor),
                 if ({JoinRules.public, JoinRules.knock}
@@ -94,18 +100,21 @@ class ChatAccessSettingsPageView extends StatelessWidget {
                     ),
                   ),
                   for (final guestAccess in GuestAccess.values)
-                    RadioListTile<GuestAccess>.adaptive(
+                    ListTile(
                       title: Text(
                         guestAccess.getLocalizedString(
                           MatrixLocals(L10n.of(context)),
                         ),
                       ),
-                      value: guestAccess,
-                      groupValue: room.guestAccess,
-                      onChanged: controller.guestAccessLoading ||
+                      leading: Icon(
+                        room.guestAccess == guestAccess
+                            ? Icons.radio_button_checked
+                            : Icons.radio_button_unchecked,
+                      ),
+                      onTap: controller.guestAccessLoading ||
                               !room.canChangeGuestAccess
                           ? null
-                          : controller.setGuestAccess,
+                          : () => controller.setGuestAccess(guestAccess),
                     ),
                   Divider(color: theme.dividerColor),
                   ListTile(

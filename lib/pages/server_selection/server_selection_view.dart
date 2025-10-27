@@ -51,14 +51,10 @@ class ServerSelectionView extends StatelessWidget {
                           margin: const EdgeInsets.only(bottom: 8),
                           child: ListTile(
                             title: Text(server.name),
-                            trailing: Radio<String>(
-                              value: server.id,
-                              groupValue: controller.selectedServer,
-                              onChanged: (value) {
-                                if (value != null) {
-                                  controller.selectServer(value);
-                                }
-                              },
+                            leading: Icon(
+                              controller.selectedServer == server.id
+                                  ? Icons.radio_button_checked
+                                  : Icons.radio_button_unchecked,
                             ),
                             onTap: () => controller.selectServer(server.id),
                           ),
@@ -92,7 +88,7 @@ class ServerSelectionView extends StatelessWidget {
             Text(
               'Список серверов взят с servers.joinmatrix.org',
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.colorScheme.onSurfaceVariant.withOpacity(0.6),
+                color: theme.colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
                 fontSize: 10,
               ),
               textAlign: TextAlign.center,

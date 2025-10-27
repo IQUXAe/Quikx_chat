@@ -115,7 +115,10 @@ Future<void> _initializeInBackground(List<Client> clients) async {
     if (firstClient.roomsLoading != null) futures.add(firstClient.roomsLoading!);
     if (firstClient.accountDataLoading != null) futures.add(firstClient.accountDataLoading!);
     if (futures.isNotEmpty) {
-      Future.wait(futures).catchError((e) => Logs().w('Client preload failed', e));
+      Future.wait(futures).catchError((e) {
+        Logs().w('Client preload failed', e);
+        return <dynamic>[];
+      });
     }
   }
   

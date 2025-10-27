@@ -9,7 +9,6 @@ import 'package:quikxchat/l10n/l10n.dart';
 import 'package:quikxchat/utils/platform_infos.dart';
 import 'package:quikxchat/widgets/layouts/max_width_body.dart';
 import 'package:quikxchat/widgets/matrix.dart';
-import 'package:quikxchat/widgets/settings_switch_list_tile.dart';
 import 'package:quikxchat/widgets/settings_card_tile.dart';
 
 import '../../utils/translation_providers.dart';
@@ -69,130 +68,176 @@ class _SettingsChatViewState extends State<SettingsChatView> {
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
-                    color: theme.colorScheme.primary.withOpacity(0.7),
+                    color: theme.colorScheme.primary.withValues(alpha: 0.7),
                     letterSpacing: 1.2,
                   ),
                 ),
               ),
-              SettingsCardSwitch(
-                leading: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.blue.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Icon(Icons.format_bold_outlined, color: Colors.blue),
-                ),
-                title: Text(L10n.of(context).formattedMessages),
-                subtitle: Text(L10n.of(context).formattedMessagesDescription),
-                value: AppConfig.renderHtml,
-                onChanged: (b) => AppConfig.renderHtml = b,
-                position: CardPosition.first,
-              ),
-              SettingsCardSwitch(
-                leading: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.red.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Icon(Icons.visibility_off_outlined, color: Colors.red),
-                ),
-                title: Text(L10n.of(context).hideRedactedMessages),
-                subtitle: Text(L10n.of(context).hideRedactedMessagesBody),
-                value: AppConfig.hideRedactedEvents,
-                onChanged: (b) => AppConfig.hideRedactedEvents = b,
-                position: CardPosition.middle,
-              ),
-              SettingsCardSwitch(
-                leading: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.orange.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Icon(Icons.block_outlined, color: Colors.orange),
-                ),
-                title: Text(L10n.of(context).hideInvalidOrUnknownMessageFormats),
-                value: AppConfig.hideUnknownEvents,
-                onChanged: (b) => AppConfig.hideUnknownEvents = b,
-                position: PlatformInfos.isMobile ? CardPosition.middle : CardPosition.middle,
-              ),
-              if (PlatformInfos.isMobile)
-                SettingsCardSwitch(
+              ValueListenableBuilder(
+                valueListenable: widget.controller.settingsNotifier,
+                builder: (context, _, __) => SettingsCardSwitch(
                   leading: Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Colors.purple.withOpacity(0.1),
+                      color: Colors.blue.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Icon(Icons.image_outlined, color: Colors.purple),
+                    child: const Icon(Icons.format_bold_outlined, color: Colors.blue),
                   ),
-                  title: Text(L10n.of(context).autoplayImages),
-                  value: AppConfig.autoplayImages,
-                  onChanged: (b) => AppConfig.autoplayImages = b,
+                  title: Text(L10n.of(context).formattedMessages),
+                  subtitle: Text(L10n.of(context).formattedMessagesDescription),
+                  value: AppConfig.renderHtml,
+                  onChanged: (b) {
+                    AppConfig.renderHtml = b;
+                    widget.controller.settingsNotifier.value++;
+                  },
+                  position: CardPosition.first,
+                ),
+              ),
+              ValueListenableBuilder(
+                valueListenable: widget.controller.settingsNotifier,
+                builder: (context, _, __) => SettingsCardSwitch(
+                  leading: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.red.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(Icons.visibility_off_outlined, color: Colors.red),
+                  ),
+                  title: Text(L10n.of(context).hideRedactedMessages),
+                  subtitle: Text(L10n.of(context).hideRedactedMessagesBody),
+                  value: AppConfig.hideRedactedEvents,
+                  onChanged: (b) {
+                    AppConfig.hideRedactedEvents = b;
+                    widget.controller.settingsNotifier.value++;
+                  },
                   position: CardPosition.middle,
                 ),
-              SettingsCardSwitch(
-                leading: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.green.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Icon(Icons.keyboard_return_outlined, color: Colors.green),
-                ),
-                title: Text(L10n.of(context).sendOnEnter),
-                value: AppConfig.sendOnEnter ?? !PlatformInfos.isMobile,
-                onChanged: (b) => AppConfig.sendOnEnter = b,
-                position: CardPosition.middle,
               ),
-              SettingsCardSwitch(
-                leading: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.teal.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
+              ValueListenableBuilder(
+                valueListenable: widget.controller.settingsNotifier,
+                builder: (context, _, __) => SettingsCardSwitch(
+                  leading: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.orange.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(Icons.block_outlined, color: Colors.orange),
                   ),
-                  child: const Icon(Icons.swipe_outlined, color: Colors.teal),
+                  title: Text(L10n.of(context).hideInvalidOrUnknownMessageFormats),
+                  value: AppConfig.hideUnknownEvents,
+                  onChanged: (b) {
+                    AppConfig.hideUnknownEvents = b;
+                    widget.controller.settingsNotifier.value++;
+                  },
+                  position: PlatformInfos.isMobile ? CardPosition.middle : CardPosition.middle,
                 ),
-                title: Text(L10n.of(context).swipeRightToLeftToReply),
-                value: AppConfig.swipeRightToLeftToReply,
-                onChanged: (b) => AppConfig.swipeRightToLeftToReply = b,
-                position: CardPosition.middle,
               ),
-              SettingsCardSwitch(
-                leading: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.indigo.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
+              if (PlatformInfos.isMobile)
+                ValueListenableBuilder(
+                  valueListenable: widget.controller.settingsNotifier,
+                  builder: (context, _, __) => SettingsCardSwitch(
+                    leading: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Colors.purple.withValues(alpha: 0.1),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(Icons.image_outlined, color: Colors.purple),
+                    ),
+                    title: Text(L10n.of(context).autoplayImages),
+                    value: AppConfig.autoplayImages,
+                    onChanged: (b) {
+                      AppConfig.autoplayImages = b;
+                      widget.controller.settingsNotifier.value++;
+                    },
+                    position: CardPosition.middle,
                   ),
-                  child: const Icon(Icons.link_outlined, color: Colors.indigo),
                 ),
-                title: Text(L10n.of(context).linkPreviews),
-                subtitle: Text(L10n.of(context).linkPreviewsDescription),
-                value: AppSettings.showLinkPreviews.getItem(Matrix.of(context).store),
-                onChanged: (b) async {
-                  AppConfig.showLinkPreviews = b;
-                  await AppSettings.showLinkPreviews.setItem(Matrix.of(context).store, b);
-                },
-                position: CardPosition.middle,
+              ValueListenableBuilder(
+                valueListenable: widget.controller.settingsNotifier,
+                builder: (context, _, __) => SettingsCardSwitch(
+                  leading: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.green.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(Icons.keyboard_return_outlined, color: Colors.green),
+                  ),
+                  title: Text(L10n.of(context).sendOnEnter),
+                  value: AppConfig.sendOnEnter ?? !PlatformInfos.isMobile,
+                  onChanged: (b) {
+                    AppConfig.sendOnEnter = b;
+                    widget.controller.settingsNotifier.value++;
+                  },
+                  position: CardPosition.middle,
+                ),
               ),
-              SettingsCardSwitch(
-                leading: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: BoxDecoration(
-                    color: Colors.cyan.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
+              ValueListenableBuilder(
+                valueListenable: widget.controller.settingsNotifier,
+                builder: (context, _, __) => SettingsCardSwitch(
+                  leading: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.teal.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(Icons.swipe_outlined, color: Colors.teal),
                   ),
-                  child: const Icon(Icons.access_time_outlined, color: Colors.cyan),
+                  title: Text(L10n.of(context).swipeRightToLeftToReply),
+                  value: AppConfig.swipeRightToLeftToReply,
+                  onChanged: (b) {
+                    AppConfig.swipeRightToLeftToReply = b;
+                    widget.controller.settingsNotifier.value++;
+                  },
+                  position: CardPosition.middle,
                 ),
-                title: Text(L10n.of(context).use24HourTimeFormat),
-                subtitle: Text(L10n.of(context).use24HourTimeFormatDescription),
-                value: true,
-                onChanged: (b) => Matrix.of(context).store.setBool('use24HourFormat', b),
-                position: CardPosition.last,
+              ),
+              ValueListenableBuilder(
+                valueListenable: widget.controller.settingsNotifier,
+                builder: (context, _, __) => SettingsCardSwitch(
+                  leading: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.indigo.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(Icons.link_outlined, color: Colors.indigo),
+                  ),
+                  title: Text(L10n.of(context).linkPreviews),
+                  subtitle: Text(L10n.of(context).linkPreviewsDescription),
+                  value: AppSettings.showLinkPreviews.getItem(Matrix.of(context).store),
+                  onChanged: (b) async {
+                    AppConfig.showLinkPreviews = b;
+                    await AppSettings.showLinkPreviews.setItem(Matrix.of(context).store, b);
+                    widget.controller.settingsNotifier.value++;
+                  },
+                  position: CardPosition.middle,
+                ),
+              ),
+              ValueListenableBuilder(
+                valueListenable: widget.controller.settingsNotifier,
+                builder: (context, _, __) => SettingsCardSwitch(
+                  leading: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.cyan.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(Icons.access_time_outlined, color: Colors.cyan),
+                  ),
+                  title: Text(L10n.of(context).use24HourTimeFormat),
+                  subtitle: Text(L10n.of(context).use24HourTimeFormatDescription),
+                  value: true,
+                  onChanged: (b) {
+                    Matrix.of(context).store.setBool('use24HourFormat', b);
+                    widget.controller.settingsNotifier.value++;
+                  },
+                  position: CardPosition.last,
+                ),
               ),
 
               
@@ -208,7 +253,7 @@ class _SettingsChatViewState extends State<SettingsChatView> {
                     leading: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: isEnabled ? Colors.blue.withOpacity(0.1) : Colors.grey.withOpacity(0.1),
+                        color: isEnabled ? Colors.blue.withValues(alpha: 0.1) : Colors.grey.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Icon(
@@ -233,7 +278,7 @@ class _SettingsChatViewState extends State<SettingsChatView> {
                 leading: Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Colors.purple.withOpacity(0.1),
+                    color: Colors.purple.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: const Icon(Icons.emoji_emotions_outlined,

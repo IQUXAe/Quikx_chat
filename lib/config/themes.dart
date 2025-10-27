@@ -67,7 +67,7 @@ abstract class QuikxChatThemes {
           borderRadius: BorderRadius.circular(24),
         ),
         color: brightness == Brightness.dark
-            ? colorScheme.surfaceContainerHighest.withOpacity(0.5)
+            ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.5)
             : colorScheme.surfaceContainerLow,
       ),
       popupMenuTheme: PopupMenuThemeData(
@@ -85,21 +85,21 @@ abstract class QuikxChatThemes {
         ),
       ),
       textSelectionTheme: TextSelectionThemeData(
-        selectionColor: colorScheme.primary.withOpacity(0.3),
+        selectionColor: colorScheme.primary.withValues(alpha: 0.3),
         selectionHandleColor: colorScheme.primary,
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: brightness == Brightness.dark
-            ? colorScheme.surfaceContainerHighest.withOpacity(0.3)
+            ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.3)
             : colorScheme.surfaceContainerLow,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide(color: colorScheme.outline.withOpacity(0.5)),
+          borderSide: BorderSide(color: colorScheme.outline.withValues(alpha: 0.5)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide(color: colorScheme.outline.withOpacity(0.5)),
+          borderSide: BorderSide(color: colorScheme.outline.withValues(alpha: 0.5)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
@@ -109,7 +109,7 @@ abstract class QuikxChatThemes {
       ),
       chipTheme: ChipThemeData(
         showCheckmark: false,
-        backgroundColor: colorScheme.primaryContainer.withOpacity(0.5),
+        backgroundColor: colorScheme.primaryContainer.withValues(alpha: 0.5),
         side: BorderSide.none,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16),
@@ -157,7 +157,7 @@ abstract class QuikxChatThemes {
           backgroundColor: colorScheme.primary,
           foregroundColor: colorScheme.onPrimary,
           elevation: 2,
-          shadowColor: colorScheme.primary.withOpacity(0.4),
+          shadowColor: colorScheme.primary.withValues(alpha: 0.4),
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
           textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
           shape: RoundedRectangleBorder(
@@ -191,7 +191,7 @@ extension BubbleColorTheme on ThemeData {
   LinearGradient get bubbleGradient => LinearGradient(
         colors: [
           colorScheme.primary,
-          colorScheme.primary.withOpacity(0.8),
+          colorScheme.primary.withValues(alpha: 0.8),
         ],
         begin: Alignment.topLeft,
         end: Alignment.bottomRight,

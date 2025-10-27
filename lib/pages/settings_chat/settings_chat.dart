@@ -10,6 +10,8 @@ class SettingsChat extends StatefulWidget {
 }
 
 class SettingsChatController extends State<SettingsChat> {
+  final settingsNotifier = ValueNotifier<int>(0);
+
   @override
   Widget build(BuildContext context) => SettingsChatView(this);
 }

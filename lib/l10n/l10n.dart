@@ -5287,6 +5287,492 @@ abstract class L10n {
   /// In en, this message translates to:
   /// **'Show previews for links in messages'**
   String get linkPreviewsDescription;
+
+  /// No description provided for @translationLimitExceeded.
+  ///
+  /// In en, this message translates to:
+  /// **'Translation limit exceeded. Enable VPN or wait for quota reset.'**
+  String get translationLimitExceeded;
+
+  /// No description provided for @openSystemSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Open system settings'**
+  String get openSystemSettings;
+
+  /// No description provided for @openDocumentation.
+  ///
+  /// In en, this message translates to:
+  /// **'Open documentation'**
+  String get openDocumentation;
+
+  /// No description provided for @createIssue.
+  ///
+  /// In en, this message translates to:
+  /// **'Create issue'**
+  String get createIssue;
+
+  /// No description provided for @performance.
+  ///
+  /// In en, this message translates to:
+  /// **'Performance'**
+  String get performance;
+
+  /// No description provided for @clearImageCache.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear image cache'**
+  String get clearImageCache;
+
+  /// No description provided for @clearImageCacheDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Free up memory by deleting cached images'**
+  String get clearImageCacheDescription;
+
+  /// No description provided for @clearAllCaches.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear all caches'**
+  String get clearAllCaches;
+
+  /// No description provided for @clearAllCachesDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete all cached data'**
+  String get clearAllCachesDescription;
+
+  /// No description provided for @optimizeMemory.
+  ///
+  /// In en, this message translates to:
+  /// **'Optimize memory'**
+  String get optimizeMemory;
+
+  /// No description provided for @optimizeMemoryDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Force memory usage optimization'**
+  String get optimizeMemoryDescription;
+
+  /// No description provided for @imageCacheCleared.
+  ///
+  /// In en, this message translates to:
+  /// **'Image cache cleared'**
+  String get imageCacheCleared;
+
+  /// No description provided for @allCachesCleared.
+  ///
+  /// In en, this message translates to:
+  /// **'All caches cleared'**
+  String get allCachesCleared;
+
+  /// No description provided for @memoryOptimized.
+  ///
+  /// In en, this message translates to:
+  /// **'Memory optimized'**
+  String get memoryOptimized;
+
+  /// No description provided for @failedToSendAllMessages.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to send all messages. Try again later.'**
+  String get failedToSendAllMessages;
+
+  /// No description provided for @callsBeta.
+  ///
+  /// In en, this message translates to:
+  /// **'🚧 Calls (BETA)'**
+  String get callsBeta;
+
+  /// No description provided for @customStickersEmojis.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom Stickers & Emojis'**
+  String get customStickersEmojis;
+
+  /// No description provided for @translationSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'Translation Settings (Beta)'**
+  String get translationSettings;
+
+  /// No description provided for @federationBaseUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Federation Base URL'**
+  String get federationBaseUrl;
+
+  /// No description provided for @baseUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Base URL'**
+  String get baseUrl;
+
+  /// No description provided for @identityServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Identity Server:'**
+  String get identityServer;
+
+  /// No description provided for @testNotificationSent.
+  ///
+  /// In en, this message translates to:
+  /// **'Test notification sent!'**
+  String get testNotificationSent;
+
+  /// No description provided for @checkLogsForPusher.
+  ///
+  /// In en, this message translates to:
+  /// **'Check logs for pusher details'**
+  String get checkLogsForPusher;
+
+  /// No description provided for @unifiedPushSetupStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'UnifiedPush setup started! Wait for new endpoint.'**
+  String get unifiedPushSetupStarted;
+
+  /// No description provided for @checkNotificationPermissions.
+  ///
+  /// In en, this message translates to:
+  /// **'1. Check notification permissions'**
+  String get checkNotificationPermissions;
+
+  /// No description provided for @restartApp.
+  ///
+  /// In en, this message translates to:
+  /// **'3. Restart the app'**
+  String get restartApp;
+
+  /// No description provided for @disableBatteryOptimization.
+  ///
+  /// In en, this message translates to:
+  /// **'4. Disable battery optimization for the app'**
+  String get disableBatteryOptimization;
+
+  /// No description provided for @testPushNotification.
+  ///
+  /// In en, this message translates to:
+  /// **'Test Push Notification'**
+  String get testPushNotification;
+
+  /// No description provided for @testPushNotificationSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Send a test notification to check if push notifications work'**
+  String get testPushNotificationSubtitle;
+
+  /// No description provided for @debugPushers.
+  ///
+  /// In en, this message translates to:
+  /// **'Debug Pushers'**
+  String get debugPushers;
+
+  /// No description provided for @debugPushersSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Show pusher details in logs'**
+  String get debugPushersSubtitle;
+
+  /// No description provided for @setupUnifiedPush.
+  ///
+  /// In en, this message translates to:
+  /// **'Setup UnifiedPush'**
+  String get setupUnifiedPush;
+
+  /// No description provided for @setupUnifiedPushSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reconfigure UnifiedPush and pusher'**
+  String get setupUnifiedPushSubtitle;
+
+  /// No description provided for @voipPermissionsRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'VoIP permissions required'**
+  String get voipPermissionsRequired;
+
+  /// No description provided for @voipSettings.
+  ///
+  /// In en, this message translates to:
+  /// **'VoIP Settings'**
+  String get voipSettings;
+
+  /// No description provided for @enableVoipCalls.
+  ///
+  /// In en, this message translates to:
+  /// **'🚧 Enable VoIP calls (BETA)'**
+  String get enableVoipCalls;
+
+  /// No description provided for @voipCallsDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Voice and video calls via Matrix. Feature in beta testing'**
+  String get voipCallsDescription;
+
+  /// No description provided for @permissions.
+  ///
+  /// In en, this message translates to:
+  /// **'Permissions'**
+  String get permissions;
+
+  /// No description provided for @permissionsRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Required permissions for calls'**
+  String get permissionsRequired;
+
+  /// No description provided for @microphone.
+  ///
+  /// In en, this message translates to:
+  /// **'Microphone'**
+  String get microphone;
+
+  /// No description provided for @allow.
+  ///
+  /// In en, this message translates to:
+  /// **'Allow'**
+  String get allow;
+
+  /// No description provided for @camera.
+  ///
+  /// In en, this message translates to:
+  /// **'Camera'**
+  String get camera;
+
+  /// No description provided for @phone.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get phone;
+
+  /// No description provided for @instructions.
+  ///
+  /// In en, this message translates to:
+  /// **'Instructions'**
+  String get instructions;
+
+  /// No description provided for @tapPhoneIconToCall.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the phone icon in chat to make a call'**
+  String get tapPhoneIconToCall;
+
+  /// No description provided for @serverSelection.
+  ///
+  /// In en, this message translates to:
+  /// **'Server Selection'**
+  String get serverSelection;
+
+  /// No description provided for @continueWithServer.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get continueWithServer;
+
+  /// No description provided for @universalRegistration.
+  ///
+  /// In en, this message translates to:
+  /// **'Universal Registration'**
+  String get universalRegistration;
+
+  /// No description provided for @translationProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'Translation Provider'**
+  String get translationProvider;
+
+  /// No description provided for @selectTranslationProvider.
+  ///
+  /// In en, this message translates to:
+  /// **'Select Translation Provider'**
+  String get selectTranslationProvider;
+
+  /// No description provided for @clearTranslationCache.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Translation Cache'**
+  String get clearTranslationCache;
+
+  /// No description provided for @removeAllCachedTranslations.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove all cached translations'**
+  String get removeAllCachedTranslations;
+
+  /// No description provided for @clearCache.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Cache'**
+  String get clearCache;
+
+  /// No description provided for @clearCacheConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to clear all cached translations?'**
+  String get clearCacheConfirm;
+
+  /// No description provided for @clear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get clear;
+
+  /// No description provided for @translationCacheCleared.
+  ///
+  /// In en, this message translates to:
+  /// **'Translation cache cleared'**
+  String get translationCacheCleared;
+
+  /// No description provided for @translationDisabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Translation Disabled'**
+  String get translationDisabled;
+
+  /// No description provided for @selectProviderToEnable.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a provider to enable translation'**
+  String get selectProviderToEnable;
+
+  /// No description provided for @myMemoryConfiguration.
+  ///
+  /// In en, this message translates to:
+  /// **'MyMemory Configuration'**
+  String get myMemoryConfiguration;
+
+  /// No description provided for @freeServiceReady.
+  ///
+  /// In en, this message translates to:
+  /// **'Free service ready to use'**
+  String get freeServiceReady;
+
+  /// No description provided for @googleTranslateConfiguration.
+  ///
+  /// In en, this message translates to:
+  /// **'Google Translate Configuration'**
+  String get googleTranslateConfiguration;
+
+  /// No description provided for @apiKey.
+  ///
+  /// In en, this message translates to:
+  /// **'API Key'**
+  String get apiKey;
+
+  /// No description provided for @requiredForGoogleTranslate.
+  ///
+  /// In en, this message translates to:
+  /// **'Required for Google Translate'**
+  String get requiredForGoogleTranslate;
+
+  /// No description provided for @libreTranslateConfiguration.
+  ///
+  /// In en, this message translates to:
+  /// **'LibreTranslate Configuration'**
+  String get libreTranslateConfiguration;
+
+  /// No description provided for @endpointUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Endpoint URL'**
+  String get endpointUrl;
+
+  /// No description provided for @serverUrl.
+  ///
+  /// In en, this message translates to:
+  /// **'Server URL'**
+  String get serverUrl;
+
+  /// No description provided for @apiKeyOptional.
+  ///
+  /// In en, this message translates to:
+  /// **'API Key (Optional)'**
+  String get apiKeyOptional;
+
+  /// No description provided for @optional.
+  ///
+  /// In en, this message translates to:
+  /// **'Optional'**
+  String get optional;
+
+  /// No description provided for @googleTranslateApiKey.
+  ///
+  /// In en, this message translates to:
+  /// **'Google Translate API Key'**
+  String get googleTranslateApiKey;
+
+  /// No description provided for @save.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get save;
+
+  /// No description provided for @libreTranslateEndpoint.
+  ///
+  /// In en, this message translates to:
+  /// **'LibreTranslate Endpoint'**
+  String get libreTranslateEndpoint;
+
+  /// No description provided for @libreTranslateApiKey.
+  ///
+  /// In en, this message translates to:
+  /// **'LibreTranslate API Key'**
+  String get libreTranslateApiKey;
+
+  /// No description provided for @selectUnifiedPushDistributor.
+  ///
+  /// In en, this message translates to:
+  /// **'Select UnifiedPush Distributor'**
+  String get selectUnifiedPushDistributor;
+
+  /// No description provided for @diagnosticInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Diagnostic Info'**
+  String get diagnosticInfo;
+
+  /// No description provided for @showDiagnosticInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Show Diagnostic Info'**
+  String get showDiagnosticInfo;
+
+  /// No description provided for @advancedConfigurations.
+  ///
+  /// In en, this message translates to:
+  /// **'Advanced configurations'**
+  String get advancedConfigurations;
+
+  /// No description provided for @callFailedBeta.
+  ///
+  /// In en, this message translates to:
+  /// **'Call failed (BETA)'**
+  String get callFailedBeta;
+
+  /// No description provided for @systemBusySending.
+  ///
+  /// In en, this message translates to:
+  /// **'System busy sending data. Wait 5-10 seconds and try again.'**
+  String get systemBusySending;
+
+  /// No description provided for @connectionTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection timeout. Check internet.'**
+  String get connectionTimeout;
+
+  /// No description provided for @failedToSendInvite.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to send invite. Try restarting the app.'**
+  String get failedToSendInvite;
+
+  /// No description provided for @callsFeatureBeta.
+  ///
+  /// In en, this message translates to:
+  /// **'Calls feature is in beta testing. Possible errors and unstable operation. Continue?'**
+  String get callsFeatureBeta;
 }
 
 class _L10nDelegate extends LocalizationsDelegate<L10n> {

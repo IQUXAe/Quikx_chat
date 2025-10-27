@@ -109,16 +109,14 @@ class _LazyLoadingImageState extends State<LazyLoadingImage> {
 
 // Простая реализация VisibilityDetector для демонстрации
 class VisibilityDetector extends StatefulWidget {
-  @override
-  final Key key;
   final Widget child;
   final Function(VisibilityInfo) onVisibilityChanged;
 
   const VisibilityDetector({
-    required this.key,
+    required super.key,
     required this.child,
     required this.onVisibilityChanged,
-  }) : super(key: key);
+  });
 
   @override
   State<VisibilityDetector> createState() => _VisibilityDetectorState();

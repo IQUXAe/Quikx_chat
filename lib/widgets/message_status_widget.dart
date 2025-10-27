@@ -96,7 +96,9 @@ class _MessageStatusWidgetState extends State<MessageStatusWidget>
     ),);
     
     // Подписываемся на обновления комнаты для мгновенного обновления статуса
-    _roomUpdateSubscription = widget.event.room.onUpdate.stream.listen((_) {
+    _roomUpdateSubscription = widget.event.room.client.onSync.stream
+        .where((syncUpdate) => syncUpdate.rooms?.join?.containsKey(widget.event.room.id) ?? false)
+        .listen((_) {
       if (mounted) {
         setState(() {});
       }
@@ -315,7 +317,9 @@ class _SimpleMessageStatusWidgetState extends State<SimpleMessageStatusWidget> {
   void initState() {
     super.initState();
     // Подписываемся на обновления комнаты для мгновенного обновления статуса
-    _roomUpdateSubscription = widget.event.room.onUpdate.stream.listen((_) {
+    _roomUpdateSubscription = widget.event.room.client.onSync.stream
+        .where((syncUpdate) => syncUpdate.rooms?.join?.containsKey(widget.event.room.id) ?? false)
+        .listen((_) {
       if (mounted) {
         setState(() {});
       }

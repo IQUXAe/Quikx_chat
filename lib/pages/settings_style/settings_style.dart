@@ -18,6 +18,8 @@ class SettingsStyle extends StatefulWidget {
 }
 
 class SettingsStyleController extends State<SettingsStyle> {
+  final settingsNotifier = ValueNotifier<int>(0);
+
   void setChatColor(Color? color) async {
     AppConfig.colorSchemeSeed = color;
     ThemeController.of(context).setPrimaryColor(color);

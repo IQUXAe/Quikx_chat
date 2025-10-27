@@ -45,7 +45,7 @@ class SpaceView extends StatefulWidget {
 }
 
 class _SpaceViewState extends State<SpaceView> {
-  final List<SpaceRoomsChunk> _discoveredChildren = [];
+  final List<dynamic> _discoveredChildren = [];
   final TextEditingController _filterController = TextEditingController();
   String? _nextBatch;
   bool _noMoreRooms = false;
@@ -95,7 +95,7 @@ class _SpaceViewState extends State<SpaceView> {
     }
   }
 
-  void _joinChildRoom(SpaceRoomsChunk item) async {
+  void _joinChildRoom(dynamic item) async {
     final client = Matrix.of(context).client;
     final space = client.getRoomById(widget.spaceId);
 

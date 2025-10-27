@@ -110,7 +110,7 @@ class _OptimizedMessageBubbleState extends State<OptimizedMessageBubble>
                   boxShadow: widget.animateIn && _controller.isAnimating
                       ? [
                           BoxShadow(
-                            color: Colors.black.withOpacity(0.1 * _fadeAnimation.value),
+                            color: Colors.black.withValues(alpha: 0.1 * _fadeAnimation.value),
                             blurRadius: 8.0 * _scaleAnimation.value,
                             offset: Offset(0, 4 * _scaleAnimation.value),
                           ),
