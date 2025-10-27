@@ -44,6 +44,9 @@ chmod +x QuikxChat-x86_64.AppImage
 ### Web
 Not deployed yet
 
+### Windows
+Not build yet
+
 ## Building from Source
 
 ### Requirements
