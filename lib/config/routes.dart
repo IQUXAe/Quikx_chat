@@ -339,6 +339,14 @@ abstract class AppRoutes {
                   ),
                   redirect: loggedOutRedirect,
                 ),
+                GoRoute(
+                  path: 'addaccount',
+                  pageBuilder: (context, state) => defaultPageBuilder(
+                    context,
+                    state,
+                    const HomeserverPicker(addMultiAccount: true),
+                  ),
+                ),
               ],
               redirect: loggedOutRedirect,
             ),
