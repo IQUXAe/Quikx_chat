@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:quikxchat/utils/memory_manager.dart';
+import 'package:quikxchat/l10n/l10n.dart';
 
 
 class PerformanceSettingsPage extends StatefulWidget {

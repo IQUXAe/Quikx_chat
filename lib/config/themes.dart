@@ -117,7 +117,7 @@ abstract class QuikxChatThemes {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       ),
       appBarTheme: kIsWeb
-          ? AppBarTheme(
+          ? const AppBarTheme(
               toolbarHeight: 64,
               elevation: 0,
               scrolledUnderElevation: 0,
