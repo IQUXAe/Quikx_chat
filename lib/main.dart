@@ -37,7 +37,7 @@ void main() async {
   final initFutures = <Future>[
     if (!PlatformInfos.isWeb) FileLogger.init(),
     SharedPreferences.getInstance(),
-    if (!PlatformInfos.isWeb) vod.init(wasmPath: 'assets/assets/vodozemac/'),
+    vod.init(wasmPath: 'assets/vodozemac/'),
   ];
   
   // WebRTC инициализируем асинхронно, не блокируя старт

@@ -1,5 +1,6 @@
 import 'dart:ui' as ui;
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:badges/badges.dart';
@@ -313,7 +314,7 @@ class ChatView extends StatelessWidget {
                                 onPressed: controller.goToNewRoomAction,
                               ),
                             )
-                          else if (controller.room.canSendDefaultMessages &&
+                          else if ((kIsWeb || controller.room.canSendDefaultMessages) &&
                               controller.room.membership == Membership.join)
                             Container(
                               margin: EdgeInsets.all(bottomSheetPadding),

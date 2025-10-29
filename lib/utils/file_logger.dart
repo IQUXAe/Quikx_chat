@@ -1,11 +1,14 @@
 import 'dart:io';
-import 'package:path_provider/path_provider.dart';
+
+import 'package:flutter/foundation.dart';
 import 'package:matrix/matrix.dart';
+import 'package:path_provider/path_provider.dart';
 
 class FileLogger {
   static File? _logFile;
   
   static Future<void> init() async {
+    if (kIsWeb) return;
     try {
       final directory = await getApplicationDocumentsDirectory();
       _logFile = File('${directory.path}/push_debug.log');

@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -28,7 +29,8 @@ class ErrorReporter {
     "HandshakeException",
   };
 
-  Future<File> _getTemporaryErrorLogFile() async {
+  Future<File?> _getTemporaryErrorLogFile() async {
+    if (kIsWeb) return null;
     final tempDir = await getTemporaryDirectory();
     return File(path.join(tempDir.path, 'error_log.txt'));
   }
@@ -37,8 +39,10 @@ class ErrorReporter {
     Object error, [
     StackTrace? stackTrace,
   ]) async {
+    if (kIsWeb) return;
     if (ingoredTypes.contains(error.runtimeType.toString())) return;
     final file = await _getTemporaryErrorLogFile();
+    if (file == null) return;
     if (await file.exists()) await file.delete();
     await file.writeAsString(
       '[${DateTime.now().toIso8601String()}] $message -  $error\n$stackTrace',
@@ -46,8 +50,9 @@ class ErrorReporter {
   }
 
   Future<void> consumeTemporaryErrorLogFile() async {
+    if (kIsWeb) return;
     final file = await _getTemporaryErrorLogFile();
-    if (!(await file.exists())) return;
+    if (file == null || !(await file.exists())) return;
     final content = await file.readAsString();
     _onErrorCallback(content);
     await file.delete();

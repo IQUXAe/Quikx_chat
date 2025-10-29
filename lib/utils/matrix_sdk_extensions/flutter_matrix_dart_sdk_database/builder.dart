@@ -64,12 +64,14 @@ Future<MatrixSdkDatabase> _constructDatabase(String clientName) async {
   final cipher = await getDatabaseCipher();
 
   Directory? fileStorageLocation;
-  try {
-    fileStorageLocation = await getTemporaryDirectory();
-  } on MissingPlatformDirectoryException catch (_) {
-    Logs().w(
-      'No temporary directory for file cache available on this platform.',
-    );
+  if (!kIsWeb) {
+    try {
+      fileStorageLocation = await getTemporaryDirectory();
+    } on MissingPlatformDirectoryException catch (_) {
+      Logs().w(
+        'No temporary directory for file cache available on this platform.',
+      );
+    }
   }
 
   final path = await _getDatabasePath(clientName);

@@ -320,9 +320,11 @@ class ChatListController extends State<ChatList>
       }
 
       // Workaround for system UI overlay style not applied on app start
-      SystemChrome.setSystemUIOverlayStyle(
-        Theme.of(context).appBarTheme.systemOverlayStyle!,
-      );
+      if (!kIsWeb && Theme.of(context).appBarTheme.systemOverlayStyle != null) {
+        SystemChrome.setSystemUIOverlayStyle(
+          Theme.of(context).appBarTheme.systemOverlayStyle!,
+        );
+      }
     });
 
     _checkTorBrowser();

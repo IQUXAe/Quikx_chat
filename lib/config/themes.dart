@@ -116,20 +116,28 @@ abstract class QuikxChatThemes {
         ),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       ),
-      appBarTheme: AppBarTheme(
-        toolbarHeight: 64,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-        centerTitle: false,
-        backgroundColor: Colors.transparent,
-        systemOverlayStyle: kIsWeb ? null : SystemUiOverlayStyle(
-          statusBarColor: Colors.transparent,
-          statusBarIconBrightness: brightness.reversed,
-          statusBarBrightness: brightness,
-          systemNavigationBarIconBrightness: brightness.reversed,
-          systemNavigationBarColor: colorScheme.surface,
-        ),
-      ),
+      appBarTheme: kIsWeb
+          ? AppBarTheme(
+              toolbarHeight: 64,
+              elevation: 0,
+              scrolledUnderElevation: 0,
+              centerTitle: false,
+              backgroundColor: Colors.transparent,
+            )
+          : AppBarTheme(
+              toolbarHeight: 64,
+              elevation: 0,
+              scrolledUnderElevation: 0,
+              centerTitle: false,
+              backgroundColor: Colors.transparent,
+              systemOverlayStyle: SystemUiOverlayStyle(
+                statusBarColor: Colors.transparent,
+                statusBarIconBrightness: brightness.reversed,
+                statusBarBrightness: brightness,
+                systemNavigationBarIconBrightness: brightness.reversed,
+                systemNavigationBarColor: colorScheme.surface,
+              ),
+            ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         elevation: 4,
         shape: RoundedRectangleBorder(
