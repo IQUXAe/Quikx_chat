@@ -49,6 +49,9 @@ QuikxChat may connect to:
 - **Matrix homeservers**: For messaging (your choice)
 - **UnifiedPush distributors**: For notifications (optional)
 - **Translation services**: For message translation (optional, when enabled)
+  - MyMemory API: Sends message text for translation
+  - Translation is opt-in and can be disabled in settings
+  - Translations are cached locally to minimize API requests
 
 ## Open Source
 

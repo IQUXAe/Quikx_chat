@@ -128,3 +128,4 @@ logs/
 # AppImage builds
 *.AppImage
 QuikxChat-x86_64.AppImage
+QuikxChat-1.0.0-linux-x64.tar.gz
