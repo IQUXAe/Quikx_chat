@@ -112,14 +112,17 @@ class _SettingsTranslationViewState extends State<SettingsTranslationView> {
                                       mainAxisSize: MainAxisSize.min,
                                       children: TranslationProvider.values
                                           .map(
-                                            (provider) => InkWell(
+                                            (provider) => ListTile(
                                               onTap: () => Navigator.pop(context, provider),
-                                              child: RadioListTile<TranslationProvider>(
-                                                value: provider,
-                                                groupValue: currentProvider,
-                                                title: Text(provider.displayName),
-                                                onChanged: null,
+                                              leading: Icon(
+                                                provider == currentProvider
+                                                    ? Icons.radio_button_checked
+                                                    : Icons.radio_button_unchecked,
+                                                color: provider == currentProvider
+                                                    ? theme.colorScheme.primary
+                                                    : theme.colorScheme.onSurface.withValues(alpha: 0.6),
                                               ),
+                                              title: Text(provider.displayName),
                                             ),
                                           )
                                           .toList(),
@@ -203,18 +206,21 @@ class _SettingsTranslationViewState extends State<SettingsTranslationView> {
                                             shrinkWrap: true,
                                             children: languages.entries
                                                 .map(
-                                                  (entry) => InkWell(
+                                                  (entry) => ListTile(
                                                     onTap: () => Navigator.pop(context, entry.key),
-                                                    child: RadioListTile<String>(
-                                                      value: entry.key,
-                                                      groupValue: targetLang,
-                                                      title: Text(
-                                                        entry.value,
-                                                        style: TextStyle(
-                                                          color: theme.colorScheme.onSurface,
-                                                        ),
+                                                    leading: Icon(
+                                                      entry.key == targetLang
+                                                          ? Icons.radio_button_checked
+                                                          : Icons.radio_button_unchecked,
+                                                      color: entry.key == targetLang
+                                                          ? theme.colorScheme.primary
+                                                          : theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                                                    ),
+                                                    title: Text(
+                                                      entry.value,
+                                                      style: TextStyle(
+                                                        color: theme.colorScheme.onSurface,
                                                       ),
-                                                      onChanged: null,
                                                     ),
                                                   ),
                                                 )

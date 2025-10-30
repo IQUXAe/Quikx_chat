@@ -78,7 +78,7 @@ class Message extends StatefulWidget {
 }
 
 class _MessageState extends State<Message> {
-  bool _isHovered = false;
+
   bool _showQuickActions = false;
 
   @override
@@ -338,7 +338,7 @@ class _MessageState extends State<Message> {
                                             if (!event.redacted && event.room.canSendDefaultMessages) {
                                               setState(() {
                                                 _showQuickActions = !_showQuickActions;
-                                                _isHovered = _showQuickActions;
+
                                               });
                                             }
                                             onSelect(event);
@@ -497,7 +497,7 @@ class _MessageState extends State<Message> {
                                                 } else if (!event.redacted && event.room.canSendDefaultMessages) {
                                                   setState(() {
                                                     _showQuickActions = true;
-                                                    _isHovered = true;
+
                                                   });
                                                   onSelect(event);
                                                 }

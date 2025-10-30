@@ -288,7 +288,8 @@ class MessageContent extends StatelessWidget {
                                   ).animate(CurvedAnimation(
                                     parent: animation,
                                     curve: Curves.easeOutCubic,
-                                  )),
+                                  ),
+                                ),
                                   child: child,
                                 ),
                               );

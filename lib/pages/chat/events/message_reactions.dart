@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:matrix/matrix.dart';
 
-import 'package:quikxchat/config/app_config.dart';
+
 import 'package:quikxchat/widgets/avatar.dart';
 import 'package:quikxchat/widgets/future_loading_dialog.dart';
 import 'package:quikxchat/widgets/matrix.dart';

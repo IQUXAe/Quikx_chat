@@ -5,10 +5,10 @@ import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
 
-import 'package:quikxchat/config/themes.dart';
+
 import 'package:quikxchat/l10n/l10n.dart';
 import 'package:quikxchat/utils/date_time_extension.dart';
-import 'package:quikxchat/widgets/adaptive_dialogs/adaptive_dialog_action.dart';
+
 import 'package:quikxchat/widgets/avatar.dart';
 import 'package:quikxchat/widgets/presence_builder.dart';
 import '../../utils/url_launcher.dart';
@@ -127,14 +127,14 @@ class UserDialog extends StatelessWidget {
                                 size: 14,
                                 color: copied
                                     ? theme.colorScheme.primary
-                                    : theme.colorScheme.onSurface.withOpacity(0.6),
+                                    : theme.colorScheme.onSurface.withValues(alpha: 0.6),
                               ),
                               const SizedBox(width: 6),
                               Flexible(
                                 child: Text(
                                   profile.userId,
                                   style: theme.textTheme.bodySmall?.copyWith(
-                                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                                   ),
                                   overflow: TextOverflow.ellipsis,
                                 ),
