@@ -9,9 +9,10 @@ import 'package:quikxchat/l10n/l10n.dart';
 import 'package:quikxchat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
 import 'package:quikxchat/widgets/future_loading_dialog.dart';
 import '../utils/translation_providers.dart';
+import '../utils/message_translator.dart';
 import 'matrix.dart';
 
-enum ChatPopupMenuActions { details, mute, unmute, leave, search, translateToggle, clearTranslations }
+enum ChatPopupMenuActions { details, mute, unmute, leave, search, clearTranslations, toggleAutoTranslate }
 
 class ChatSettingsPopupMenu extends StatefulWidget {
   final Room room;
@@ -27,11 +28,13 @@ class ChatSettingsPopupMenu extends StatefulWidget {
 class ChatSettingsPopupMenuState extends State<ChatSettingsPopupMenu> {
   StreamSubscription? notificationChangeSub;
   TranslationProvider? _currentProvider;
+  bool _autoTranslateEnabled = false;
 
   @override
   void initState() {
     super.initState();
     _loadTranslationProvider();
+    _loadAutoTranslateState();
   }
 
   void _loadTranslationProvider() async {
@@ -39,6 +42,15 @@ class ChatSettingsPopupMenuState extends State<ChatSettingsPopupMenu> {
     if (mounted) {
       setState(() {
         _currentProvider = provider;
+      });
+    }
+  }
+  
+  void _loadAutoTranslateState() async {
+    final enabled = await MessageTranslator.autoTranslateEnabled;
+    if (mounted) {
+      setState(() {
+        _autoTranslateEnabled = enabled;
       });
     }
   }
@@ -113,12 +125,27 @@ class ChatSettingsPopupMenuState extends State<ChatSettingsPopupMenu> {
               case ChatPopupMenuActions.search:
                 context.go('/rooms/${widget.room.id}/search');
                 break;
-              case ChatPopupMenuActions.translateToggle:
-                widget.translateController?.translateAllVisibleMessages();
-                break;
-
               case ChatPopupMenuActions.clearTranslations:
-                widget.translateController?.clearTranslations();
+                // Clear translations from message.dart
+                if (mounted) {
+                  setState(() {});
+                }
+                break;
+              case ChatPopupMenuActions.toggleAutoTranslate:
+                final newValue = !_autoTranslateEnabled;
+                await MessageTranslator.setAutoTranslate(newValue);
+                if (mounted) {
+                  setState(() {
+                    _autoTranslateEnabled = newValue;
+                  });
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        newValue ? 'Auto-translate enabled' : 'Auto-translate disabled',
+                      ),
+                    ),
+                  );
+                }
                 break;
             }
           },
@@ -203,21 +230,12 @@ class ChatSettingsPopupMenuState extends State<ChatSettingsPopupMenu> {
   List<PopupMenuEntry<ChatPopupMenuActions>> _buildTranslationMenuItems(BuildContext context) {
     return [
       PopupMenuItem<ChatPopupMenuActions>(
-        value: ChatPopupMenuActions.translateToggle,
+        value: ChatPopupMenuActions.toggleAutoTranslate,
         child: Row(
           children: [
-            Icon(
-              widget.translateController?.autoTranslateEnabled == true
-                  ? Icons.toggle_on
-                  : Icons.toggle_off,
-              color: widget.translateController?.autoTranslateEnabled == true
-                  ? Colors.blue
-                  : null,
-            ),
+            Icon(_autoTranslateEnabled ? Icons.auto_awesome : Icons.auto_awesome_outlined),
             const SizedBox(width: 12),
-            Text(widget.translateController?.autoTranslateEnabled == true
-                ? L10n.of(context).disableAutoTranslate
-                : L10n.of(context).enableAutoTranslate,),
+            Text(_autoTranslateEnabled ? 'Disable Auto-translate' : 'Enable Auto-translate'),
           ],
         ),
       ),

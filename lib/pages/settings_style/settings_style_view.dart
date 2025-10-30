@@ -41,26 +41,41 @@ class SettingsStyleView extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.all(12.0),
-              child: SegmentedButton<ThemeMode>(
-                selected: {controller.currentTheme},
-                onSelectionChanged: (selected) =>
-                    controller.switchTheme(selected.single),
-                segments: [
-                  ButtonSegment(
-                    value: ThemeMode.light,
-                    label: Text(L10n.of(context).lightTheme),
-                    icon: const Icon(Icons.light_mode_outlined),
+              child: Column(
+                children: [
+                  SegmentedButton<ThemeMode>(
+                    selected: {controller.currentTheme},
+                    onSelectionChanged: (selected) =>
+                        controller.switchTheme(selected.single),
+                    segments: [
+                      ButtonSegment(
+                        value: ThemeMode.light,
+                        label: Text(L10n.of(context).lightTheme),
+                        icon: const Icon(Icons.light_mode_outlined),
+                      ),
+                      ButtonSegment(
+                        value: ThemeMode.dark,
+                        label: Text(L10n.of(context).darkTheme),
+                        icon: const Icon(Icons.dark_mode_outlined),
+                      ),
+                      ButtonSegment(
+                        value: ThemeMode.system,
+                        label: Text(L10n.of(context).systemTheme),
+                        icon: const Icon(Icons.auto_mode_outlined),
+                      ),
+                    ],
                   ),
-                  ButtonSegment(
-                    value: ThemeMode.dark,
-                    label: Text(L10n.of(context).darkTheme),
-                    icon: const Icon(Icons.dark_mode_outlined),
-                  ),
-                  ButtonSegment(
-                    value: ThemeMode.system,
-                    label: Text(L10n.of(context).systemTheme),
-                    icon: const Icon(Icons.auto_mode_outlined),
-                  ),
+                  if (controller.currentTheme == ThemeMode.dark || 
+                      (controller.currentTheme == ThemeMode.system && 
+                       Theme.of(context).brightness == Brightness.dark)) ...[
+                    const SizedBox(height: 12),
+                    SwitchListTile(
+                      title: const Text('AMOLED'),
+                      subtitle: const Text('Pure black background'),
+                      value: controller.useAmoled,
+                      onChanged: controller.setAmoled,
+                    ),
+                  ],
                 ],
               ),
             ),

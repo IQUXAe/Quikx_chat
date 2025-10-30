@@ -16,6 +16,7 @@ import 'package:quikxchat/utils/error_reporter.dart';
 import 'package:quikxchat/utils/file_description.dart';
 import 'package:quikxchat/utils/localized_exception_extension.dart';
 import 'package:quikxchat/utils/url_launcher.dart';
+import 'package:quikxchat/utils/date_time_extension.dart';
 import '../../../utils/matrix_sdk_extensions/event_extension.dart';
 import '../../../widgets/quikx_chat_app.dart';
 import '../../../widgets/matrix.dart';
@@ -309,6 +310,19 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text(
+                        widget.event.originServerTs.localizedTimeShort(context),
+                        style: TextStyle(
+                          color: widget.color.withAlpha(180),
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 4),
                   ConstrainedBox(
                     constraints: const BoxConstraints(
                       maxWidth: QuikxChatThemes.columnWidth,

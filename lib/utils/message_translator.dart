@@ -1,13 +1,26 @@
+import 'package:flutter/widgets.dart';
 import 'package:matrix/matrix.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../pages/chat/events/message.dart';
+import 'translation_cache.dart';
+import 'translation_batch_processor.dart';
 import 'translation_providers.dart';
 
 class MessageTranslator {
-  static const String _cachePrefix = 'translation_cache_';
   static const String _enabledKey = 'translation_enabled';
   static const String _targetLanguageKey = 'translation_target_language';
+  static const String _autoTranslateKey = 'translation_auto_translate';
+  
+  static final _cache = TranslationCache();
+  static final _batchProcessor = TranslationBatchProcessor();
+  static bool _initialized = false;
 
+  static Future<void> init() async {
+    if (!_initialized) {
+      await _cache.init();
+      _initialized = true;
+    }
+  }
   
   static Future<bool> get isEnabled async {
     final provider = await TranslationProviders.getCurrentProvider();
@@ -22,56 +35,41 @@ class MessageTranslator {
   }
   
   static Future<void> clearCache() async {
-    final prefs = await SharedPreferences.getInstance();
-    final keys = prefs.getKeys().where((key) => key.startsWith(_cachePrefix));
-    for (final key in keys) {
-      await prefs.remove(key);
-    }
-    // Очищаем также активные переводы в UI
+    await _cache.clear();
     messageTranslations.clear();
     notifyTranslationChanged();
-    Logs().i('[MessageTranslator] Cache and active translations cleared');
+    Logs().i('[MessageTranslator] Cache cleared');
   }
 
   static Future<String?> translateMessage(String text, String targetLang) async {
-    Logs().i('[Translator] Starting translation for: "$text"');
+    await init();
     
     final cleanText = _cleanTextForTranslation(text);
-    Logs().i('[Translator] Clean text: "$cleanText"');
-    
-    if (cleanText.trim().isEmpty) {
-      Logs().i('[Translator] Empty text after cleaning, skipping');
+    if (cleanText.trim().isEmpty || _isNumericOnly(cleanText.trim())) {
       return null;
     }
     
-    if (_isNumericOnly(cleanText.trim())) {
-      Logs().i('[Translator] Numeric only text, skipping');
+    final detectedLang = detectLanguage(cleanText);
+    if (detectedLang == targetLang) {
       return null;
     }
     
-    final detectedLang = MessageTranslator.detectLanguage(cleanText);
-    final actualTargetLang = await MessageTranslator.getTargetLanguage(detectedLang);
-    
-    Logs().i('[Translator] Detected: $detectedLang, Target: $actualTargetLang');
-    
-    // Если язык уже целевой, не переводим
-    if (detectedLang == actualTargetLang) {
-      Logs().i('[Translator] Same language detected, skipping');
-      return null;
+    final cached = await _cache.get(cleanText, detectedLang, targetLang);
+    if (cached != null) {
+      return cached;
     }
     
     try {
-      final translation = await _translateWithChunking(cleanText, detectedLang, actualTargetLang);
-      Logs().i('[Translator] Translation result: "$translation"');
+      final translation = await _translateWithChunking(cleanText, detectedLang, targetLang);
       
       if (translation != null && translation != cleanText && translation.trim().isNotEmpty) {
+        await _cache.put(cleanText, detectedLang, targetLang, translation);
         return translation;
       }
     } catch (e) {
-      Logs().w('Translation failed: $e');
+      Logs().w('[Translator] Failed: $e');
     }
     
-    Logs().i('[Translator] No valid translation found');
     return null;
   }
   
@@ -87,7 +85,6 @@ class MessageTranslator {
       final translation = await _translateChunk(chunk, fromLang, toLang);
       if (translation == null) return null;
       translations.add(translation);
-      await Future.delayed(const Duration(milliseconds: 200)); // Rate limiting
     }
     
     return translations.join(' ');
@@ -119,12 +116,7 @@ class MessageTranslator {
   }
   
   static Future<String?> _translateChunk(String text, String fromLang, String toLang) async {
-    try {
-      return await TranslationProviders.translateText(text, fromLang, toLang);
-    } catch (e) {
-      Logs().w('[Translator] Translation failed: $e');
-      return null;
-    }
+    return await _batchProcessor.translate(text, fromLang, toLang);
   }
   
 
@@ -132,29 +124,39 @@ class MessageTranslator {
 
 
   static String detectLanguage(String text) {
-    // Extended language detection
-    final patterns = {
-      'ru': RegExp(r'[а-яё]', caseSensitive: false),
-      'en': RegExp(r'[a-z]', caseSensitive: false),
-      'es': RegExp(r'[ñáéíóúü]', caseSensitive: false),
-      'fr': RegExp(r'[àâäéèêëïîôöùûüÿç]', caseSensitive: false),
-      'de': RegExp(r'[äöüß]', caseSensitive: false),
-      'it': RegExp(r'[àèéìíîòóù]', caseSensitive: false),
-      'pt': RegExp(r'[ãáâàéêíóôõú]', caseSensitive: false),
-    };
+    final cleanText = text.trim();
+    if (cleanText.length < 2) return 'auto';
     
-    var maxMatches = 0;
-    var detectedLang = 'auto';
+    // Кириллица = Русский
+    if (RegExp(r'[а-яёА-ЯЁ]').hasMatch(cleanText)) return 'ru';
     
-    for (final entry in patterns.entries) {
-      final matches = entry.value.allMatches(text).length;
-      if (matches > maxMatches) {
-        maxMatches = matches;
-        detectedLang = entry.key;
-      }
+    // Китайский/Японский/Корейский
+    if (RegExp(r'[\u4e00-\u9fff\u3040-\u309f\u30a0-\u30ff\uac00-\ud7af]').hasMatch(text)) {
+      if (RegExp(r'[\u3040-\u309f\u30a0-\u30ff]').hasMatch(text)) return 'ja';
+      if (RegExp(r'[\uac00-\ud7af]').hasMatch(text)) return 'ko';
+      return 'zh';
     }
     
-    return maxMatches > 0 ? detectedLang : 'auto';
+    // Арабский
+    if (RegExp(r'[\u0600-\u06ff]').hasMatch(text)) return 'ar';
+    
+    // Иврит
+    if (RegExp(r'[\u0590-\u05ff]').hasMatch(text)) return 'he';
+    
+    // Тайский
+    if (RegExp(r'[\u0e00-\u0e7f]').hasMatch(text)) return 'th';
+    
+    // Европейские языки по спецсимволам
+    final lower = cleanText.toLowerCase();
+    if (RegExp(r'[ñáéíóúü]').hasMatch(lower)) return 'es';
+    if (RegExp(r'[àâäéèêëïîôöùûüÿç]').hasMatch(lower)) return 'fr';
+    if (RegExp(r'[äöüß]').hasMatch(lower)) return 'de';
+    if (RegExp(r'[ãõç]').hasMatch(lower)) return 'pt';
+    
+    // Латиница = Английский
+    if (RegExp(r'[a-zA-Z]').hasMatch(cleanText)) return 'en';
+    
+    return 'auto';
   }
 
   static Future<String> getTargetLanguage(String detectedLang) async {
@@ -162,15 +164,17 @@ class MessageTranslator {
     final targetLang = prefs.getString(_targetLanguageKey) ?? 'auto';
     
     if (targetLang == 'auto') {
-      // Auto mode: translate to opposite language
-      switch (detectedLang) {
-        case 'ru': return 'en';
-        case 'en': return 'ru';
-        default: return 'en';
-      }
+      final systemLang = _getSystemLanguage();
+      if (detectedLang == systemLang) return 'en';
+      return systemLang;
     }
     
     return targetLang;
+  }
+  
+  static String _getSystemLanguage() {
+    final locale = WidgetsBinding.instance.platformDispatcher.locale.languageCode;
+    return locale.split('_').first;
   }
   
   static Future<String> get targetLanguage async {
@@ -181,6 +185,16 @@ class MessageTranslator {
   static Future<void> setTargetLanguage(String language) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_targetLanguageKey, language);
+  }
+  
+  static Future<bool> get autoTranslateEnabled async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getBool(_autoTranslateKey) ?? false;
+  }
+  
+  static Future<void> setAutoTranslate(bool enabled) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_autoTranslateKey, enabled);
   }
   
   static String _cleanTextForTranslation(String text) {

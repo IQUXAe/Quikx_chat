@@ -138,6 +138,12 @@ class SettingsStyleController extends State<SettingsStyle> {
 
   ThemeMode get currentTheme => ThemeController.of(context).themeMode;
   Color? get currentColor => ThemeController.of(context).primaryColor;
+  bool get useAmoled => ThemeController.of(context).useAmoled;
+
+  void setAmoled(bool value) {
+    ThemeController.of(context).setAmoled(value);
+    setState(() {});
+  }
 
   static final List<Color?> customColors = [
     null,
@@ -167,17 +173,7 @@ class SettingsStyleController extends State<SettingsStyle> {
 
   void switchTheme(ThemeMode? newTheme) {
     if (newTheme == null) return;
-    switch (newTheme) {
-      case ThemeMode.light:
-        ThemeController.of(context).setThemeMode(ThemeMode.light);
-        break;
-      case ThemeMode.dark:
-        ThemeController.of(context).setThemeMode(ThemeMode.dark);
-        break;
-      case ThemeMode.system:
-        ThemeController.of(context).setThemeMode(ThemeMode.system);
-        break;
-    }
+    ThemeController.of(context).setThemeMode(newTheme);
     setState(() {});
   }
 

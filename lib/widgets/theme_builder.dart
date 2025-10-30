@@ -12,15 +12,18 @@ class ThemeBuilder extends StatefulWidget {
     BuildContext context,
     ThemeMode themeMode,
     Color? primaryColor,
+    bool useAmoled,
   ) builder;
 
   final String themeModeSettingsKey;
   final String primaryColorSettingsKey;
+  final String amoledSettingsKey;
 
   const ThemeBuilder({
     required this.builder,
     this.themeModeSettingsKey = 'theme_mode',
     this.primaryColorSettingsKey = 'primary_color',
+    this.amoledSettingsKey = 'use_amoled',
     super.key,
   });
 
@@ -32,10 +35,13 @@ class ThemeController extends State<ThemeBuilder> {
   SharedPreferences? _sharedPreferences;
   ThemeMode? _themeMode;
   Color? _primaryColor;
+  bool _useAmoled = false;
 
   ThemeMode get themeMode => _themeMode ?? ThemeMode.system;
 
   Color? get primaryColor => _primaryColor;
+  
+  bool get useAmoled => _useAmoled;
 
   static ThemeController of(BuildContext context) =>
       Provider.of<ThemeController>(
@@ -49,11 +55,13 @@ class ThemeController extends State<ThemeBuilder> {
 
     final rawThemeMode = preferences.getString(widget.themeModeSettingsKey);
     final rawColor = preferences.getInt(widget.primaryColorSettingsKey);
+    final amoled = preferences.getBool(widget.amoledSettingsKey) ?? false;
 
     setState(() {
       _themeMode = ThemeMode.values
           .singleWhereOrNull((value) => value.name == rawThemeMode);
       _primaryColor = rawColor == null ? null : Color(rawColor);
+      _useAmoled = amoled;
     });
   }
 
@@ -82,6 +90,15 @@ class ThemeController extends State<ThemeBuilder> {
     });
   }
 
+  Future<void> setAmoled(bool value) async {
+    final preferences =
+        _sharedPreferences ??= await SharedPreferences.getInstance();
+    await preferences.setBool(widget.amoledSettingsKey, value);
+    setState(() {
+      _useAmoled = value;
+    });
+  }
+
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback(_loadData);
@@ -97,6 +114,7 @@ class ThemeController extends State<ThemeBuilder> {
           context,
           themeMode,
           primaryColor ?? light?.primary,
+          useAmoled,
         ),
       ),
     );

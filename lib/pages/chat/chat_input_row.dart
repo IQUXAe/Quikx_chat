@@ -329,7 +329,7 @@ class ChatInputRow extends StatelessWidget {
                             ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
                             content: Text(
-                              'Hold to record voice message', // L10n.of(context).longPressToRecordVoiceMessage,
+                              'Hold to record voice message',
                             ),
                           ),
                         ),
@@ -341,19 +341,122 @@ class ChatInputRow extends StatelessWidget {
                         ),
                         icon: const Icon(Icons.mic_none_outlined),
                       )
-                    : IconButton(
-                        tooltip: L10n.of(context).send,
+                    : _SendButton(
                         onPressed: controller.send,
-                        style: IconButton.styleFrom(
-                          backgroundColor: theme.bubbleColor,
-                          foregroundColor: theme.onBubbleColor,
-                        ),
-                        icon: const Icon(Icons.send_outlined),
+                        tooltip: L10n.of(context).send,
                       ),
               ),
             ],
         );
       },
+    );
+  }
+}
+
+class _SendButton extends StatefulWidget {
+  final VoidCallback onPressed;
+  final String tooltip;
+
+  const _SendButton({required this.onPressed, required this.tooltip});
+
+  @override
+  State<_SendButton> createState() => _SendButtonState();
+}
+
+class _SendButtonState extends State<_SendButton> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+  late Animation<double> _rotateAnimation;
+  bool _isPressed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 150),
+      vsync: this,
+    );
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.85).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+    _rotateAnimation = Tween<double>(begin: 0.0, end: -0.15).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _handleTapDown(TapDownDetails details) {
+    setState(() => _isPressed = true);
+    _controller.forward();
+  }
+
+  void _handleTapUp(TapUpDetails details) {
+    setState(() => _isPressed = false);
+    _controller.reverse();
+    widget.onPressed();
+  }
+
+  void _handleTapCancel() {
+    setState(() => _isPressed = false);
+    _controller.reverse();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
+    return Tooltip(
+      message: widget.tooltip,
+      child: GestureDetector(
+        onTapDown: _handleTapDown,
+        onTapUp: _handleTapUp,
+        onTapCancel: _handleTapCancel,
+        child: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, child) {
+            return Transform.scale(
+              scale: _scaleAnimation.value,
+              child: Transform.rotate(
+                angle: _rotateAnimation.value,
+                child: Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        theme.colorScheme.primary,
+                        theme.colorScheme.secondary,
+                      ],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    shape: BoxShape.circle,
+                    boxShadow: _isPressed
+                        ? []
+                        : [
+                            BoxShadow(
+                              color: theme.colorScheme.primary.withAlpha(100),
+                              blurRadius: 8,
+                              offset: const Offset(0, 2),
+                            ),
+                          ],
+                  ),
+                  child: Icon(
+                    Icons.send_rounded,
+                    color: theme.colorScheme.onPrimary,
+                    size: 20,
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
     );
   }
 }

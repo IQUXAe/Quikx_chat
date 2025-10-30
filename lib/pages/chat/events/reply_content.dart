@@ -31,6 +31,13 @@ class ReplyContent extends StatelessWidget {
     final displayEvent =
         timeline != null ? replyEvent.getDisplayEvent(timeline) : replyEvent;
     final fontSize = AppConfig.messageFontSize * AppConfig.fontSizeFactor;
+    
+    final textColor = ownMessage
+        ? theme.brightness == Brightness.dark
+            ? theme.colorScheme.onSurface
+            : theme.colorScheme.onPrimaryContainer
+        : theme.colorScheme.onSurface;
+    
     final color = theme.brightness == Brightness.dark
         ? theme.colorScheme.onTertiaryContainer
         : ownMessage
@@ -82,11 +89,7 @@ class ReplyContent extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   maxLines: 1,
                   style: TextStyle(
-                    color: theme.brightness == Brightness.dark
-                        ? theme.colorScheme.onSurface
-                        : ownMessage
-                            ? theme.colorScheme.onTertiary
-                            : theme.colorScheme.onSurface,
+                    color: textColor,
                     fontSize: fontSize,
                   ),
                 ),

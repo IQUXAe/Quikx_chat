@@ -276,26 +276,45 @@ class MessageContent extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Flexible(
-                        child: HtmlMessage(
-                          html: html,
-                          textColor: textColor,
-                          room: event.room,
-                          fontSize: AppConfig.fontSizeFactor *
-                              AppConfig.messageFontSize *
-                              (bigEmotes ? 5 : 1),
-                          limitHeight: !selected,
-                          linkStyle: TextStyle(
-                            color: linkColor,
-                            fontSize:
-                                AppConfig.fontSizeFactor * AppConfig.messageFontSize,
-                            decoration: TextDecoration.underline,
-                            decorationColor: linkColor,
-                          ),
-                          onOpen: (url) => UrlLauncher(context, url.url).launchUrl(),
-                          eventId: event.eventId,
-                          checkboxCheckedEvents: event.aggregatedEvents(
-                            timeline,
-                            EventCheckboxRoomExtension.relationshipType,
+                        child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 300),
+                            transitionBuilder: (child, animation) {
+                              return FadeTransition(
+                                opacity: animation,
+                                child: SlideTransition(
+                                  position: Tween<Offset>(
+                                    begin: const Offset(0, 0.1),
+                                    end: Offset.zero,
+                                  ).animate(CurvedAnimation(
+                                    parent: animation,
+                                    curve: Curves.easeOutCubic,
+                                  )),
+                                  child: child,
+                                ),
+                              );
+                            },
+                            child: HtmlMessage(
+                            key: ValueKey(html),
+                            html: html,
+                            textColor: textColor,
+                            room: event.room,
+                            fontSize: AppConfig.fontSizeFactor *
+                                AppConfig.messageFontSize *
+                                (bigEmotes ? 5 : 1),
+                            limitHeight: !selected,
+                            linkStyle: TextStyle(
+                              color: linkColor,
+                              fontSize:
+                                  AppConfig.fontSizeFactor * AppConfig.messageFontSize,
+                              decoration: TextDecoration.underline,
+                              decorationColor: linkColor,
+                            ),
+                            onOpen: (url) => UrlLauncher(context, url.url).launchUrl(),
+                            eventId: event.eventId,
+                            checkboxCheckedEvents: event.aggregatedEvents(
+                              timeline,
+                              EventCheckboxRoomExtension.relationshipType,
+                            ),
                           ),
                         ),
                       ),

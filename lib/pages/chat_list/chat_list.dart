@@ -20,7 +20,7 @@ import 'package:quikxchat/utils/localized_exception_extension.dart';
 import 'package:quikxchat/utils/matrix_sdk_extensions/matrix_locals.dart';
 import 'package:quikxchat/utils/platform_infos.dart';
 import 'package:quikxchat/utils/show_scaffold_dialog.dart';
-import 'package:quikxchat/utils/show_update_snackbar.dart';
+
 import 'package:quikxchat/widgets/adaptive_dialogs/show_modal_action_popup.dart';
 import 'package:quikxchat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
 import 'package:quikxchat/widgets/adaptive_dialogs/show_text_input_dialog.dart';
@@ -313,9 +313,7 @@ class ChatListController extends State<ChatList>
         _searchController.searchServer =
             Matrix.of(context).store.getString(_serverStoreNamespace);
         Matrix.of(context).backgroundPush?.setupPush();
-        UpdateNotifier.showUpdateSnackBar(context);
 
-        // Предзагружаем профили всех пользователей
         _preloadAllProfiles();
       }
 

@@ -7,6 +7,7 @@ import 'package:quikxchat/config/app_config.dart';
 import 'package:quikxchat/pages/image_viewer/image_viewer.dart';
 import 'package:quikxchat/utils/file_description.dart';
 import 'package:quikxchat/utils/url_launcher.dart';
+import 'package:quikxchat/utils/date_time_extension.dart';
 import 'package:quikxchat/widgets/mxc_image.dart';
 import '../../../widgets/blur_hash.dart';
 
@@ -114,16 +115,39 @@ class ImageBubble extends StatelessWidget {
               tag: event.eventId,
               child: ClipRRect(
                 borderRadius: borderRadius,
-                child: MxcImage(
-                  event: event,
-                  width: width,
-                  height: height,
-                  fit: fit,
-                  animated: animated,
-                  isThumbnail: thumbnailOnly,
-                  placeholder: event.messageType == MessageTypes.Sticker
-                      ? null
-                      : _buildPlaceholder,
+                child: Stack(
+                  children: [
+                    MxcImage(
+                      event: event,
+                      width: width,
+                      height: height,
+                      fit: fit,
+                      animated: animated,
+                      isThumbnail: thumbnailOnly,
+                      placeholder: event.messageType == MessageTypes.Sticker
+                          ? null
+                          : _buildPlaceholder,
+                    ),
+                    Positioned(
+                      bottom: 8,
+                      right: 8,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withAlpha(150),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          event.originServerTs.localizedTimeShort(context),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),

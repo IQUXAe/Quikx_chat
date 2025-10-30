@@ -188,7 +188,11 @@ class ChatMembersView extends StatelessWidget {
                         );
                       }
                       i--;
-                      return ParticipantListItem(members[i]);
+                      return ParticipantListItem(
+                        members[i],
+                        isFirst: i == 0,
+                        isLast: i == members.length - 1,
+                      );
                     },
                   ),
       ),

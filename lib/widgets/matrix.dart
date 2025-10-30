@@ -382,69 +382,6 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
     }
 
     // createVoipPlugin(); // VoIP temporarily disabled
-    _scheduleUpdateCheck();
-  }
-
-  Timer? _updateCheckTimer;
-  
-  void _scheduleUpdateCheck() async {
-    final lastCheck = store.getString('last_update_check');
-    final now = DateTime.now();
-    
-    // Проверяем не чаще раза в 3 дня (оптимизация)
-    if (lastCheck == null || 
-        now.difference(DateTime.parse(lastCheck)).inDays >= 3) {
-      
-      // Отложенная проверка через 5 минут после запуска
-      _updateCheckTimer = Timer(const Duration(minutes: 5), () async {
-        await _checkForUpdatesBackground();
-        await store.setString('last_update_check', DateTime.now().toIso8601String());
-      });
-    }
-  }
-
-  Future<void> _checkForUpdatesBackground() async {
-    try {
-      const currentVersion = '0.2.1';
-      final uri = Uri.parse('https://iquxae.pythonanywhere.com/api/updates')
-          .replace(queryParameters: {'version': currentVersion});
-      
-      final response = await http.get(uri, headers: {
-        'Accept-Language': 'ru-RU,ru;q=0.9,en;q=0.8',
-      },);
-      
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        final needsUpdate = data['needs_update'] ?? false;
-        final forceUpdate = data['force_update'] ?? false;
-        
-        if (needsUpdate || forceUpdate) {
-          _showUpdateNotification(data);
-        }
-      }
-    } catch (e) {
-      // Silently fail background update check
-    }
-  }
-
-
-
-  void _showUpdateNotification(Map<String, dynamic> data) {
-    final context = QuikxChatApp.router.routerDelegate.navigatorKey.currentContext;
-    if (context != null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(L10n.of(context).newVersionAvailable(data['latest_version'])),
-          action: SnackBarAction(
-            label: L10n.of(context).learnMore,
-            onPressed: () {
-              // Show update dialog
-            },
-          ),
-          duration: const Duration(seconds: 10),
-        ),
-      );
-    }
   }
 
   void createVoipPlugin() async {
@@ -537,7 +474,6 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
     client.httpClient.close();
     onFocusSub?.cancel();
     onBlurSub?.cancel();
-    _updateCheckTimer?.cancel();
 
     linuxNotifications?.close();
     // voipPlugin?.dispose(); // VoIP temporarily disabled

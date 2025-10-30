@@ -24,14 +24,29 @@ class _TranslateButtonState extends State<TranslateButton> {
   Widget build(BuildContext context) {
     final hasTranslation = messageTranslations.containsKey(widget.event.eventId);
     
+    if (_isTranslating) {
+      return Padding(
+        padding: const EdgeInsets.all(8),
+        child: SizedBox(
+          width: 16,
+          height: 16,
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            valueColor: AlwaysStoppedAnimation(widget.color),
+          ),
+        ),
+      );
+    }
+    
     return IconButton(
       icon: Icon(
         hasTranslation ? Icons.translate : Icons.translate_outlined,
-        size: 16,
+        size: 18,
       ),
       color: widget.color,
-      onPressed: _isTranslating ? null : _toggleTranslation,
-      tooltip: hasTranslation ? 'Show original' : 'Translate',
+      onPressed: _toggleTranslation,
+      tooltip: hasTranslation ? 'Show original' : 'Translate message',
+      visualDensity: VisualDensity.compact,
     );
   }
   
@@ -50,9 +65,11 @@ class _TranslateButtonState extends State<TranslateButton> {
       final translation = await MessageTranslator.translateMessage(
         widget.event.body,
         'auto',
-      );
+      ).timeout(const Duration(seconds: 10));
       
-      if (translation != null && mounted) {
+      if (!mounted) return;
+      
+      if (translation != null && translation.isNotEmpty) {
         setState(() {
           messageTranslations[widget.event.eventId] = translation;
           notifyTranslationChanged();

@@ -102,12 +102,12 @@ class _QuikxChatAppState extends State<QuikxChatApp> with WidgetsBindingObserver
   @override
   Widget build(BuildContext context) {
     return ThemeBuilder(
-      builder: (context, themeMode, primaryColor) => MaterialApp.router(
+      builder: (context, themeMode, primaryColor, useAmoled) => MaterialApp.router(
         title: AppConfig.applicationName,
         themeMode: themeMode,
         theme: QuikxChatThemes.buildTheme(context, Brightness.light, primaryColor),
         darkTheme:
-            QuikxChatThemes.buildTheme(context, Brightness.dark, primaryColor),
+            QuikxChatThemes.buildTheme(context, Brightness.dark, primaryColor, useAmoled),
         scrollBehavior: CustomScrollBehavior(),
         localizationsDelegates: L10n.localizationsDelegates,
         supportedLocales: L10n.supportedLocales,

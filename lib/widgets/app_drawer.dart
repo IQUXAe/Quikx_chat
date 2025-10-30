@@ -3,7 +3,6 @@ import 'package:matrix/matrix.dart';
 
 import 'package:quikxchat/config/app_config.dart';
 import 'package:quikxchat/config/app_version.dart';
-import 'package:quikxchat/utils/optimized_http_client.dart';
 import 'package:quikxchat/widgets/drawer/drawer_header.dart';
 import 'package:quikxchat/widgets/drawer/drawer_menu_groups.dart';
 import 'package:quikxchat/widgets/drawer/drawer_dialogs.dart';
@@ -48,7 +47,6 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
                 children: [
                   DrawerMenuGroups(
                     itemAnimations: _itemAnimations,
-                    onCheckUpdates: _checkForUpdates,
                     onShowAbout: _showAboutDialog,
                   ),
                 ],
@@ -149,33 +147,6 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
         textAlign: TextAlign.center,
       ),
     );
-  }
-
-
-
-  void _checkForUpdates(BuildContext context) async {
-    try {
-      final data = await OptimizedHttpClient().getJson('https://api.github.com/repos/IQUXAe/Quikx_chat/releases/latest');
-      
-      if (data != null) {
-        final latestVersion = data['tag_name']?.replaceFirst('v', '') ?? data['name'];
-        const currentVersion = AppVersion.version;
-        
-        if (latestVersion != currentVersion && latestVersion != null) {
-          DrawerDialogs.showUpdateDialog(context, {
-            'latest_version': latestVersion,
-            'release_notes': data['body'] ?? 'Новая версия доступна',
-            'download_url': data['html_url'],
-          });
-        } else {
-          DrawerDialogs.showNoUpdateDialog(context);
-        }
-      } else {
-        DrawerDialogs.showUpdateErrorDialog(context);
-      }
-    } catch (e) {
-      DrawerDialogs.showUpdateErrorDialog(context);
-    }
   }
 
 

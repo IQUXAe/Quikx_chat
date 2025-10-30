@@ -7,6 +7,7 @@ import 'package:quikxchat/config/app_config.dart';
 import 'package:quikxchat/utils/file_description.dart';
 import 'package:quikxchat/utils/matrix_sdk_extensions/event_extension.dart';
 import 'package:quikxchat/utils/url_launcher.dart';
+import 'package:quikxchat/utils/date_time_extension.dart';
 
 class MessageDownloadContent extends StatelessWidget {
   final Event event;
@@ -42,42 +43,57 @@ class MessageDownloadContent extends StatelessWidget {
           child: InkWell(
             borderRadius: BorderRadius.circular(AppConfig.borderRadius / 2),
             onTap: () => event.saveFile(context),
-            child: Container(
-              width: 400,
-              padding: const EdgeInsets.all(16.0),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                spacing: 16,
-                children: [
-                  CircleAvatar(
-                    backgroundColor: textColor.withAlpha(32),
-                    child: Icon(Icons.file_download_outlined, color: textColor),
+            child: Stack(
+              children: [
+                Container(
+                  width: 400,
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    spacing: 16,
+                    children: [
+                      CircleAvatar(
+                        backgroundColor: textColor.withAlpha(32),
+                        child: Icon(Icons.file_download_outlined, color: textColor),
+                      ),
+                      Flexible(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              filename,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: textColor,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            Text(
+                              '$sizeString | $filetype',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: TextStyle(color: textColor, fontSize: 10),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                  Flexible(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          filename,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: textColor,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        Text(
-                          '$sizeString | $filetype',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: textColor, fontSize: 10),
-                        ),
-                      ],
+                ),
+                Positioned(
+                  bottom: 8,
+                  right: 8,
+                  child: Text(
+                    event.originServerTs.localizedTimeShort(context),
+                    style: TextStyle(
+                      color: textColor.withAlpha(180),
+                      fontSize: 11,
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),

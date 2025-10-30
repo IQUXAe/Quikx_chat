@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
 import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/pages/user_profile/user_profile.dart';
 import 'package:quikxchat/widgets/permission_slider_dialog.dart';
 import 'adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
 import 'adaptive_dialogs/show_text_input_dialog.dart';
-import 'adaptive_dialogs/user_dialog.dart';
 import 'avatar.dart';
 import 'future_loading_dialog.dart';
 
@@ -278,12 +278,12 @@ void showMemberActionsPopupMenu({
       );
       return;
     case _MemberActions.info:
-      await UserDialog.show(
-        context: context,
-        profile: Profile(
-          userId: user.id,
-          displayName: user.displayName,
-          avatarUrl: user.avatarUrl,
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => UserProfilePage(
+            userId: user.id,
+            roomId: user.room.id,
+          ),
         ),
       );
       return;

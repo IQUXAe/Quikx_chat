@@ -13,7 +13,7 @@ import 'package:quikxchat/utils/platform_infos.dart';
 import 'package:quikxchat/utils/notification_service.dart';
 import 'package:quikxchat/utils/file_logger.dart';
 import 'package:quikxchat/utils/memory_manager.dart';
-import 'package:quikxchat/utils/optimized_message_translator.dart';
+import 'package:quikxchat/utils/message_translator.dart';
 import 'package:quikxchat/utils/notification_handler.dart';
 import 'package:quikxchat/utils/image_cache_manager.dart';
 
@@ -96,8 +96,8 @@ Future<void> startGui(List<Client> clients, SharedPreferences store) async {
     }
   }
 
-  // Инициализируем переводчик синхронно
-  OptimizedMessageTranslator.initialize();
+  // Инициализируем переводчик
+  MessageTranslator.init();
   
   // Запускаем GUI сразу, остальное грузим асинхронно
   runApp(QuikxChatApp(clients: clients, pincode: pin, store: store));

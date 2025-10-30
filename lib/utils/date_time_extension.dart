@@ -65,7 +65,6 @@ extension DateTimeExtension on DateTime {
 
   /// If the DateTime is today, this returns [localizedTimeOfDay()], if not it also
   /// shows the date.
-  /// TODO: Add localization
   String localizedTime(BuildContext context) {
     final now = DateTime.now();
 

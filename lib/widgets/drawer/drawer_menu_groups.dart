@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:quikxchat/l10n/l10n.dart';
@@ -7,13 +6,11 @@ import 'package:quikxchat/widgets/settings_card_tile.dart';
 
 class DrawerMenuGroups extends StatelessWidget {
   final List<Animation<double>> itemAnimations;
-  final Function(BuildContext) onCheckUpdates;
   final Function(BuildContext) onShowAbout;
 
   const DrawerMenuGroups({
     super.key,
     required this.itemAnimations,
-    required this.onCheckUpdates,
     required this.onShowAbout,
   });
 
@@ -96,23 +93,13 @@ class DrawerMenuGroups extends StatelessWidget {
   Widget _buildInfoGroup(BuildContext context) {
     return Column(
       children: [
-        if (!kIsWeb)
-          DrawerMenuItem(
-            icon: Icons.system_update_rounded,
-            iconColor: Colors.teal,
-            title: L10n.of(context).checkUpdates,
-            onTap: () => onCheckUpdates(context),
-            closeDrawer: false,
-            position: CardPosition.first,
-            animation: itemAnimations[7],
-          ),
         DrawerMenuItem(
           icon: Icons.info_rounded,
           iconColor: Colors.cyan,
           title: L10n.of(context).about,
           onTap: () => onShowAbout(context),
           closeDrawer: false,
-          position: kIsWeb ? CardPosition.single : CardPosition.last,
+          position: CardPosition.single,
           animation: itemAnimations[8],
         ),
       ],

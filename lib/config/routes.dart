@@ -346,6 +346,16 @@ abstract class AppRoutes {
                     state,
                     const HomeserverPicker(addMultiAccount: true),
                   ),
+                  routes: [
+                    GoRoute(
+                      path: 'login',
+                      pageBuilder: (context, state) => defaultPageBuilder(
+                        context,
+                        state,
+                        Login(client: state.extra as Client),
+                      ),
+                    ),
+                  ],
                 ),
               ],
               redirect: loggedOutRedirect,

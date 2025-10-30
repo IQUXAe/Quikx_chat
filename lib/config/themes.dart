@@ -48,12 +48,26 @@ abstract class QuikxChatThemes {
     BuildContext context,
     Brightness brightness, [
     Color? seed,
+    bool useAmoled = false,
   ]) {
-    final colorScheme = ColorScheme.fromSeed(
-      brightness: brightness,
-      seedColor: seed ?? AppConfig.colorSchemeSeed ?? const Color(0xFF6366F1),
-      dynamicSchemeVariant: DynamicSchemeVariant.vibrant,
-    );
+    final colorScheme = useAmoled && brightness == Brightness.dark
+        ? ColorScheme.fromSeed(
+            brightness: brightness,
+            seedColor: seed ?? AppConfig.colorSchemeSeed ?? const Color(0xFF6366F1),
+            dynamicSchemeVariant: DynamicSchemeVariant.vibrant,
+          ).copyWith(
+            surface: Colors.black,
+            surfaceContainerLowest: Colors.black,
+            surfaceContainerLow: const Color(0xFF0A0A0A),
+            surfaceContainer: const Color(0xFF121212),
+            surfaceContainerHigh: const Color(0xFF1A1A1A),
+            surfaceContainerHighest: const Color(0xFF222222),
+          )
+        : ColorScheme.fromSeed(
+            brightness: brightness,
+            seedColor: seed ?? AppConfig.colorSchemeSeed ?? const Color(0xFF6366F1),
+            dynamicSchemeVariant: DynamicSchemeVariant.vibrant,
+          );
     final isColumnMode = QuikxChatThemes.isColumnMode(context);
     return ThemeData(
       visualDensity: VisualDensity.standard,

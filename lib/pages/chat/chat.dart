@@ -46,7 +46,6 @@ import '../../utils/message_translator.dart';
 import '../../utils/link_extractor.dart';
 import 'events/compact_link_preview.dart';
 import 'controllers/chat_input_controller.dart';
-import 'controllers/chat_translation_controller.dart';
 import 'controllers/chat_scroll_controller.dart';
 
 class ChatPage extends StatelessWidget {
@@ -113,11 +112,9 @@ class ChatController extends State<ChatPageWithRoom>
   String get roomId => widget.room.id;
   
   late final ChatInputController _inputController;
-  late final ChatTranslationController _translationController;
   ChatScrollController? _scrollController;
   
   final AutoScrollController scrollController = AutoScrollController();
-  bool get autoTranslateEnabled => _translationController.autoTranslateEnabled;
 
   late final FocusNode inputFocus;
   StreamSubscription<html.Event>? onFocusSub;
@@ -301,7 +298,6 @@ class ChatController extends State<ChatPageWithRoom>
   void initState() {
     inputFocus = FocusNode(onKeyEvent: _customEnterKeyHandling);
     _inputController = ChatInputController(widget.room, inputFocus);
-    _translationController = ChatTranslationController(() => setState(() {}));
     inputFocus.addListener(_inputFocusListener);
 
     super.initState();
@@ -425,13 +421,8 @@ class ChatController extends State<ChatPageWithRoom>
       if (mounted) {
         setState(() {});
         setReadMarker();
-        // Обновление статуса через синхронизацию
       }
     });
-    
-    if (autoTranslateEnabled && timeline != null) {
-      _translationController.translateVisibleMessages(timeline!.events);
-    }
   }
   
 
@@ -559,7 +550,6 @@ class ChatController extends State<ChatPageWithRoom>
     scrollController.removeListener(_updateScrollController);
     onFocusSub?.cancel();
     _inputController.dispose();
-    _translationController.dispose();
     _scrollController?.dispose();
     scrollController.dispose();
     super.dispose();
@@ -621,7 +611,6 @@ class ChatController extends State<ChatPageWithRoom>
       parseCommands = false;
     }
 
-    // Save text for animation
     final messageText = sendController.text;
     
     // Save reply and edit events before clearing
@@ -1406,12 +1395,7 @@ class ChatController extends State<ChatPageWithRoom>
     _displayChatDetailsColumn.value = !_displayChatDetailsColumn.value;
   }
   
-  void translateAllVisibleMessages() {
-    _translationController.toggle();
-    if (autoTranslateEnabled && timeline != null) {
-      _translationController.translateVisibleMessages(timeline!.events);
-    }
-  }
+
   
 
 

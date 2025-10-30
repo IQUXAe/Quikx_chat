@@ -301,10 +301,10 @@ packages:
     dependency: transitive
     description:
       name: dart_webrtc
-      sha256: "3bfa069a8b14a53ba506f6dd529e9b88c878ba0cc238f311051a39bf1e53d075"
+      sha256: "51bcda4ba5d7dd9e65a309244ce3ac0b58025e6e1f6d7442cee4cd02134ef65f"
       url: "https://pub.dev"
     source: hosted
-    version: "1.5.3+hotfix.5"
+    version: "1.6.0"
   dbus:
     dependency: transitive
     description:
@@ -567,10 +567,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_local_notifications
-      sha256: a9966c850de5e445331b854fa42df96a8020066d67f125a5964cbc6556643f68
+      sha256: "19ffb0a8bb7407875555e5e98d7343a633bb73707bae6c6a5f37c90014077875"
       url: "https://pub.dev"
     source: hosted
-    version: "19.4.1"
+    version: "19.5.0"
   flutter_local_notifications_linux:
     dependency: transitive
     description:
@@ -591,10 +591,10 @@ packages:
     dependency: transitive
     description:
       name: flutter_local_notifications_windows
-      sha256: ed46d7ae4ec9d19e4c8fa2badac5fe27ba87a3fe387343ce726f927af074ec98
+      sha256: "8d658f0d367c48bd420e7cf2d26655e2d1130147bca1eea917e576ca76668aaf"
       url: "https://pub.dev"
     source: hosted
-    version: "1.0.2"
+    version: "1.0.3"
   flutter_localizations:
     dependency: "direct main"
     description: flutter
@@ -612,10 +612,10 @@ packages:
     dependency: "direct dev"
     description:
       name: flutter_native_splash
-      sha256: "8321a6d11a8d13977fa780c89de8d257cce3d841eecfb7a4cadffcc4f12d82dc"
+      sha256: "4fb9f4113350d3a80841ce05ebf1976a36de622af7d19aca0ca9a9911c7ff002"
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.6"
+    version: "2.4.7"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -707,10 +707,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_vodozemac
-      sha256: "54cd3790b6dfdc1afce928f8c46f7eeea9e4f8326f077400894935926f202057"
+      sha256: "16d4b44dd338689441fe42a80d0184e5c864e9563823de9e7e6371620d2c0590"
       url: "https://pub.dev"
     source: hosted
-    version: "0.3.0"
+    version: "0.4.1"
   flutter_web_auth_2:
     dependency: "direct main"
     description:
@@ -737,10 +737,10 @@ packages:
     dependency: "direct main"
     description:
       name: flutter_webrtc
-      sha256: "945d0a38b90fbca8257eadb167d8fb9fa7075d9a1939fd2953c10054454d1de2"
+      sha256: "16ca9e30d428bae3dd32933e875c9f67c5843d1fa726c37cf1fc479eb9294549"
       url: "https://pub.dev"
     source: hosted
-    version: "1.1.0"
+    version: "1.2.0"
   frontend_server_client:
     dependency: transitive
     description:
@@ -838,10 +838,10 @@ packages:
     dependency: "direct main"
     description:
       name: go_router
-      sha256: e1d7ffb0db475e6e845eb58b44768f50b830e23960e3df6908924acd8f7f70ea
+      sha256: d8f590a69729f719177ea68eb1e598295e8dbc41bbc247fed78b2c8a25660d7c
       url: "https://pub.dev"
     source: hosted
-    version: "16.2.5"
+    version: "16.3.0"
   gsettings:
     dependency: transitive
     description:
@@ -1155,10 +1155,10 @@ packages:
     dependency: "direct main"
     description:
       name: matrix
-      sha256: "84354dd61f47b297631a3fe5eeebb5c1e0725f872b8fae75851a49cd5689c4f1"
+      sha256: "94f5284c4ee521ae9d61f30cbb7c299d02d820e35509c028090d3b1901f520a3"
       url: "https://pub.dev"
     source: hosted
-    version: "3.0.1"
+    version: "3.0.2"
   meta:
     dependency: transitive
     description:
@@ -1191,14 +1191,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.16.12"
-  mymemory_translate:
-    dependency: "direct main"
-    description:
-      name: mymemory_translate
-      sha256: e7a1d9e3e047b5705fd918c20a53a6600dfd79c80fcf940f3c5e025e6655661e
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.0.0"
   native_imaging:
     dependency: "direct main"
     description:
@@ -1403,10 +1395,10 @@ packages:
     dependency: transitive
     description:
       name: pointer_interceptor_ios
-      sha256: a6906772b3205b42c44614fcea28f818b1e5fdad73a4ca742a7bd49818d9c917
+      sha256: "03c5fa5896080963ab4917eeffda8d28c90f22863a496fb5ba13bc10943e40e4"
       url: "https://pub.dev"
     source: hosted
-    version: "0.10.1"
+    version: "0.10.1+1"
   pointer_interceptor_platform_interface:
     dependency: transitive
     description:
@@ -1507,10 +1499,10 @@ packages:
     dependency: "direct main"
     description:
       name: qr_code_scanner_plus
-      sha256: "39696b50d277097ee4d90d4292de36f38c66213a4f5216a06b2bdd2b63117859"
+      sha256: "41f4a834a48d670d25e3917cb9f1dbb4742298a0b4ab60d82416b295b73931e1"
       url: "https://pub.dev"
     source: hosted
-    version: "2.0.10+1"
+    version: "2.0.13"
   qr_image:
     dependency: "direct main"
     description:
@@ -2232,18 +2224,18 @@ packages:
     dependency: transitive
     description:
       name: vodozemac
-      sha256: "95cac62ffab94db99e134c8f9aac198f8131a4eed0bed76a6cfc9c72add229b9"
+      sha256: "39144e20740807731871c9248d811ed5a037b21d0aa9ffcfa630954de74139d9"
       url: "https://pub.dev"
     source: hosted
-    version: "0.3.0"
+    version: "0.4.0"
   wakelock_plus:
     dependency: "direct main"
     description:
       name: wakelock_plus
-      sha256: a474e314c3e8fb5adef1f9ae2d247e57467ad557fa7483a2b895bc1b421c5678
+      sha256: "61713aa82b7f85c21c9f4cd0a148abd75f38a74ec645fcb1e446f882c82fd09b"
       url: "https://pub.dev"
     source: hosted
-    version: "1.3.2"
+    version: "1.3.3"
   wakelock_plus_platform_interface:
     dependency: transitive
     description:
@@ -2320,10 +2312,10 @@ packages:
     dependency: "direct main"
     description:
       name: webrtc_interface
-      sha256: "86fe3afc81a08481dfb25cf14a5a94e27062ecef25544783f352c914e0bbc1ca"
+      sha256: "2e604a31703ad26781782fb14fa8a4ee621154ee2c513d2b9938e486fa695233"
       url: "https://pub.dev"
     source: hosted
-    version: "1.2.2+hotfix.2"
+    version: "1.3.0"
   win32:
     dependency: transitive
     description:
@@ -2389,5 +2381,5 @@ packages:
     source: hosted
     version: "3.1.3"
 sdks:
-  dart: ">=3.8.0 <4.0.0"
-  flutter: ">=3.32.0"
+  dart: ">=3.9.0 <4.0.0"
+  flutter: ">=3.35.0"

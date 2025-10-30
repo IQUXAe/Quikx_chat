@@ -23,7 +23,7 @@ import 'message_reactions.dart';
 import 'reply_content.dart';
 import 'state_message.dart';
 
-class Message extends StatelessWidget {
+class Message extends StatefulWidget {
   final Event event;
   final Event? nextEvent;
   final Event? previousEvent;
@@ -74,7 +74,35 @@ class Message extends StatelessWidget {
   });
 
   @override
+  State<Message> createState() => _MessageState();
+}
+
+class _MessageState extends State<Message> {
+  bool _isHovered = false;
+  bool _showQuickActions = false;
+
+  @override
   Widget build(BuildContext context) {
+    final event = widget.event;
+    final nextEvent = widget.nextEvent;
+    final previousEvent = widget.previousEvent;
+    final displayReadMarker = widget.displayReadMarker;
+    final onSelect = widget.onSelect;
+    final onInfoTab = widget.onInfoTab;
+    final scrollToEventId = widget.scrollToEventId;
+    final onSwipe = widget.onSwipe;
+    final onMention = widget.onMention;
+    final longPressSelect = widget.longPressSelect;
+    final selected = widget.selected;
+    final singleSelected = widget.singleSelected;
+    final timeline = widget.timeline;
+    final highlightMarker = widget.highlightMarker;
+    final resetAnimateIn = widget.resetAnimateIn;
+    final wallpaperMode = widget.wallpaperMode;
+    final scrollController = widget.scrollController;
+    final colors = widget.colors;
+    final onExpand = widget.onExpand;
+    final isCollapsed = widget.isCollapsed;
     final theme = Theme.of(context);
 
     if (!{
@@ -104,14 +132,14 @@ class Message extends StatelessWidget {
     var color = theme.colorScheme.surfaceContainerHigh;
     final displayTime = event.type == EventTypes.RoomCreate ||
         nextEvent == null ||
-        !event.originServerTs.sameEnvironment(nextEvent!.originServerTs);
+        !event.originServerTs.sameEnvironment(nextEvent.originServerTs);
     final nextEventSameSender = nextEvent != null &&
         {
           EventTypes.Message,
           EventTypes.Sticker,
           EventTypes.Encrypted,
-        }.contains(nextEvent!.type) &&
-        nextEvent!.senderId == event.senderId &&
+        }.contains(nextEvent.type) &&
+        nextEvent.senderId == event.senderId &&
         !displayTime;
 
     final previousEventSameSender = previousEvent != null &&
@@ -119,9 +147,9 @@ class Message extends StatelessWidget {
           EventTypes.Message,
           EventTypes.Sticker,
           EventTypes.Encrypted,
-        }.contains(previousEvent!.type) &&
-        previousEvent!.senderId == event.senderId &&
-        previousEvent!.originServerTs.sameEnvironment(event.originServerTs);
+        }.contains(previousEvent.type) &&
+        previousEvent.senderId == event.senderId &&
+        previousEvent.originServerTs.sameEnvironment(event.originServerTs);
 
     final textColor = ownMessage 
         ? theme.onBubbleColor
@@ -168,8 +196,7 @@ class Message extends StatelessWidget {
       color = theme.colorScheme.surfaceContainerHigh;
     }
 
-    final resetAnimateIn = this.resetAnimateIn;
-    var animateIn = this.animateIn;
+    var animateIn = widget.animateIn;
 
     final sentReactions = <String>{};
     if (singleSelected) {
@@ -202,16 +229,33 @@ class Message extends StatelessWidget {
     return Center(
       child: Swipeable(
         key: ValueKey(event.eventId),
-        background: const Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12.0),
-          child: Center(
-            child: Icon(Icons.check_outlined),
+        background: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+          child: Align(
+            alignment: AppConfig.swipeRightToLeftToReply
+                ? Alignment.centerRight
+                : Alignment.centerLeft,
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primaryContainer,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.reply_rounded,
+                color: theme.colorScheme.onPrimaryContainer,
+                size: 20,
+              ),
+            ),
           ),
         ),
         direction: AppConfig.swipeRightToLeftToReply
             ? SwipeDirection.endToStart
             : SwipeDirection.startToEnd,
-        onSwipe: (_) => onSwipe(),
+        onSwipe: (_) {
+          HapticFeedback.mediumImpact();
+          onSwipe();
+        },
         child: Container(
           constraints: const BoxConstraints(
             maxWidth: QuikxChatThemes.maxTimelineWidth,
@@ -290,7 +334,15 @@ class Message extends StatelessWidget {
                                     enableFeedback: !selected,
                                     onTap: longPressSelect
                                         ? null
-                                        : () => onSelect(event),
+                                        : () {
+                                            if (!event.redacted && event.room.canSendDefaultMessages) {
+                                              setState(() {
+                                                _showQuickActions = !_showQuickActions;
+                                                _isHovered = _showQuickActions;
+                                              });
+                                            }
+                                            onSelect(event);
+                                          },
                                     borderRadius: BorderRadius.circular(
                                       AppConfig.borderRadius / 2,
                                     ),
@@ -341,7 +393,7 @@ class Message extends StatelessWidget {
                                           ),
                                         ),
                                       )
-                                    else if (!showReceiptsRow)
+                                    else
                                       FutureBuilder<User?>(
                                         future: event.fetchSenderUser(),
                                         builder: (context, snapshot) {
@@ -362,15 +414,18 @@ class Message extends StatelessWidget {
                                                 : null,
                                           );
                                         },
-                                      )
-                                    else
-                                      const SizedBox(width: Avatar.defaultSize),
+                                      ),
                                     Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                      child: Row(
                                         mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
+                                          Flexible(
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
                                           if (!nextEventSameSender)
                                             Padding(
                                               padding: const EdgeInsets.only(
@@ -428,18 +483,25 @@ class Message extends StatelessWidget {
                                                       },
                                                     ),
                                             ),
-                                          Container(
-                                            alignment: alignment,
-                                            padding:
-                                                const EdgeInsets.only(left: 8),
-                                            child: GestureDetector(
-                                              onLongPress: longPressSelect
-                                                  ? null
-                                                  : () {
-                                                      HapticFeedback
-                                                          .heavyImpact();
-                                                      onSelect(event);
-                                                    },
+                                          Stack(
+                                            children: [
+                                              Container(
+                                                alignment: alignment,
+                                                padding:
+                                                    const EdgeInsets.only(left: 8),
+                                                child: GestureDetector(
+                                              onLongPress: () {
+                                                HapticFeedback.heavyImpact();
+                                                if (longPressSelect) {
+                                                  onSelect(event);
+                                                } else if (!event.redacted && event.room.canSendDefaultMessages) {
+                                                  setState(() {
+                                                    _showQuickActions = true;
+                                                    _isHovered = true;
+                                                  });
+                                                  onSelect(event);
+                                                }
+                                              },
                                               child: AnimatedOpacity(
                                                 opacity: animateIn
                                                     ? 0
@@ -643,7 +705,9 @@ class Message extends StatelessWidget {
                                               ),
                                             ),
                                           ),
-                                          if (showReactionPicker)
+                                        ],
+                                      ),
+                                      if (showReactionPicker)
                                             Align(
                                               alignment: ownMessage
                                                   ? Alignment.bottomRight
@@ -837,17 +901,6 @@ class Message extends StatelessWidget {
                                                               );
                                                             },
                                                           ),
-                                                          // Translation button
-                                                          FutureBuilder<bool>(
-                                                            future: MessageTranslator.isEnabled,
-                                                            builder: (context, snapshot) {
-                                                              if (!(snapshot.data ?? false)) return const SizedBox.shrink();
-                                                              return Padding(
-                                                                padding: const EdgeInsets.only(right: 8.0),
-                                                                child: _TranslateButton(event: event, timeline: timeline),
-                                                              );
-                                                            },
-                                                          ),
                                                         ],
                                                       ),
                                                     ),
@@ -855,6 +908,9 @@ class Message extends StatelessWidget {
                                                 ),
                                               ),
                                             ),
+                                              ],
+                                            ),
+                                          ),
                                         ],
                                       ),
                                     ),
@@ -866,7 +922,7 @@ class Message extends StatelessWidget {
                   },
                 ),
               ),
-              if (showReceiptsRow)
+              if (showReceiptsRow || singleSelected || _showQuickActions)
                 AnimatedSize(
                   duration: QuikxChatThemes.animationDuration,
                   curve: QuikxChatThemes.animationCurve,
@@ -877,7 +933,11 @@ class Message extends StatelessWidget {
                       left: (ownMessage ? 0 : Avatar.defaultSize) + 12.0,
                       right: ownMessage ? 0 : 12.0,
                     ),
-                    child: MessageReactions(event, timeline),
+                    child: MessageReactions(
+                      event,
+                      timeline,
+                      showTranslateButton: singleSelected || _showQuickActions,
+                    ),
                   ),
                 ),
 
@@ -991,37 +1051,72 @@ class _TranslateButton extends StatefulWidget {
   State<_TranslateButton> createState() => _TranslateButtonState();
 }
 
-class _TranslateButtonState extends State<_TranslateButton> {
+class _TranslateButtonState extends State<_TranslateButton> with SingleTickerProviderStateMixin {
   bool _isLoading = false;
+  late AnimationController _controller;
+  late Animation<double> _fadeAnimation;
+  bool _shouldShowButton = false;
 
   bool get _isTranslated => messageTranslations.containsKey(widget.event.eventId);
 
   @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 300),
+      vsync: this,
+    );
+    _fadeAnimation = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
+    _checkLanguage();
+  }
+
+  void _checkLanguage() async {
+    final detected = MessageTranslator.detectLanguage(widget.event.body);
+    if (detected == 'auto') return;
+    
+    final targetLang = await MessageTranslator.targetLanguage;
+    final systemLang = WidgetsBinding.instance.platformDispatcher.locale.languageCode;
+    final actualTarget = targetLang == 'auto' ? systemLang : targetLang;
+    
+    if (detected != actualTarget && mounted) {
+      setState(() => _shouldShowButton = true);
+      _controller.forward();
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return IconButton(
-      icon: _isLoading 
-        ? const SizedBox(
-            width: 16,
-            height: 16,
-            child: CircularProgressIndicator(strokeWidth: 2),
-          )
-        : Icon(
-            Icons.translate,
-            color: _isTranslated ? Colors.blue : null,
-          ),
-      tooltip: L10n.of(context).translateMessage,
-      onPressed: _isLoading ? null : _toggleTranslation,
+    if (!_shouldShowButton && !_isTranslated) return const SizedBox.shrink();
+
+    return FadeTransition(
+      opacity: _fadeAnimation,
+      child: IconButton(
+        icon: _isLoading 
+          ? const SizedBox(
+              width: 16,
+              height: 16,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            )
+          : Icon(
+              _isTranslated ? Icons.translate : Icons.translate_outlined,
+              color: _isTranslated ? Theme.of(context).colorScheme.primary : null,
+            ),
+        tooltip: _isTranslated ? 'Show original' : 'Translate',
+        onPressed: _isLoading ? null : _toggleTranslation,
+      ),
     );
   }
 
   Future<void> _toggleTranslation() async {
     final eventId = widget.event.eventId;
-    final text = widget.event.body;
-    
-    Logs().i('[TranslateButton] Toggle translation for event $eventId: "$text"');
     
     if (_isTranslated) {
-      Logs().i('[TranslateButton] Removing translation for $eventId');
       if (mounted) {
         setState(() {
           messageTranslations.remove(eventId);
@@ -1032,47 +1127,28 @@ class _TranslateButtonState extends State<_TranslateButton> {
     }
 
     setState(() => _isLoading = true);
-    Logs().i('[TranslateButton] Starting translation for $eventId');
 
     try {
-      if (text.trim().isEmpty) {
-        Logs().i('[TranslateButton] Empty text, skipping');
-        return;
-      }
+      final targetLang = await MessageTranslator.targetLanguage;
+      final systemLang = WidgetsBinding.instance.platformDispatcher.locale.languageCode;
+      final actualTarget = targetLang == 'auto' ? systemLang : targetLang;
       
-      final translation = await MessageTranslator.translateMessage(text, 'auto');
-      Logs().i('[TranslateButton] Translation result for $eventId: "$translation"');
+      final translation = await MessageTranslator.translateMessage(
+        widget.event.body,
+        actualTarget,
+      );
 
       if (translation != null && translation.isNotEmpty && mounted) {
-        Logs().i('[TranslateButton] Saving translation for $eventId');
-        if (mounted) {
-          setState(() {
-            messageTranslations[eventId] = translation;
-          });
-          notifyTranslationChanged();
-        }
-      } else {
-        Logs().i('[TranslateButton] No valid translation received for $eventId');
+        setState(() {
+          messageTranslations[eventId] = translation;
+        });
+        notifyTranslationChanged();
       }
     } catch (e) {
-      Logs().w('[TranslateButton] Translation error for $eventId: $e');
-      if (mounted && e.toString().contains('Translation limit exceeded')) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(L10n.of(context).translationLimitExceeded),
-            backgroundColor: Colors.orange,
-            duration: const Duration(seconds: 5),
-          ),
-        );
-      }
+      Logs().w('[TranslateButton] Translation error: $e');
     } finally {
       if (mounted) {
-        try {
-          setState(() => _isLoading = false);
-        } catch (e) {
-          // Widget might be disposed
-        }
-        Logs().i('[TranslateButton] Finished translation attempt for $eventId');
+        setState(() => _isLoading = false);
       }
     }
   }

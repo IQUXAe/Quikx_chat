@@ -60,13 +60,13 @@ Not build yet
 flutter pub get
 
 # Android
-./build_apk_release.sh
+./scripts/build_apk_release.sh
 
 # Linux
-./build_appimage.sh
+./scripts/build_appimage.sh
 
 # Web
-./build_web.sh
+./scripts/build_web.sh
 ```
 
 ## Development
@@ -91,6 +91,8 @@ flutter run -d android
 ## Credits
 
 Based on [FluffyChat](https://github.com/krille-chan/fluffychat) by Christian Pauly
+
+Logo design by n9ntik ([@n9ntik](https://t.me/n9ntik))
 
 ## License
 

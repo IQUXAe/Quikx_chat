@@ -47,164 +47,213 @@ class UserDialog extends StatelessWidget {
     var copied = false;
     final theme = Theme.of(context);
     final avatar = profile.avatarUrl;
-    return AlertDialog.adaptive(
-      title: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 256),
-        child: Center(child: Text(displayname, textAlign: TextAlign.center)),
-      ),
-      content: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 256, maxHeight: 256),
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 400),
         child: PresenceBuilder(
           userId: profile.userId,
           client: Matrix.of(context).client,
           builder: (context, presence) {
-            if (presence == null) return const SizedBox.shrink();
-            final statusMsg = presence.statusMsg;
-            final lastActiveTimestamp = presence.lastActiveTimestamp;
-            final presenceText = presence.currentlyActive == true
+            final statusMsg = presence?.statusMsg;
+            final lastActiveTimestamp = presence?.lastActiveTimestamp;
+            final presenceText = presence?.currentlyActive == true
                 ? L10n.of(context).currentlyActive
                 : lastActiveTimestamp != null
                     ? L10n.of(context).lastActiveAgo(
                         lastActiveTimestamp.localizedTimeShort(context),
                       )
                     : null;
-            return SingleChildScrollView(
-              child: Column(
-                spacing: 8,
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  HoverBuilder(
-                    builder: (context, hovered) => StatefulBuilder(
-                      builder: (context, setState) => MouseRegion(
-                        cursor: SystemMouseCursors.click,
-                        child: GestureDetector(
-                          onTap: () {
-                            Clipboard.setData(
-                              ClipboardData(text: profile.userId),
-                            );
-                            setState(() {
-                              copied = true;
-                            });
-                          },
-                          child: RichText(
-                            text: TextSpan(
-                              children: [
-                                WidgetSpan(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(right: 4.0),
-                                    child: AnimatedScale(
-                                      duration: QuikxChatThemes.animationDuration,
-                                      curve: QuikxChatThemes.animationCurve,
-                                      scale: hovered
-                                          ? 1.33
-                                          : copied
-                                              ? 1.25
-                                              : 1.0,
-                                      child: Icon(
-                                        copied
-                                            ? Icons.check_circle
-                                            : Icons.copy,
-                                        size: 12,
-                                        color: copied ? Colors.green : null,
-                                      ),
-                                    ),
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(height: 32),
+                Avatar(
+                  mxContent: avatar,
+                  name: displayname,
+                  size: Avatar.defaultSize * 2.5,
+                  onTap: avatar != null
+                      ? () => showDialog(
+                            context: context,
+                            builder: (_) => MxcImageViewer(avatar),
+                          )
+                      : null,
+                ),
+                const SizedBox(height: 16),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Text(
+                    displayname,
+                    style: theme.textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                HoverBuilder(
+                  builder: (context, hovered) => StatefulBuilder(
+                    builder: (context, setState) => MouseRegion(
+                      cursor: SystemMouseCursors.click,
+                      child: GestureDetector(
+                        onTap: () {
+                          Clipboard.setData(
+                            ClipboardData(text: profile.userId),
+                          );
+                          setState(() {
+                            copied = true;
+                          });
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: copied
+                                ? theme.colorScheme.primaryContainer
+                                : hovered
+                                    ? theme.colorScheme.surfaceContainerHighest
+                                    : Colors.transparent,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                copied ? Icons.check : Icons.alternate_email,
+                                size: 14,
+                                color: copied
+                                    ? theme.colorScheme.primary
+                                    : theme.colorScheme.onSurface.withOpacity(0.6),
+                              ),
+                              const SizedBox(width: 6),
+                              Flexible(
+                                child: Text(
+                                  profile.userId,
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: theme.colorScheme.onSurface.withOpacity(0.6),
                                   ),
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                                TextSpan(text: profile.userId),
-                              ],
-                              style: theme.textTheme.bodyMedium
-                                  ?.copyWith(fontSize: 10),
-                            ),
-                            textAlign: TextAlign.center,
+                              ),
+                            ],
                           ),
                         ),
                       ),
                     ),
                   ),
-                  Center(
-                    child: Avatar(
-                      mxContent: avatar,
-                      name: displayname,
-                      size: Avatar.defaultSize * 2,
-                      onTap: avatar != null
-                          ? () => showDialog(
-                                context: context,
-                                builder: (_) => MxcImageViewer(avatar),
-                              )
-                          : null,
+                ),
+                if (presenceText != null) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    presenceText,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.primary,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+                if (statusMsg != null) ...[
+                  const SizedBox(height: 16),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.surfaceContainerHighest,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: SelectableLinkify(
+                        text: statusMsg,
+                        textScaleFactor:
+                            MediaQuery.textScalerOf(context).scale(1),
+                        textAlign: TextAlign.center,
+                        options: const LinkifyOptions(humanize: false),
+                        linkStyle: TextStyle(
+                          color: theme.colorScheme.primary,
+                          decoration: TextDecoration.underline,
+                        ),
+                        style: theme.textTheme.bodyMedium,
+                        onOpen: (url) =>
+                            UrlLauncher(context, url.url).launchUrl(),
+                      ),
                     ),
                   ),
-                  if (presenceText != null)
-                    Text(
-                      presenceText,
-                      style: const TextStyle(fontSize: 10),
-                      textAlign: TextAlign.center,
-                    ),
-                  if (statusMsg != null)
-                    SelectableLinkify(
-                      text: statusMsg,
-                      textScaleFactor:
-                          MediaQuery.textScalerOf(context).scale(1),
-                      textAlign: TextAlign.center,
-                      options: const LinkifyOptions(humanize: false),
-                      linkStyle: TextStyle(
-                        color: theme.colorScheme.primary,
-                        decoration: TextDecoration.underline,
-                        decorationColor: theme.colorScheme.primary,
-                      ),
-                      onOpen: (url) =>
-                          UrlLauncher(context, url.url).launchUrl(),
-                    ),
                 ],
-              ),
+                const SizedBox(height: 24),
+                if (client.userID != profile.userId)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          width: double.infinity,
+                          child: FilledButton.icon(
+                            onPressed: () async {
+                              final router = GoRouter.of(context);
+                              final roomIdResult = await showFutureLoadingDialog(
+                                context: context,
+                                future: () => client.startDirectChat(profile.userId),
+                              );
+                              final roomId = roomIdResult.result;
+                              if (roomId == null) return;
+                              if (context.mounted) Navigator.of(context).pop();
+                              router.go('/rooms/$roomId');
+                            },
+                            icon: const Icon(Icons.send_outlined),
+                            label: Text(
+                              dmRoomId == null
+                                  ? L10n.of(context).startConversation
+                                  : L10n.of(context).sendAMessage,
+                            ),
+                            style: FilledButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton.icon(
+                            onPressed: () {
+                              final router = GoRouter.of(context);
+                              Navigator.of(context).pop();
+                              router.go(
+                                '/rooms/settings/security/ignorelist',
+                                extra: profile.userId,
+                              );
+                            },
+                            icon: Icon(
+                              Icons.block_outlined,
+                              color: theme.colorScheme.error,
+                            ),
+                            label: Text(
+                              L10n.of(context).ignoreUser,
+                              style: TextStyle(color: theme.colorScheme.error),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              side: BorderSide(color: theme.colorScheme.error),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                const SizedBox(height: 16),
+                TextButton(
+                  onPressed: Navigator.of(context).pop,
+                  child: Text(L10n.of(context).close),
+                ),
+                const SizedBox(height: 8),
+              ],
             );
           },
         ),
       ),
-      actions: [
-        if (client.userID != profile.userId) ...[
-          AdaptiveDialogAction(
-            bigButtons: true,
-            onPressed: () async {
-              final router = GoRouter.of(context);
-              final roomIdResult = await showFutureLoadingDialog(
-                context: context,
-                future: () => client.startDirectChat(profile.userId),
-              );
-              final roomId = roomIdResult.result;
-              if (roomId == null) return;
-              if (context.mounted) Navigator.of(context).pop();
-              router.go('/rooms/$roomId');
-            },
-            child: Text(
-              dmRoomId == null
-                  ? L10n.of(context).startConversation
-                  : L10n.of(context).sendAMessage,
-            ),
-          ),
-          AdaptiveDialogAction(
-            bigButtons: true,
-            onPressed: () {
-              final router = GoRouter.of(context);
-              Navigator.of(context).pop();
-              router.go(
-                '/rooms/settings/security/ignorelist',
-                extra: profile.userId,
-              );
-            },
-            child: Text(
-              L10n.of(context).ignoreUser,
-              style: TextStyle(color: theme.colorScheme.error),
-            ),
-          ),
-        ],
-        AdaptiveDialogAction(
-          bigButtons: true,
-          onPressed: Navigator.of(context).pop,
-          child: Text(L10n.of(context).close),
-        ),
-      ],
     );
   }
 }
