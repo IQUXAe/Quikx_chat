@@ -77,10 +77,13 @@ Future<MatrixSdkDatabase> _constructDatabase(String clientName) async {
   final path = await _getDatabasePath(clientName);
 
   // fix dlopen for old Android
-  await applyWorkaroundToOpenSqlCipherOnOldAndroidVersions();
+  if (Platform.isAndroid) {
+    await applyWorkaroundToOpenSqlCipherOnOldAndroidVersions();
+  }
   // import the SQLite / SQLCipher shared objects / dynamic libraries
-  final factory =
-      createDatabaseFactoryFfi(ffiInit: SQfLiteEncryptionHelper.ffiInit);
+  final factory = createDatabaseFactoryFfi(
+    ffiInit: SQfLiteEncryptionHelper.ffiInit,
+  );
 
   // required for [getDatabasesPath]
   databaseFactory = factory;

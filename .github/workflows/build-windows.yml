@@ -29,9 +29,18 @@ jobs:
     - name: Build Windows
       run: flutter build windows --release
     
+    - name: Copy SQLCipher DLL
+      run: |
+        if (Test-Path "build\windows\x64\plugins\sqlcipher_flutter_libs\libsqlcipher.dll") {
+          Copy-Item "build\windows\x64\plugins\sqlcipher_flutter_libs\libsqlcipher.dll" "build\windows\x64\runner\Release\"
+          Write-Host "Copied libsqlcipher.dll"
+        }
+      shell: powershell
+    
     - name: List build output
       run: |
         dir build\windows\x64\runner\Release
+        dir build\windows\x64\plugins\sqlcipher_flutter_libs
       shell: powershell
     
     - name: Create Installer with Inno Setup
