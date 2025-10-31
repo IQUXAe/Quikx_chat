@@ -195,12 +195,13 @@ abstract class ClientManager {
     final flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
     await flutterLocalNotificationsPlugin.initialize(
-      InitializationSettings(
-        android: const AndroidInitializationSettings('notifications_icon'),
-        iOS: const DarwinInitializationSettings(),
-        windows: DarwinInitializationSettings(
-          appName: AppConfig.applicationName,
+      const InitializationSettings(
+        android: AndroidInitializationSettings('notifications_icon'),
+        iOS: DarwinInitializationSettings(),
+        windows: WindowsInitializationSettings(
+          appName: 'QuikxChat',
           appUserModelId: 'com.iquxae.quikxchat',
+          guid: 'A8B9C0D1-E2F3-4A5B-6C7D-8E9F0A1B2C3D',
         ),
       ),
     );
