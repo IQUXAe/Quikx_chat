@@ -10,6 +10,7 @@ import 'package:quikxchat/l10n/l10n.dart';
 import 'package:quikxchat/utils/optimized_http_client.dart';
 import 'package:quikxchat/utils/memory_manager.dart';
 import 'package:quikxchat/widgets/app_lock.dart';
+import 'package:quikxchat/widgets/modern_back_button.dart';
 import 'package:quikxchat/widgets/theme_builder.dart';
 import '../config/app_config.dart';
 import '../utils/custom_scroll_behaviour.dart';
@@ -123,7 +124,8 @@ class _QuikxChatAppState extends State<QuikxChatApp> with WidgetsBindingObserver
             child: widget.testWidget ?? child,
           ),
         ),
-      ),
+        ),
     );
   }
 }
+

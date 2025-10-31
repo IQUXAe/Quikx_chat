@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quikxchat/widgets/modern_back_button.dart';
 
 import 'package:matrix/matrix.dart';
 
@@ -32,6 +33,7 @@ class SettingsNotificationsView extends StatelessWidget {
     ];
     return Scaffold(
       appBar: AppBar(
+        leading: Center(child: ModernBackButton()),
         centerTitle: QuikxChatThemes.isColumnMode(context),
         title: Text(L10n.of(context).notifications),
       ),

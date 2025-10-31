@@ -126,6 +126,23 @@ class RecordingDialogState extends State<RecordingDialog> {
     );
   }
 
+  void _convertToText() async {
+    _recorderSubscription?.cancel();
+    final path = await _audioRecorder.stop();
+
+    if (path == null) throw ('Recording failed!');
+    
+    Navigator.of(context, rootNavigator: false).pop<RecordingResult>(
+      RecordingResult(
+        path: path,
+        duration: _duration.inMilliseconds,
+        waveform: [],
+        fileName: fileName,
+        convertToText: true,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -190,6 +207,11 @@ class RecordingDialogState extends State<RecordingDialog> {
           ),
           if (error != true)
             CupertinoDialogAction(
+              onPressed: _convertToText,
+              child: Text('📝 ${L10n.of(context).send}'),
+            ),
+          if (error != true)
+            CupertinoDialogAction(
               onPressed: _stopAndSend,
               child: Text(L10n.of(context).send),
             ),
@@ -210,6 +232,11 @@ class RecordingDialogState extends State<RecordingDialog> {
         ),
         if (error != true)
           TextButton(
+            onPressed: _convertToText,
+            child: Text('📝 ${L10n.of(context).send}'),
+          ),
+        if (error != true)
+          TextButton(
             onPressed: _stopAndSend,
             child: Text(L10n.of(context).send),
           ),
@@ -223,12 +250,14 @@ class RecordingResult {
   final int duration;
   final List<int> waveform;
   final String? fileName;
+  final bool convertToText;
 
   const RecordingResult({
     required this.path,
     required this.duration,
     required this.waveform,
     required this.fileName,
+    this.convertToText = false,
   });
 }
 

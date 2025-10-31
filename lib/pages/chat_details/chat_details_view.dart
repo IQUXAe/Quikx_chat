@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quikxchat/widgets/modern_back_button.dart';
 
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:go_router/go_router.dart';
@@ -82,7 +83,7 @@ class ChatDetailsView extends StatelessWidget {
         return Scaffold(
           appBar: AppBar(
             leading: controller.widget.embeddedCloseButton ??
-                const Center(child: BackButton()),
+                Center(child: ModernBackButton()),
             elevation: theme.appBarTheme.elevation,
             actions: <Widget>[
               if (room.canonicalAlias.isNotEmpty)

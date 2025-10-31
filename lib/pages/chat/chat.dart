@@ -757,6 +757,14 @@ class ChatController extends State<ChatPageWithRoom>
     return;
   }
 
+  Future<void> onVoiceToTextSend(String text) async {
+    setState(() {
+      sendController.text = text;
+      replyEvent = null;
+    });
+    await send();
+  }
+
 
 
   void hideEmojiPicker() {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quikxchat/widgets/modern_back_button.dart';
 
 import 'package:go_router/go_router.dart';
 
@@ -52,7 +53,7 @@ class _SettingsChatViewState extends State<SettingsChatView> {
 
     return Scaffold(
       appBar: AppBar(
-        leading: const BackButton(),
+        leading: ModernBackButton(),
         title: Text(L10n.of(context).chat),
         centerTitle: QuikxChatThemes.isColumnMode(context),
       ),

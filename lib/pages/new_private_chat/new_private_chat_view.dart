@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quikxchat/widgets/modern_back_button.dart';
 
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
@@ -30,7 +31,7 @@ class NewPrivateChatView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         scrolledUnderElevation: 0,
-        leading: const Center(child: BackButton()),
+        leading: Center(child: ModernBackButton()),
         title: Text(L10n.of(context).newChat),
         backgroundColor: theme.scaffoldBackgroundColor,
         actions: [

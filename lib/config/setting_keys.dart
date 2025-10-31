@@ -70,7 +70,9 @@ enum AppSettings<T> {
     false,
   ),
   enableSoftLogout<bool>('chat.fluffy.enable_soft_logout', false),
-  showLinkPreviews<bool>('chat.fluffy.show_link_previews', true);
+  showLinkPreviews<bool>('chat.fluffy.show_link_previews', true),
+  aiEnabled<bool>('chat.quikxchat.ai_enabled', true),
+  voiceToTextEnabled<bool>('chat.quikxchat.voice_to_text_enabled', true);
 
   final String key;
   final T defaultValue;

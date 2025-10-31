@@ -2,6 +2,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:quikxchat/widgets/modern_back_button.dart';
 
 import 'package:badges/badges.dart';
 import 'package:desktop_drop/desktop_drop.dart';
@@ -195,7 +196,7 @@ class ChatView extends StatelessWidget {
                               filter: (r) => r.id != controller.roomId,
                               badgePosition:
                                   BadgePosition.topEnd(end: 8, top: 4),
-                              child: const Center(child: BackButton()),
+                              child: Center(child: ModernBackButton()),
                             ),
                           ),
                 titleSpacing: QuikxChatThemes.isColumnMode(context) ? 24 : 0,

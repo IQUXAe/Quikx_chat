@@ -137,8 +137,8 @@ extension LocalNotificationsExtension on MatrixState {
         appIcon: 'quikxchat',
         actions: [
           NotificationAction(
-            DesktopNotificationActions.openChat.name,
-            L10n.of(context).openChat,
+            DesktopNotificationActions.reply.name,
+            L10n.of(context).reply,
           ),
           NotificationAction(
             DesktopNotificationActions.seen.name,
@@ -171,6 +171,7 @@ extension LocalNotificationsExtension on MatrixState {
                 });
                 break;
               case DesktopNotificationActions.openChat:
+              case DesktopNotificationActions.reply:
                 try {
                   QuikxChatApp.router.go('/rooms/${event.room.id}');
                 } catch (e) {
@@ -190,4 +191,4 @@ extension LocalNotificationsExtension on MatrixState {
   }
 }
 
-enum DesktopNotificationActions { seen, openChat }
+enum DesktopNotificationActions { seen, openChat, reply }

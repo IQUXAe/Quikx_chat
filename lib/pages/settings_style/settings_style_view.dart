@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:quikxchat/widgets/modern_back_button.dart';
 
 import 'package:dynamic_color/dynamic_color.dart';
 import 'package:matrix/matrix.dart';
@@ -31,6 +32,7 @@ class SettingsStyleView extends StatelessWidget {
     final client = Matrix.of(context).client;
     return Scaffold(
       appBar: AppBar(
+        leading: Center(child: ModernBackButton()),
         centerTitle: QuikxChatThemes.isColumnMode(context),
         title: Text(L10n.of(context).changeTheme),
       ),

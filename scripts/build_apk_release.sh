@@ -4,16 +4,25 @@ set -e
 
 echo "🚀 Building Android APKs..."
 
+# Load .env variables
+if [ -f .env ]; then
+    export $(cat .env | grep -v '^#' | xargs)
+fi
+
 # Get version from pubspec.yaml
 VERSION=$(grep "^version:" pubspec.yaml | sed 's/version: //' | sed 's/+.*//')
 
 # Build split APKs
 echo "📦 Building split APKs..."
-flutter build apk --release --obfuscate --split-debug-info=build/app/outputs/symbols --split-per-abi
+flutter build apk --release --obfuscate --split-debug-info=build/app/outputs/symbols --split-per-abi \
+  --dart-define=V2T_SECRET_KEY="$V2T_SECRET_KEY" \
+  --dart-define=V2T_SERVER_URL="$V2T_SERVER_URL"
 
 # Build universal APK
 echo "📦 Building universal APK..."
-flutter build apk --release --obfuscate --split-debug-info=build/app/outputs/symbols
+flutter build apk --release --obfuscate --split-debug-info=build/app/outputs/symbols \
+  --dart-define=V2T_SECRET_KEY="$V2T_SECRET_KEY" \
+  --dart-define=V2T_SERVER_URL="$V2T_SERVER_URL"
 
 # Rename APK files
 cd build/app/outputs/flutter-apk/

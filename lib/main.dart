@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'package:flutter/material.dart';
 
 import 'package:collection/collection.dart';
@@ -5,6 +6,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_vodozemac/flutter_vodozemac.dart' as vod;
 import 'package:matrix/matrix.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:ffi/ffi.dart';
+import 'package:just_audio_media_kit/just_audio_media_kit.dart';
 
 import 'package:quikxchat/config/app_config.dart';
 import 'package:quikxchat/utils/client_manager.dart';
@@ -31,25 +34,49 @@ void main() async {
   // widget bindings are initialized already.
   WidgetsFlutterBinding.ensureInitialized();
 
+  // Initialize media_kit for Linux audio support (optional)
+  var mediaKitInitialized = false;
+  if (PlatformInfos.isLinux) {
+    try {
+      // Set LC_NUMERIC=C for media_kit via FFI
+      try {
+        final libc = DynamicLibrary.open('libc.so.6');
+        final setlocale = libc.lookupFunction<
+            Pointer<Utf8> Function(Int32, Pointer<Utf8>),
+            Pointer<Utf8> Function(int, Pointer<Utf8>)
+        >('setlocale');
+        const lcAll = 6;
+        setlocale(lcAll, 'C'.toNativeUtf8());
+      } catch (_) {}
+      
+      JustAudioMediaKit.ensureInitialized(linux: true, windows: false);
+      mediaKitInitialized = true;
+      Logs().i('media_kit initialized. Audio playback enabled.');
+    } catch (e) {
+      Logs().w('media_kit failed (mpv not installed). Audio disabled.', e);
+    }
+  }
+  PlatformInfos.mediaKitAvailable = mediaKitInitialized;
+
   // Параллельная инициализация для ускорения запуска
   Logs().nativeColors = true;
-  
+
   final initFutures = <Future>[
     if (!PlatformInfos.isWeb) FileLogger.init(),
     SharedPreferences.getInstance(),
     vod.init(wasmPath: 'assets/vodozemac/'),
   ];
-  
+
   // WebRTC инициализируем асинхронно, не блокируя старт
   if (!PlatformInfos.isWeb) {
     WebRTC.initialize().catchError((e) => Logs().w('WebRTC init failed', e));
   }
-  
+
   // Инициализируем сервисы синхронно (быстро)
   MemoryManager().initialize();
   OptimizedHttpClient().initialize();
   ImageCacheManager().configure();
-  
+
   final results = await Future.wait(initFutures);
   final store = results[PlatformInfos.isWeb ? 0 : 1] as SharedPreferences;
   final clients = await ClientManager.getClients(store: store);
@@ -89,8 +116,9 @@ Future<void> startGui(List<Client> clients, SharedPreferences store) async {
   String? pin;
   if (PlatformInfos.isAndroid) {
     try {
-      pin =
-          await const FlutterSecureStorage().read(key: SettingKeys.appLockKey);
+      pin = await const FlutterSecureStorage().read(
+        key: SettingKeys.appLockKey,
+      );
     } catch (e, s) {
       Logs().d('Unable to read PIN from Secure storage', e, s);
     }
@@ -98,13 +126,12 @@ Future<void> startGui(List<Client> clients, SharedPreferences store) async {
 
   // Инициализируем переводчик
   MessageTranslator.init();
-  
+
   // Запускаем GUI сразу, остальное грузим асинхронно
   runApp(QuikxChatApp(clients: clients, pincode: pin, store: store));
-  
+
   // Фоновая инициализация после старта GUI
   _initializeInBackground(clients);
-
 }
 
 Future<void> _initializeInBackground(List<Client> clients) async {
@@ -112,8 +139,12 @@ Future<void> _initializeInBackground(List<Client> clients) async {
   final firstClient = clients.firstOrNull;
   if (firstClient != null) {
     final futures = <Future>[];
-    if (firstClient.roomsLoading != null) futures.add(firstClient.roomsLoading!);
-    if (firstClient.accountDataLoading != null) futures.add(firstClient.accountDataLoading!);
+    if (firstClient.roomsLoading != null) {
+      futures.add(firstClient.roomsLoading!);
+    }
+    if (firstClient.accountDataLoading != null) {
+      futures.add(firstClient.accountDataLoading!);
+    }
     if (futures.isNotEmpty) {
       Future.wait(futures).catchError((e) {
         Logs().w('Client preload failed', e);
@@ -121,23 +152,25 @@ Future<void> _initializeInBackground(List<Client> clients) async {
       });
     }
   }
-  
+
   // Инициализация уведомлений в фоне
   try {
     await NotificationService.instance.initialize();
-    
+
     await NotificationService.instance.localNotifications.initialize(
       InitializationSettings(
         android: const AndroidInitializationSettings('notifications_icon'),
-        linux: PlatformInfos.isLinux ? const LinuxInitializationSettings(
-          defaultActionName: 'Open notification',
-        ) : null,
+        linux: PlatformInfos.isLinux
+            ? const LinuxInitializationSettings(
+                defaultActionName: 'Open notification',
+              )
+            : null,
       ),
-      onDidReceiveNotificationResponse: NotificationHandler.onNotificationResponse,
-      onDidReceiveBackgroundNotificationResponse: NotificationHandler.onNotificationResponse,
+      onDidReceiveNotificationResponse:
+          NotificationHandler.onNotificationResponse,
+      onDidReceiveBackgroundNotificationResponse:
+          NotificationHandler.onNotificationResponse,
     );
-    
-    NotificationHandler.processPendingNotificationActions(clients.firstOrNull);
   } catch (e, s) {
     Logs().w('Background init failed', e, s);
   }

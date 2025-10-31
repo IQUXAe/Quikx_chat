@@ -49,6 +49,7 @@ class ChatInputRow extends StatelessWidget {
           return RecordingInputRow(
             state: recordingViewModel,
             onSend: controller.onVoiceMessageSend,
+            onSendText: controller.onVoiceToTextSend,
           );
         }
         return Row(
@@ -325,16 +326,18 @@ class ChatInputRow extends StatelessWidget {
                         controller.sendController.text.isEmpty
                     ? IconButton(
                         tooltip: L10n.of(context).voiceMessage,
-                        onPressed: () =>
-                            ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text(
-                              'Hold to record voice message',
-                            ),
-                          ),
-                        ),
-                        onLongPress: () => recordingViewModel
-                            .startRecording(controller.room),
+                        onPressed: PlatformInfos.isLinux
+                            ? () => recordingViewModel.startRecording(controller.room)
+                            : () => ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    'Hold to record voice message',
+                                  ),
+                                ),
+                              ),
+                        onLongPress: PlatformInfos.isMobile
+                            ? () => recordingViewModel.startRecording(controller.room)
+                            : null,
                         style: IconButton.styleFrom(
                           backgroundColor: theme.bubbleColor,
                           foregroundColor: theme.onBubbleColor,

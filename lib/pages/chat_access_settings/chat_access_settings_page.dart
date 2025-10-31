@@ -3,6 +3,7 @@ import 'package:flutter/material.dart' hide Visibility;
 import 'package:matrix/matrix.dart';
 
 import 'package:quikxchat/l10n/l10n.dart';
+import 'package:quikxchat/widgets/modern_back_button.dart';
 import 'package:quikxchat/pages/chat_access_settings/chat_access_settings_controller.dart';
 import 'package:quikxchat/utils/fluffy_share.dart';
 import 'package:quikxchat/utils/matrix_sdk_extensions/matrix_locals.dart';
@@ -19,7 +20,7 @@ class ChatAccessSettingsPageView extends StatelessWidget {
     final room = controller.room;
     return Scaffold(
       appBar: AppBar(
-        leading: const Center(child: BackButton()),
+        leading: Center(child: ModernBackButton()),
         title: Text(L10n.of(context).accessAndVisibility),
       ),
       body: MaxWidthBody(

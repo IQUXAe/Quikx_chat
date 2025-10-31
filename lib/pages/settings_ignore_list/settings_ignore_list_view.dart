@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quikxchat/widgets/modern_back_button.dart';
 
 import 'package:matrix/matrix.dart';
 
@@ -21,7 +22,7 @@ class SettingsIgnoreListView extends StatelessWidget {
     final client = Matrix.of(context).client;
     return Scaffold(
       appBar: AppBar(
-        leading: const Center(child: BackButton()),
+        leading: Center(child: ModernBackButton()),
         title: Text(L10n.of(context).blockedUsers),
       ),
       body: MaxWidthBody(

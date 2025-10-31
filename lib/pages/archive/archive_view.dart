@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quikxchat/widgets/modern_back_button.dart';
 
 import 'package:go_router/go_router.dart';
 import 'package:matrix/matrix.dart';
@@ -19,7 +20,7 @@ class ArchiveView extends StatelessWidget {
       future: controller.getArchive(context),
       builder: (BuildContext context, snapshot) => Scaffold(
         appBar: AppBar(
-          leading: const Center(child: BackButton()),
+          leading: Center(child: ModernBackButton()),
           title: Text(L10n.of(context).archive),
           actions: [
             if (snapshot.data?.isNotEmpty ?? false)

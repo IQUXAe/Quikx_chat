@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quikxchat/widgets/modern_back_button.dart';
 
 import 'package:quikxchat/l10n/l10n.dart';
 import 'package:quikxchat/widgets/layouts/login_scaffold.dart';
@@ -24,7 +25,7 @@ class LoginView extends StatelessWidget {
       enforceMobileMode:
           Matrix.of(context).widget.clients.any((client) => client.isLogged()),
       appBar: AppBar(
-        leading: controller.loading ? null : const Center(child: BackButton()),
+        leading: controller.loading ? null : Center(child: ModernBackButton()),
         automaticallyImplyLeading: !controller.loading,
         titleSpacing: !controller.loading ? 0 : null,
         title: Text.rich(

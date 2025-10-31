@@ -17,12 +17,14 @@ dependencies:
   chewie: ^1.13.0
   collection: ^1.19.1
   cross_file: ^0.3.4+2
+  crypto: ^3.0.3
   desktop_drop: ^0.7.0
   desktop_notifications: ^0.6.3
   device_info_plus: ^12.2.0
   dynamic_color: ^1.8.1
   emoji_picker_flutter: ^4.3.0
   emojis: ^0.9.9
+  ffi: ^2.1.0
   file_picker: ^10.3.3
   file_selector: ^1.0.4
   flutter:
@@ -52,6 +54,7 @@ dependencies:
   image_picker: ^1.1.0
   intl: ^0.20.2
   just_audio: ^0.10.5
+  just_audio_media_kit: ^2.1.0
   latlong2: ^0.9.1
   linkify: ^5.0.0
   matrix: ^3.0.2

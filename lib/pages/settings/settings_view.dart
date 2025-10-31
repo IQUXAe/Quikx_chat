@@ -312,6 +312,21 @@ class SettingsView extends StatelessWidget {
                             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
                             onTap: controller.navigateToSecurity,
                             isActive: activeRoute.startsWith('/rooms/settings/security'),
+                            position: CardPosition.middle,
+                          ),
+                          SettingsCardTile(
+                            leading: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.deepPurple.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: const Icon(Icons.auto_awesome, color: Colors.deepPurple),
+                            ),
+                            title: const Text('AI'),
+                            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                            onTap: () => context.go('/rooms/settings/ai'),
+                            isActive: activeRoute.startsWith('/rooms/settings/ai'),
                             position: CardPosition.last,
                           ),
                         ],

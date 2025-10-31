@@ -7,9 +7,11 @@ import 'package:quikxchat/pages/chat/recording_view_model.dart';
 class RecordingInputRow extends StatelessWidget {
   final RecordingViewModelState state;
   final Future<void> Function(String, int, List<int>, String?) onSend;
+  final Future<void> Function(String) onSendText;
   const RecordingInputRow({
     required this.state,
     required this.onSend,
+    required this.onSendText,
     super.key,
   });
 
@@ -67,6 +69,21 @@ class RecordingInputRow extends StatelessWidget {
               );
             },
           ),
+        ),
+        IconButton(
+          style: IconButton.styleFrom(
+            disabledBackgroundColor: theme.bubbleColor.withAlpha(128),
+            backgroundColor: theme.bubbleColor,
+            foregroundColor: theme.onBubbleColor,
+          ),
+          tooltip: 'Voice to text',
+          icon: state.isSending
+              ? const SizedBox.square(
+                  dimension: 24,
+                  child: CircularProgressIndicator.adaptive(),
+                )
+              : const Icon(Icons.text_fields),
+          onPressed: state.isSending ? null : () => state.stopAndConvertToText(onSendText),
         ),
         IconButton(
           style: IconButton.styleFrom(

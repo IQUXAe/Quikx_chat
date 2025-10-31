@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quikxchat/widgets/modern_back_button.dart';
 
 import 'package:go_router/go_router.dart';
 
@@ -16,6 +17,7 @@ class SettingsPasswordView extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        leading: Center(child: ModernBackButton()),
         title: Text(L10n.of(context).changePassword),
       ),
       body: ListTileTheme(

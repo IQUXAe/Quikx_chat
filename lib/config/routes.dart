@@ -36,6 +36,7 @@ import 'package:quikxchat/pages/settings_style/settings_style.dart';
 import 'package:quikxchat/pages/settings_translation/settings_translation.dart';
 import 'package:quikxchat/pages/settings_voip/settings_voip.dart';
 import 'package:quikxchat/pages/server_selection/server_selection.dart';
+import 'package:quikxchat/pages/settings/ai_settings.dart';
 
 import 'package:quikxchat/widgets/config_viewer.dart';
 import 'package:quikxchat/widgets/layouts/empty_page.dart';
@@ -336,6 +337,15 @@ abstract class AppRoutes {
                     context,
                     state,
                     const SettingsVoipView(),
+                  ),
+                  redirect: loggedOutRedirect,
+                ),
+                GoRoute(
+                  path: 'ai',
+                  pageBuilder: (context, state) => defaultPageBuilder(
+                    context,
+                    state,
+                    const AiSettingsPage(),
                   ),
                   redirect: loggedOutRedirect,
                 ),

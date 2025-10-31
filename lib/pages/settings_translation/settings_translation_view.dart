@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quikxchat/widgets/modern_back_button.dart';
 import 'package:quikxchat/config/themes.dart';
 import 'package:quikxchat/l10n/l10n.dart';
 import 'package:quikxchat/widgets/layouts/max_width_body.dart';
@@ -22,7 +23,7 @@ class _SettingsTranslationViewState extends State<SettingsTranslationView> {
 
     return Scaffold(
       appBar: AppBar(
-        leading: const BackButton(),
+        leading: ModernBackButton(),
         title: const Text('Translation Settings'),
         centerTitle: QuikxChatThemes.isColumnMode(context),
       ),

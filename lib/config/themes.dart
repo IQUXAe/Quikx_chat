@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'app_config.dart';
+import 'package:quikxchat/widgets/modern_back_button.dart';
 
 abstract class QuikxChatThemes {
   static const double columnWidth = 420.0;
@@ -130,6 +131,14 @@ abstract class QuikxChatThemes {
         ),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       ),
+      iconButtonTheme: IconButtonThemeData(
+        style: IconButton.styleFrom(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+      ),
+
       appBarTheme: kIsWeb
           ? const AppBarTheme(
               toolbarHeight: 64,

@@ -28,8 +28,14 @@ abstract class PlatformInfos {
   static bool get supportsVideoPlayer =>
       !PlatformInfos.isWindows && !PlatformInfos.isLinux;
 
+  /// Media kit availability status (set at startup)
+  static bool mediaKitAvailable = false;
+
   /// Web could also record in theory but currently only wav which is too large
-  static bool get platformCanRecord => isMobile;
+  static bool get platformCanRecord => isMobile || (isLinux && mediaKitAvailable);
+  
+  /// Audio playback support
+  static bool get supportsAudioPlayback => isMobile || (isLinux && mediaKitAvailable);
 
   static String get clientName =>
       '${AppConfig.applicationName} ${isWeb ? 'web' : Platform.operatingSystem}${kReleaseMode ? '' : 'Debug'}';

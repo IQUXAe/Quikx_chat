@@ -353,7 +353,27 @@ Future<void> _tryPushHelper(
     importance: Importance.high,
     priority: Priority.max,
     groupKey: _getNotificationGroupKey(event.room),
-
+    actions: event.type == EventTypes.RoomMember
+        ? null
+        : <AndroidNotificationAction>[
+            AndroidNotificationAction(
+              QuikxChatNotificationActions.reply.name,
+              l10n.reply,
+              inputs: [
+                AndroidNotificationActionInput(
+                  label: l10n.writeAMessage,
+                ),
+              ],
+              cancelNotification: false,
+              allowGeneratedReplies: true,
+              semanticAction: SemanticAction.reply,
+            ),
+            AndroidNotificationAction(
+              QuikxChatNotificationActions.markAsRead.name,
+              l10n.markAsRead,
+              semanticAction: SemanticAction.markAsRead,
+            ),
+          ],
   );
   const iOSPlatformChannelSpecifics = DarwinNotificationDetails();
   final platformChannelSpecifics = NotificationDetails(
@@ -374,7 +394,9 @@ Future<void> _tryPushHelper(
     title,
     body,
     platformChannelSpecifics,
-    payload: 'room:${event.roomId}',
+    payload:
+        QuikxChatPushPayload(client.clientName, event.room.id, event.eventId)
+            .toString(),
   );
   
   // Записываем успешное получение уведомления
@@ -387,19 +409,28 @@ Future<void> _tryPushHelper(
   Logs().v('Push helper has been completed!');
 }
 
+class QuikxChatPushPayload {
+  final String? clientName, roomId, eventId;
+
+  QuikxChatPushPayload(this.clientName, this.roomId, this.eventId);
+
+  factory QuikxChatPushPayload.fromString(String payload) {
+    final parts = payload.split('|');
+    if (parts.length != 3) {
+      return QuikxChatPushPayload(null, null, null);
+    }
+    return QuikxChatPushPayload(parts[0], parts[1], parts[2]);
+  }
+
+  @override
+  String toString() => '$clientName|$roomId|$eventId';
+}
+
+enum QuikxChatNotificationActions { markAsRead, reply }
+
 /// Определяет ключ группы для уведомления
 String _getNotificationGroupKey(Room room) {
-  // Приоритет: пространство -> тип чата -> общая группа
-  final spaceParent = room.spaceParents.firstOrNull?.roomId;
-  if (spaceParent != null) {
-    return 'space_$spaceParent';
-  }
-  
-  if (room.isDirectChat) {
-    return 'direct_chats';
-  } else {
-    return 'group_chats';
-  }
+  return room.spaceParents.firstOrNull?.roomId ?? 'rooms';
 }
 
 /// Creates a shortcut for Android platform but does not block displaying the

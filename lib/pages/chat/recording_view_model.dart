@@ -14,6 +14,7 @@ import 'package:wakelock_plus/wakelock_plus.dart';
 import 'package:quikxchat/config/setting_keys.dart';
 import 'package:quikxchat/l10n/l10n.dart';
 import 'package:quikxchat/utils/platform_infos.dart';
+import 'package:quikxchat/utils/voice_to_text_client.dart';
 import 'package:quikxchat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
 import 'package:quikxchat/widgets/matrix.dart';
 import 'events/audio_player.dart';
@@ -191,6 +192,31 @@ class RecordingViewModelState extends State<RecordingViewModel> {
       await onSend(path, duration.inMilliseconds, waveform, fileName);
     } catch (e, s) {
       Logs().e('Unable to send voice message', e, s);
+      setState(() {
+        isSending = false;
+      });
+      return;
+    }
+
+    cancel();
+  }
+
+  void stopAndConvertToText(
+    Future<void> Function(String text) onSendText,
+  ) async {
+    _recorderSubscription?.cancel();
+    final path = await _audioRecorder?.stop();
+
+    if (path == null) throw ('Recording failed!');
+
+    setState(() {
+      isSending = true;
+    });
+    try {
+      final text = await VoiceToTextClient.convert(path);
+      await onSendText(text);
+    } catch (e, s) {
+      Logs().e('Unable to convert voice to text', e, s);
       setState(() {
         isSending = false;
       });

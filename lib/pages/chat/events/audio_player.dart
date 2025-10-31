@@ -11,12 +11,14 @@ import 'package:matrix/matrix.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:quikxchat/config/app_config.dart';
+import 'package:quikxchat/config/setting_keys.dart';
 import 'package:quikxchat/config/themes.dart';
 import 'package:quikxchat/utils/error_reporter.dart';
 import 'package:quikxchat/utils/file_description.dart';
 import 'package:quikxchat/utils/localized_exception_extension.dart';
 import 'package:quikxchat/utils/url_launcher.dart';
 import 'package:quikxchat/utils/date_time_extension.dart';
+import 'package:quikxchat/utils/voice_to_text_client.dart';
 import '../../../utils/matrix_sdk_extensions/event_extension.dart';
 import '../../../widgets/quikx_chat_app.dart';
 import '../../../widgets/matrix.dart';
@@ -52,6 +54,11 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
   late final MatrixState matrix;
   List<int>? _waveform;
   String? _durationString;
+  bool _isTranscribing = false;
+  String? _transcribedText;
+  bool _showTranscription = false;
+  
+  static final Map<String, String> _transcriptionCache = {};
 
   @override
   void dispose() {
@@ -226,6 +233,82 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
         break;
     }
     setState(() {});
+  }
+
+  void _transcribeAudio() async {
+    // Check if AI features are enabled
+    final store = matrix.store;
+    final aiEnabled = AppSettings.aiEnabled.getItem(store);
+    final voiceToTextEnabled = AppSettings.voiceToTextEnabled.getItem(store);
+    
+    if (!aiEnabled || !voiceToTextEnabled) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Voice to Text is disabled in settings'),
+        ),
+      );
+      return;
+    }
+    
+    final eventId = widget.event.eventId;
+    
+    // Если уже есть перевод - переключаем видимость
+    if (_transcribedText != null) {
+      setState(() => _showTranscription = !_showTranscription);
+      return;
+    }
+    
+    // Проверяем кэш
+    if (_transcriptionCache.containsKey(eventId)) {
+      setState(() {
+        _transcribedText = _transcriptionCache[eventId];
+        _showTranscription = true;
+      });
+      return;
+    }
+    
+    if (_isTranscribing) return;
+    
+    setState(() => _isTranscribing = true);
+    
+    try {
+      final matrixFile = await widget.event.downloadAndDecryptAttachment();
+      
+      File? file;
+      if (!kIsWeb) {
+        final tempDir = await getTemporaryDirectory();
+        final fileName = Uri.encodeComponent(
+          widget.event.attachmentOrThumbnailMxcUrl()!.pathSegments.last,
+        );
+        file = File('${tempDir.path}/${fileName}_${matrixFile.name}');
+        await file.writeAsBytes(matrixFile.bytes);
+      }
+      
+      if (file == null) {
+        throw Exception('Web platform not supported for transcription');
+      }
+      
+      final text = await VoiceToTextClient.convert(file.path);
+      
+      setState(() {
+        _transcribedText = text;
+        _transcriptionCache[eventId] = text;
+        _showTranscription = true;
+        _isTranscribing = false;
+      });
+    } catch (e, s) {
+      Logs().e('Failed to transcribe audio', e, s);
+      setState(() => _isTranscribing = false);
+      
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Ошибка перевода: ${e.toString()}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
   }
 
   List<int>? _getWaveform() {
@@ -435,6 +518,32 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
                           ),
                         ),
                         const SizedBox(width: 8),
+                        Material(
+                          color: widget.color.withAlpha(64),
+                          borderRadius: BorderRadius.circular(AppConfig.borderRadius),
+                          child: InkWell(
+                            borderRadius: BorderRadius.circular(AppConfig.borderRadius),
+                            onTap: _transcribeAudio,
+                            child: SizedBox(
+                              width: 32,
+                              height: 32,
+                              child: _isTranscribing
+                                  ? Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: widget.color,
+                                      ),
+                                    )
+                                  : Icon(
+                                      Icons.text_fields,
+                                      color: widget.color,
+                                      size: 20,
+                                    ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
                         AnimatedCrossFade(
                           firstChild: Padding(
                             padding: const EdgeInsets.only(right: 8.0),
@@ -474,6 +583,34 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
                         ),
                       ],
                     ),
+                  ),
+                  AnimatedSize(
+                    duration: QuikxChatThemes.animationDuration,
+                    curve: Curves.easeInOut,
+                    child: _transcribedText != null && _showTranscription
+                        ? Padding(
+                            padding: const EdgeInsets.only(top: 8),
+                            child: AnimatedOpacity(
+                              opacity: _showTranscription ? 1.0 : 0.0,
+                              duration: const Duration(milliseconds: 300),
+                              child: Container(
+                                padding: const EdgeInsets.all(12),
+                                margin: const EdgeInsets.symmetric(horizontal: 8),
+                                decoration: BoxDecoration(
+                                  color: widget.color.withAlpha(32),
+                                  borderRadius: BorderRadius.circular(AppConfig.borderRadius),
+                                ),
+                                child: SelectableText(
+                                  _transcribedText!,
+                                  style: TextStyle(
+                                    color: widget.color,
+                                    fontSize: widget.fontSize,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+                        : const SizedBox.shrink(),
                   ),
                   if (fileDescription != null) ...[
                     const SizedBox(height: 8),
