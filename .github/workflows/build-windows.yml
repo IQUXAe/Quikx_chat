@@ -19,7 +19,6 @@ jobs:
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.35.7'
         channel: 'stable'
         cache: true
     
@@ -43,11 +42,11 @@ jobs:
     
     - name: Copy SQLCipher DLL
       run: |
-        if (Test-Path "build\windows\x64\plugins\sqlcipher_flutter_libs\libsqlcipher.dll") {
-          Copy-Item "build\windows\x64\plugins\sqlcipher_flutter_libs\libsqlcipher.dll" "build\windows\x64\runner\Release\"
-          Write-Host "Copied libsqlcipher.dll"
+        if (Test-Path "build\windows\x64\plugins\sqlcipher_flutter_libs\Release\sqlite3.dll") {
+          Copy-Item "build\windows\x64\plugins\sqlcipher_flutter_libs\Release\sqlite3.dll" "build\windows\x64\runner\Release\libsqlcipher.dll"
+          Write-Host "Copied and renamed sqlite3.dll to libsqlcipher.dll"
         } else {
-          Write-Host "libsqlcipher.dll not found in plugin directory"
+          Write-Host "sqlite3.dll not found in plugin Release directory"
         }
       shell: powershell
     
