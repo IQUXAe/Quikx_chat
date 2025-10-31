@@ -2,7 +2,7 @@
 #define MyAppVersion "1.0.0"
 #define MyAppPublisher "IQUXAe"
 #define MyAppURL "https://github.com/IQUXAe/Quikx_chat"
-#define MyAppExeName "quikxchat.exe"
+#define MyAppExeName "Quikx_chat.exe"
 
 [Setup]
 AppId={{A8B9C0D1-E2F3-4A5B-6C7D-8E9F0A1B2C3D}
