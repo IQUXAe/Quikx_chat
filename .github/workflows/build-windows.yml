@@ -29,11 +29,25 @@ jobs:
     - name: Build Windows
       run: flutter build windows --release
     
+    - name: Debug SQLCipher plugin
+      run: |
+        Write-Host "Checking sqlcipher_flutter_libs plugin directory:"
+        if (Test-Path "build\windows\x64\plugins\sqlcipher_flutter_libs") {
+          Get-ChildItem "build\windows\x64\plugins\sqlcipher_flutter_libs" -Recurse | Select-Object FullName
+        } else {
+          Write-Host "Plugin directory not found"
+        }
+        Write-Host "`nChecking all plugins:"
+        Get-ChildItem "build\windows\x64\plugins" | Select-Object Name
+      shell: powershell
+    
     - name: Copy SQLCipher DLL
       run: |
         if (Test-Path "build\windows\x64\plugins\sqlcipher_flutter_libs\libsqlcipher.dll") {
           Copy-Item "build\windows\x64\plugins\sqlcipher_flutter_libs\libsqlcipher.dll" "build\windows\x64\runner\Release\"
           Write-Host "Copied libsqlcipher.dll"
+        } else {
+          Write-Host "libsqlcipher.dll not found in plugin directory"
         }
       shell: powershell
     
