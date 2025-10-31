@@ -5,7 +5,7 @@
 #define MyAppExeName "quikxchat.exe"
 
 [Setup]
-AppId={A8B9C0D1-E2F3-4A5B-6C7D-8E9F0A1B2C3D}
+AppId={{A8B9C0D1-E2F3-4A5B-6C7D-8E9F0A1B2C3D}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}
