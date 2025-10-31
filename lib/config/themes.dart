@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'app_config.dart';
-import 'package:quikxchat/widgets/modern_back_button.dart';
 
 abstract class QuikxChatThemes {
   static const double columnWidth = 420.0;
