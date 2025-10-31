@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 
-import 'package:quikxchat/config/themes.dart';
+import 'package:quikxchat/config/env_config.dart';
+import 'package:quikxchat/config/setting_keys.dart';
 import 'package:quikxchat/l10n/l10n.dart';
 import 'package:quikxchat/pages/chat/recording_view_model.dart';
+import 'package:quikxchat/widgets/matrix.dart';
 
 class RecordingInputRow extends StatelessWidget {
   final RecordingViewModelState state;
   final Future<void> Function(String, int, List<int>, String?) onSend;
-  final Future<void> Function(String) onSendText;
+  final void Function(String) onSendText;
   const RecordingInputRow({
     required this.state,
     required this.onSend,
@@ -18,6 +20,11 @@ class RecordingInputRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final store = Matrix.of(context).store;
+    final aiEnabled = AppSettings.aiEnabled.getItem(store);
+    final voiceToTextEnabled = AppSettings.voiceToTextEnabled.getItem(store);
+    final configValid = EnvConfig.v2tServerUrl.isNotEmpty && EnvConfig.v2tSecretKey.isNotEmpty;
+    final showV2TButton = configValid && aiEnabled && voiceToTextEnabled;
     const maxDecibalWidth = 36.0;
     final time =
         '${state.duration.inMinutes.toString().padLeft(2, '0')}:${(state.duration.inSeconds % 60).toString().padLeft(2, '0')}';
@@ -25,20 +32,40 @@ class RecordingInputRow extends StatelessWidget {
       children: [
         IconButton(
           tooltip: L10n.of(context).cancel,
-          icon: const Icon(Icons.delete_outlined),
-          color: theme.colorScheme.error,
+          icon: const Icon(Icons.close_rounded, size: 20),
+          style: IconButton.styleFrom(
+            backgroundColor: theme.colorScheme.errorContainer,
+            foregroundColor: theme.colorScheme.onErrorContainer,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+          ),
           onPressed: state.cancel,
         ),
         if (state.isPaused)
           IconButton(
-            tooltip: 'Resume', // L10n.of(context).resume,
-            icon: const Icon(Icons.play_circle_outline_outlined),
+            tooltip: 'Resume',
+            icon: const Icon(Icons.play_arrow_rounded, size: 20),
+            style: IconButton.styleFrom(
+              backgroundColor: theme.colorScheme.primaryContainer,
+              foregroundColor: theme.colorScheme.onPrimaryContainer,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
             onPressed: state.resume,
           )
         else
           IconButton(
-            tooltip: 'Pause', // L10n.of(context).pause,
-            icon: const Icon(Icons.pause_circle_outline_outlined),
+            tooltip: 'Pause',
+            icon: const Icon(Icons.pause_rounded, size: 20),
+            style: IconButton.styleFrom(
+              backgroundColor: theme.colorScheme.primaryContainer,
+              foregroundColor: theme.colorScheme.onPrimaryContainer,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
             onPressed: state.pause,
           ),
         Text(time),
@@ -70,34 +97,45 @@ class RecordingInputRow extends StatelessWidget {
             },
           ),
         ),
-        IconButton(
-          style: IconButton.styleFrom(
-            disabledBackgroundColor: theme.bubbleColor.withAlpha(128),
-            backgroundColor: theme.bubbleColor,
-            foregroundColor: theme.onBubbleColor,
+        if (showV2TButton)
+          IconButton(
+            style: IconButton.styleFrom(
+              disabledBackgroundColor: theme.colorScheme.secondaryContainer.withAlpha(128),
+              backgroundColor: theme.colorScheme.secondaryContainer,
+              foregroundColor: theme.colorScheme.onSecondaryContainer,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
+            tooltip: 'Voice to text',
+            icon: state.isSending
+                ? const SizedBox.square(
+                    dimension: 20,
+                    child: CircularProgressIndicator.adaptive(strokeWidth: 2),
+                  )
+                : const Icon(Icons.text_fields, size: 20),
+            onPressed: state.isSending ? null : () {
+              state.stopAndConvertToText((text) {
+                onSendText(text);
+              });
+            },
           ),
-          tooltip: 'Voice to text',
-          icon: state.isSending
-              ? const SizedBox.square(
-                  dimension: 24,
-                  child: CircularProgressIndicator.adaptive(),
-                )
-              : const Icon(Icons.text_fields),
-          onPressed: state.isSending ? null : () => state.stopAndConvertToText(onSendText),
-        ),
         IconButton(
           style: IconButton.styleFrom(
-            disabledBackgroundColor: theme.bubbleColor.withAlpha(128),
-            backgroundColor: theme.bubbleColor,
-            foregroundColor: theme.onBubbleColor,
+            disabledBackgroundColor: theme.colorScheme.primary.withAlpha(128),
+            backgroundColor: theme.colorScheme.primary,
+            foregroundColor: theme.colorScheme.onPrimary,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
           ),
           tooltip: L10n.of(context).sendAudio,
           icon: state.isSending
               ? const SizedBox.square(
-                  dimension: 24,
-                  child: CircularProgressIndicator.adaptive(),
+                  dimension: 20,
+                  child: CircularProgressIndicator.adaptive(strokeWidth: 2),
                 )
-              : const Icon(Icons.send_outlined),
+              : const Icon(Icons.check_rounded, size: 20),
           onPressed: state.isSending ? null : () => state.stopAndSend(onSend),
         ),
       ],

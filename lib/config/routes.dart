@@ -122,21 +122,40 @@ abstract class AppRoutes {
       // Never use a transition on the shell route. Changing the PageBuilder
       // here based on a MediaQuery causes the child to briefly be rendered
       // twice with the same GlobalKey, blowing up the rendering.
-      pageBuilder: (context, state, child) => noTransitionPageBuilder(
-        context,
-        state,
-        QuikxChatThemes.isColumnMode(context) &&
-                state.fullPath?.startsWith('/rooms/settings') == false
-            ? TwoColumnLayout(
-                mainView: ChatList(
-                  activeChat: state.pathParameters['roomid'],
-                  displayNavigationRail:
-                      state.path?.startsWith('/rooms/settings') != true,
-                ),
-                sideView: child,
-              )
-            : child,
-      ),
+      pageBuilder: (context, state, child) {
+        if (!QuikxChatThemes.isColumnMode(context)) {
+          return noTransitionPageBuilder(context, state, child);
+        }
+        
+        final isSettings = state.fullPath?.startsWith('/rooms/settings') == true;
+        
+        if (isSettings) {
+          // Для настроек показываем список настроек слева
+          return noTransitionPageBuilder(
+            context,
+            state,
+            TwoColumnLayout(
+              mainView: const Settings(),
+              sideView: state.path == '/rooms/settings' 
+                  ? const EmptyPage() 
+                  : child,
+            ),
+          );
+        } else {
+          // Для чатов показываем список чатов слева
+          return noTransitionPageBuilder(
+            context,
+            state,
+            TwoColumnLayout(
+              mainView: ChatList(
+                activeChat: state.pathParameters['roomid'],
+                displayNavigationRail: true,
+              ),
+              sideView: child,
+            ),
+          );
+        }
+      },
       routes: [
         GoRoute(
           path: '/rooms',
@@ -212,7 +231,7 @@ abstract class AppRoutes {
               path: 'settings',
               pageBuilder: (context, state) {
                 if (QuikxChatThemes.isColumnMode(context)) {
-                  return defaultPageBuilder(context, state, const Settings());
+                  return defaultPageBuilder(context, state, const EmptyPage());
                 }
                 return noTransitionPageBuilder(
                   context,

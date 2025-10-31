@@ -26,24 +26,27 @@ class ReplyDisplay extends StatelessWidget {
       decoration: BoxDecoration(
         color: theme.colorScheme.onInverseSurface,
       ),
-      child: Row(
-        children: <Widget>[
-          IconButton(
-            tooltip: L10n.of(context).close,
-            icon: const Icon(Icons.close),
-            onPressed: controller.cancelReplyEventAction,
-          ),
-          Expanded(
-            child: controller.replyEvent != null
-                ? ReplyContent(
-                    controller.replyEvent!,
-                    timeline: controller.timeline!,
-                  )
-                : _EditContent(
-                    controller.editEvent?.getDisplayEvent(controller.timeline!),
-                  ),
-          ),
-        ],
+      child: SingleChildScrollView(
+        physics: const NeverScrollableScrollPhysics(),
+        child: Row(
+          children: <Widget>[
+            IconButton(
+              tooltip: L10n.of(context).close,
+              icon: const Icon(Icons.close),
+              onPressed: controller.cancelReplyEventAction,
+            ),
+            Expanded(
+              child: controller.replyEvent != null
+                  ? ReplyContent(
+                      controller.replyEvent!,
+                      timeline: controller.timeline!,
+                    )
+                  : _EditContent(
+                      controller.editEvent?.getDisplayEvent(controller.timeline!),
+                    ),
+            ),
+          ],
+        ),
       ),
     );
   }

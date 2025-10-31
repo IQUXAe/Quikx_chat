@@ -5,6 +5,7 @@ import 'package:matrix/matrix.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 import 'package:quikxchat/config/app_config.dart';
+import 'package:quikxchat/config/env_config.dart';
 import 'package:quikxchat/config/themes.dart';
 import 'package:quikxchat/l10n/l10n.dart';
 import 'package:quikxchat/utils/fluffy_share.dart';
@@ -314,20 +315,36 @@ class SettingsView extends StatelessWidget {
                             isActive: activeRoute.startsWith('/rooms/settings/security'),
                             position: CardPosition.middle,
                           ),
-                          SettingsCardTile(
-                            leading: Container(
-                              padding: const EdgeInsets.all(8),
-                              decoration: BoxDecoration(
-                                color: Colors.deepPurple.withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: const Icon(Icons.auto_awesome, color: Colors.deepPurple),
-                            ),
-                            title: const Text('AI'),
-                            trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                            onTap: () => context.go('/rooms/settings/ai'),
-                            isActive: activeRoute.startsWith('/rooms/settings/ai'),
-                            position: CardPosition.last,
+                          Builder(
+                            builder: (context) {
+                              final isConfigured = EnvConfig.v2tServerUrl.isNotEmpty && EnvConfig.v2tSecretKey.isNotEmpty;
+                              return Opacity(
+                                opacity: isConfigured ? 1.0 : 0.5,
+                                child: IgnorePointer(
+                                  ignoring: !isConfigured,
+                                  child: SettingsCardTile(
+                                    leading: Container(
+                                      padding: const EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        color: isConfigured
+                                            ? Colors.deepPurple.withValues(alpha: 0.1)
+                                            : Colors.grey.withValues(alpha: 0.1),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Icon(
+                                        Icons.auto_awesome,
+                                        color: isConfigured ? Colors.deepPurple : Colors.grey,
+                                      ),
+                                    ),
+                                    title: const Text('AI'),
+                                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                                    onTap: () => context.go('/rooms/settings/ai'),
+                                    isActive: activeRoute.startsWith('/rooms/settings/ai'),
+                                    position: CardPosition.last,
+                                  ),
+                                ),
+                              );
+                            },
                           ),
                         ],
                       ),

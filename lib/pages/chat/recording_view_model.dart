@@ -202,7 +202,7 @@ class RecordingViewModelState extends State<RecordingViewModel> {
   }
 
   void stopAndConvertToText(
-    Future<void> Function(String text) onSendText,
+    void Function(String text) onTextReady,
   ) async {
     _recorderSubscription?.cancel();
     final path = await _audioRecorder?.stop();
@@ -214,13 +214,13 @@ class RecordingViewModelState extends State<RecordingViewModel> {
     });
     try {
       final text = await VoiceToTextClient.convert(path);
-      await onSendText(text);
+      onTextReady(text);
     } catch (e, s) {
       Logs().e('Unable to convert voice to text', e, s);
       setState(() {
         isSending = false;
       });
-      return;
+      rethrow;
     }
 
     cancel();

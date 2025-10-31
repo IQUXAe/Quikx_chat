@@ -134,8 +134,14 @@ class ChatInputRow extends StatelessWidget {
                 clipBehavior: Clip.hardEdge,
                 child: PopupMenuButton<String>(
                   useRootNavigator: true,
-                  icon: const Icon(Icons.add_circle_outline),
-                  iconColor: theme.colorScheme.onPrimaryContainer,
+                  icon: const Icon(Icons.add_rounded),
+                  style: IconButton.styleFrom(
+                    backgroundColor: theme.colorScheme.primaryContainer,
+                    foregroundColor: theme.colorScheme.onPrimaryContainer,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
                   onSelected: controller.onAddPopupMenuButtonSelected,
                   itemBuilder: (BuildContext context) =>
                       <PopupMenuEntry<String>>[
@@ -143,11 +149,18 @@ class ChatInputRow extends StatelessWidget {
                       PopupMenuItem<String>(
                         value: 'location',
                         child: ListTile(
-                          leading: CircleAvatar(
-                            backgroundColor:
-                                theme.colorScheme.onPrimaryContainer,
-                            foregroundColor: theme.colorScheme.primaryContainer,
-                            child: const Icon(Icons.gps_fixed_outlined),
+                          leading: Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.primaryContainer,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Icon(
+                              Icons.my_location_rounded,
+                              color: theme.colorScheme.onPrimaryContainer,
+                              size: 20,
+                            ),
                           ),
                           title: Text(L10n.of(context).shareLocation),
                           contentPadding: const EdgeInsets.all(0),
@@ -156,10 +169,18 @@ class ChatInputRow extends StatelessWidget {
                     PopupMenuItem<String>(
                       value: 'image',
                       child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: theme.colorScheme.onPrimaryContainer,
-                          foregroundColor: theme.colorScheme.primaryContainer,
-                          child: const Icon(Icons.photo_outlined),
+                        leading: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.primaryContainer,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Icon(
+                            Icons.photo_library_rounded,
+                            color: theme.colorScheme.onPrimaryContainer,
+                            size: 20,
+                          ),
                         ),
                         title: Text(L10n.of(context).sendImage),
                         contentPadding: const EdgeInsets.all(0),
@@ -168,10 +189,18 @@ class ChatInputRow extends StatelessWidget {
                     PopupMenuItem<String>(
                       value: 'video',
                       child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: theme.colorScheme.onPrimaryContainer,
-                          foregroundColor: theme.colorScheme.primaryContainer,
-                          child: const Icon(Icons.video_camera_back_outlined),
+                        leading: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.primaryContainer,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Icon(
+                            Icons.play_circle_rounded,
+                            color: theme.colorScheme.onPrimaryContainer,
+                            size: 20,
+                          ),
                         ),
                         title: Text(L10n.of(context).sendVideo),
                         contentPadding: const EdgeInsets.all(0),
@@ -180,10 +209,18 @@ class ChatInputRow extends StatelessWidget {
                     PopupMenuItem<String>(
                       value: 'file',
                       child: ListTile(
-                        leading: CircleAvatar(
-                          backgroundColor: theme.colorScheme.onPrimaryContainer,
-                          foregroundColor: theme.colorScheme.primaryContainer,
-                          child: const Icon(Icons.attachment_outlined),
+                        leading: Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.primaryContainer,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Icon(
+                            Icons.insert_drive_file_rounded,
+                            color: theme.colorScheme.onPrimaryContainer,
+                            size: 20,
+                          ),
                         ),
                         title: Text(L10n.of(context).sendFile),
                         contentPadding: const EdgeInsets.all(0),
@@ -203,18 +240,31 @@ class ChatInputRow extends StatelessWidget {
                   clipBehavior: Clip.hardEdge,
                   child: PopupMenuButton(
                     useRootNavigator: true,
-                    icon: const Icon(Icons.camera_alt_outlined),
+                    icon: const Icon(Icons.photo_camera_rounded),
+                    style: IconButton.styleFrom(
+                      backgroundColor: theme.colorScheme.primaryContainer,
+                      foregroundColor: theme.colorScheme.onPrimaryContainer,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
                     onSelected: controller.onAddPopupMenuButtonSelected,
-                    iconColor: theme.colorScheme.onPrimaryContainer,
                     itemBuilder: (context) => [
                       PopupMenuItem<String>(
                         value: 'camera-video',
                         child: ListTile(
-                          leading: CircleAvatar(
-                            backgroundColor:
-                                theme.colorScheme.onPrimaryContainer,
-                            foregroundColor: theme.colorScheme.primaryContainer,
-                            child: const Icon(Icons.videocam_outlined),
+                          leading: Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.primaryContainer,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Icon(
+                              Icons.video_camera_front_rounded,
+                              color: theme.colorScheme.onPrimaryContainer,
+                              size: 20,
+                            ),
                           ),
                           title: Text(L10n.of(context).recordAVideo),
                           contentPadding: const EdgeInsets.all(0),
@@ -223,11 +273,18 @@ class ChatInputRow extends StatelessWidget {
                       PopupMenuItem<String>(
                         value: 'camera',
                         child: ListTile(
-                          leading: CircleAvatar(
-                            backgroundColor:
-                                theme.colorScheme.onPrimaryContainer,
-                            foregroundColor: theme.colorScheme.primaryContainer,
-                            child: const Icon(Icons.camera_alt_outlined),
+                          leading: Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: theme.colorScheme.primaryContainer,
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Icon(
+                              Icons.camera_rounded,
+                              color: theme.colorScheme.onPrimaryContainer,
+                              size: 20,
+                            ),
                           ),
                           title: Text(L10n.of(context).takeAPhoto),
                           contentPadding: const EdgeInsets.all(0),
@@ -242,7 +299,13 @@ class ChatInputRow extends StatelessWidget {
                 alignment: Alignment.center,
                 child: IconButton(
                   tooltip: L10n.of(context).emojis,
-                  color: theme.colorScheme.onPrimaryContainer,
+                  style: IconButton.styleFrom(
+                    backgroundColor: theme.colorScheme.primaryContainer,
+                    foregroundColor: theme.colorScheme.onPrimaryContainer,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                  ),
                   icon: AnimatedSwitcher(
                     duration: QuikxChatThemes.fastAnimationDuration,
                     transitionBuilder: (child, animation) {
@@ -256,8 +319,8 @@ class ChatInputRow extends StatelessWidget {
                     },
                     child: Icon(
                       controller.showEmojiPicker
-                          ? Icons.keyboard
-                          : Icons.add_reaction_outlined,
+                          ? Icons.keyboard_rounded
+                          : Icons.emoji_emotions_rounded,
                       key: ValueKey(controller.showEmojiPicker),
                     ),
                   ),
@@ -299,18 +362,27 @@ class ChatInputRow extends StatelessWidget {
                         focusNode: controller.inputFocus,
                         controller: controller.sendController,
                         decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.only(
-                            left: 6.0,
-                            right: 6.0,
-                            bottom: 6.0,
-                            top: 3.0,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 16.0,
+                            vertical: 12.0,
                           ),
                           counter: const SizedBox.shrink(),
                           hintText: L10n.of(context).writeAMessage,
                           hintMaxLines: 1,
-                          border: InputBorder.none,
-                          enabledBorder: InputBorder.none,
-                          filled: false,
+                          filled: true,
+                          fillColor: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(24),
+                            borderSide: BorderSide.none,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(24),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(24),
+                            borderSide: BorderSide.none,
+                          ),
                         ),
                         onChanged: controller.onInputBarChanged,
                       ),
@@ -339,10 +411,14 @@ class ChatInputRow extends StatelessWidget {
                             ? () => recordingViewModel.startRecording(controller.room)
                             : null,
                         style: IconButton.styleFrom(
-                          backgroundColor: theme.bubbleColor,
-                          foregroundColor: theme.onBubbleColor,
+                          backgroundColor: theme.colorScheme.primary,
+                          foregroundColor: theme.colorScheme.onPrimary,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
                         ),
-                        icon: const Icon(Icons.mic_none_outlined),
+                        icon: const Icon(Icons.mic_rounded, size: 20),
+                        iconSize: 20,
                       )
                     : _SendButton(
                         onPressed: controller.send,
@@ -356,110 +432,28 @@ class ChatInputRow extends StatelessWidget {
   }
 }
 
-class _SendButton extends StatefulWidget {
+class _SendButton extends StatelessWidget {
   final VoidCallback onPressed;
   final String tooltip;
 
   const _SendButton({required this.onPressed, required this.tooltip});
 
   @override
-  State<_SendButton> createState() => _SendButtonState();
-}
-
-class _SendButtonState extends State<_SendButton> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _scaleAnimation;
-  late Animation<double> _rotateAnimation;
-  bool _isPressed = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      duration: const Duration(milliseconds: 150),
-      vsync: this,
-    );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.85).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
-    _rotateAnimation = Tween<double>(begin: 0.0, end: -0.15).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  void _handleTapDown(TapDownDetails details) {
-    setState(() => _isPressed = true);
-    _controller.forward();
-  }
-
-  void _handleTapUp(TapUpDetails details) {
-    setState(() => _isPressed = false);
-    _controller.reverse();
-    widget.onPressed();
-  }
-
-  void _handleTapCancel() {
-    setState(() => _isPressed = false);
-    _controller.reverse();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     
-    return Tooltip(
-      message: widget.tooltip,
-      child: GestureDetector(
-        onTapDown: _handleTapDown,
-        onTapUp: _handleTapUp,
-        onTapCancel: _handleTapCancel,
-        child: AnimatedBuilder(
-          animation: _controller,
-          builder: (context, child) {
-            return Transform.scale(
-              scale: _scaleAnimation.value,
-              child: Transform.rotate(
-                angle: _rotateAnimation.value,
-                child: Container(
-                  width: 48,
-                  height: 48,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        theme.colorScheme.primary,
-                        theme.colorScheme.secondary,
-                      ],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                    ),
-                    shape: BoxShape.circle,
-                    boxShadow: _isPressed
-                        ? []
-                        : [
-                            BoxShadow(
-                              color: theme.colorScheme.primary.withAlpha(100),
-                              blurRadius: 8,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                  ),
-                  child: Icon(
-                    Icons.send_rounded,
-                    color: theme.colorScheme.onPrimary,
-                    size: 20,
-                  ),
-                ),
-              ),
-            );
-          },
+    return IconButton(
+      tooltip: tooltip,
+      onPressed: onPressed,
+      style: IconButton.styleFrom(
+        backgroundColor: theme.colorScheme.primary,
+        foregroundColor: theme.colorScheme.onPrimary,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
         ),
       ),
+      icon: const Icon(Icons.arrow_upward_rounded, size: 20),
+      iconSize: 20,
     );
   }
 }

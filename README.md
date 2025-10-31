@@ -34,6 +34,20 @@ QuikxChat is a fork of FluffyChat with redesigned UI and additional features. Bu
 Download APK from [Releases](https://github.com/IQUXAe/Quikx_chat/releases)
 
 ### Linux
+
+**Requirements:**
+- MPV player (for audio/video playback)
+  ```bash
+  # Ubuntu/Debian
+  sudo apt install mpv
+  
+  # Fedora
+  sudo dnf install mpv
+  
+  # Arch
+  sudo pacman -S mpv
+  ```
+
 Download AppImage from [Releases](https://github.com/IQUXAe/Quikx_chat/releases)
 
 ```bash
@@ -53,6 +67,19 @@ Not build yet
 - Flutter SDK
 - Android Studio (for Android)
 - CMake (for Linux)
+- MPV player (for Linux audio/video)
+
+### Linux Dependencies
+```bash
+# Ubuntu/Debian
+sudo apt install cmake ninja-build libgtk-3-dev pkg-config clang mpv
+
+# Fedora  
+sudo dnf install cmake ninja-build gtk3-devel pkgconfig clang mpv
+
+# Arch
+sudo pacman -S cmake ninja gtk3 pkgconfig clang mpv
+```
 
 ### Build Commands
 ```bash

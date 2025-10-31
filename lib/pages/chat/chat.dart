@@ -727,12 +727,13 @@ class ChatController extends State<ChatPageWithRoom>
       name: fileName ?? audioFile.path,
     );
 
+    final currentReplyEvent = replyEvent;
     setState(() {
       replyEvent = null;
     });
     room.sendFileEvent(
       file,
-      inReplyTo: replyEvent,
+      inReplyTo: currentReplyEvent,
       extraContent: {
         'info': {
           ...file.info,
@@ -757,12 +758,11 @@ class ChatController extends State<ChatPageWithRoom>
     return;
   }
 
-  Future<void> onVoiceToTextSend(String text) async {
+  void onVoiceToTextSend(String text) {
     setState(() {
       sendController.text = text;
-      replyEvent = null;
     });
-    await send();
+    inputFocus.requestFocus();
   }
 
 

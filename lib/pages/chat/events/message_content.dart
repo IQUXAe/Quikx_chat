@@ -156,6 +156,7 @@ class MessageContent extends StatelessWidget {
                 color: textColor,
                 linkColor: linkColor,
                 fontSize: fontSize,
+                timeline: timeline,
               );
             }
             return MessageDownloadContent(

@@ -33,9 +33,9 @@ class ReplyContent extends StatelessWidget {
     final fontSize = AppConfig.messageFontSize * AppConfig.fontSizeFactor;
     
     final textColor = ownMessage
-        ? theme.brightness == Brightness.dark
+        ? (theme.brightness == Brightness.dark
             ? theme.colorScheme.onSurface
-            : theme.colorScheme.onPrimaryContainer
+            : theme.colorScheme.onPrimary)
         : theme.colorScheme.onSurface;
     
     final color = theme.brightness == Brightness.dark
@@ -47,57 +47,63 @@ class ReplyContent extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       borderRadius: borderRadius,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Container(
-            width: 5,
-            height: fontSize * 2 + 16,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(AppConfig.borderRadius),
-              color: color,
-            ),
-          ),
-          const SizedBox(width: 6),
-          Flexible(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                FutureBuilder<User?>(
-                  initialData: displayEvent.senderFromMemoryOrFallback,
-                  future: displayEvent.fetchSenderUser(),
-                  builder: (context, snapshot) {
-                    return Text(
-                      '${snapshot.data?.calcDisplayname() ?? displayEvent.senderFromMemoryOrFallback.calcDisplayname()}:',
-                      maxLines: 1,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        child: IntrinsicHeight(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Container(
+                width: 5,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(AppConfig.borderRadius),
+                  color: color,
+                ),
+              ),
+              const SizedBox(width: 6),
+              Flexible(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    FutureBuilder<User?>(
+                      initialData: displayEvent.senderFromMemoryOrFallback,
+                      future: displayEvent.fetchSenderUser(),
+                      builder: (context, snapshot) {
+                        return Text(
+                          '${snapshot.data?.calcDisplayname() ?? displayEvent.senderFromMemoryOrFallback.calcDisplayname()}:',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: color,
+                            fontSize: fontSize,
+                          ),
+                        );
+                      },
+                    ),
+                    Text(
+                      displayEvent.calcLocalizedBodyFallback(
+                        MatrixLocals(L10n.of(context)),
+                        withSenderNamePrefix: false,
+                        hideReply: true,
+                      ),
                       overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                       style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: color,
+                        color: textColor,
                         fontSize: fontSize,
                       ),
-                    );
-                  },
+                    ),
+                  ],
                 ),
-                Text(
-                  displayEvent.calcLocalizedBodyFallback(
-                    MatrixLocals(L10n.of(context)),
-                    withSenderNamePrefix: false,
-                    hideReply: true,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                  style: TextStyle(
-                    color: textColor,
-                    fontSize: fontSize,
-                  ),
-                ),
-              ],
-            ),
+              ),
+              const SizedBox(width: 6),
+            ],
           ),
-          const SizedBox(width: 6),
-        ],
+        ),
       ),
     );
   }

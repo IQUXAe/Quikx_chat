@@ -40,6 +40,46 @@ class _AiSettingsPageState extends State<AiSettingsPage> {
     final theme = Theme.of(context);
     final serverConfigured = EnvConfig.v2tServerUrl.isNotEmpty && 
                              EnvConfig.v2tSecretKey.isNotEmpty;
+    
+    if (!serverConfigured) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('AI'),
+          leading: const Center(child: ModernBackButton()),
+        ),
+        body: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.cloud_off,
+                  size: 80,
+                  color: theme.colorScheme.error,
+                ),
+                const SizedBox(height: 24),
+                Text(
+                  'AI Server Not Configured',
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'AI features require V2T_SERVER_URL and V2T_SECRET_KEY to be configured during build.',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: theme.colorScheme.onSurface.withValues(alpha: 0.7),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -62,12 +102,12 @@ class _AiSettingsPageState extends State<AiSettingsPage> {
               ),
               title: const Text('AI Features'),
               subtitle: const Text('Enable all AI-powered features'),
-              value: _aiEnabled,
-              onChanged: (value) async {
+              value: _aiEnabled && serverConfigured,
+              onChanged: serverConfigured ? (value) async {
                 final store = Matrix.of(context).store;
                 await AppSettings.aiEnabled.setItem(store, value);
                 setState(() => _aiEnabled = value);
-              },
+              } : null,
               position: CardPosition.single,
             ),
             const SizedBox(height: 24),
@@ -101,8 +141,8 @@ class _AiSettingsPageState extends State<AiSettingsPage> {
                   color: serverConfigured ? null : Colors.red,
                 ),
               ),
-              value: _voiceToTextEnabled && _aiEnabled,
-              onChanged: _aiEnabled
+              value: _voiceToTextEnabled && _aiEnabled && serverConfigured,
+              onChanged: _aiEnabled && serverConfigured
                   ? (value) async {
                       final store = Matrix.of(context).store;
                       await AppSettings.voiceToTextEnabled.setItem(store, value);

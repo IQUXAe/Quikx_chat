@@ -11,6 +11,7 @@ import 'package:matrix/matrix.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:quikxchat/config/app_config.dart';
+import 'package:quikxchat/config/env_config.dart';
 import 'package:quikxchat/config/setting_keys.dart';
 import 'package:quikxchat/config/themes.dart';
 import 'package:quikxchat/utils/error_reporter.dart';
@@ -28,6 +29,7 @@ class AudioPlayerWidget extends StatefulWidget {
   final Color linkColor;
   final double fontSize;
   final Event event;
+  final Timeline? timeline;
 
   static const int wavesCount = 40;
 
@@ -36,6 +38,7 @@ class AudioPlayerWidget extends StatefulWidget {
     required this.color,
     required this.linkColor,
     required this.fontSize,
+    this.timeline,
     super.key,
   });
 
@@ -57,6 +60,7 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
   bool _isTranscribing = false;
   String? _transcribedText;
   bool _showTranscription = false;
+  double _lastPosition = 0.0;
   
   static final Map<String, String> _transcriptionCache = {};
 
@@ -235,26 +239,28 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
     setState(() {});
   }
 
-  void _transcribeAudio() async {
-    // Check if AI features are enabled
+  bool _isAIEnabled() {
+    if (EnvConfig.v2tServerUrl.isEmpty || EnvConfig.v2tSecretKey.isEmpty) {
+      return false;
+    }
     final store = matrix.store;
     final aiEnabled = AppSettings.aiEnabled.getItem(store);
     final voiceToTextEnabled = AppSettings.voiceToTextEnabled.getItem(store);
-    
-    if (!aiEnabled || !voiceToTextEnabled) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Voice to Text is disabled in settings'),
-        ),
-      );
-      return;
-    }
+    return aiEnabled && voiceToTextEnabled;
+  }
+
+  void _transcribeAudio() async {
+    if (!_isAIEnabled()) return;
     
     final eventId = widget.event.eventId;
     
-    // Если уже есть перевод - переключаем видимость
+    // Если уже есть перевод - переключаем видимость с анимацией
     if (_transcribedText != null) {
-      setState(() => _showTranscription = !_showTranscription);
+      if (_showTranscription) {
+        setState(() => _showTranscription = false);
+      } else {
+        setState(() => _showTranscription = true);
+      }
       return;
     }
     
@@ -367,18 +373,22 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
 
         final fileDescription = widget.event.fileDescription;
 
-        return StreamBuilder<Object>(
-          stream: audioPlayer == null
-              ? null
-              : StreamGroup.merge([
-                  audioPlayer.positionStream.asBroadcastStream(),
-                  audioPlayer.playerStateStream.asBroadcastStream(),
-                ]),
-          builder: (context, _) {
+        return StreamBuilder<Duration>(
+          stream: audioPlayer?.positionStream,
+          builder: (context, positionSnapshot) {
             final maxPosition =
                 audioPlayer?.duration?.inMilliseconds.toDouble() ?? 1.0;
-            var currentPosition =
+            var currentPosition = positionSnapshot.data?.inMilliseconds.toDouble() ??
                 audioPlayer?.position.inMilliseconds.toDouble() ?? 0.0;
+            
+            // Предотвращаем подергивание назад
+            if (audioPlayer != null && currentPosition < _lastPosition && 
+                (_lastPosition - currentPosition) < 1000) {
+              currentPosition = _lastPosition;
+            } else {
+              _lastPosition = currentPosition;
+            }
+            
             if (currentPosition > maxPosition) currentPosition = maxPosition;
 
             final wavePosition =
@@ -386,7 +396,7 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
 
             final statusText = audioPlayer == null
                 ? _durationString ?? '00:00'
-                : audioPlayer.position.minuteSecondString;
+                : (positionSnapshot.data ?? audioPlayer.position).minuteSecondString;
             return Padding(
               padding: const EdgeInsets.all(12.0),
               child: Column(
@@ -394,23 +404,6 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      Text(
-                        widget.event.originServerTs.localizedTimeShort(context),
-                        style: TextStyle(
-                          color: widget.color.withAlpha(180),
-                          fontSize: 11,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 4),
-                  ConstrainedBox(
-                    constraints: const BoxConstraints(
-                      maxWidth: QuikxChatThemes.columnWidth,
-                    ),
-                    child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: <Widget>[
                         SizedBox(
@@ -422,23 +415,28 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
                                   color: widget.color,
                                   value: _downloadProgress,
                                 )
-                              : InkWell(
-                                  borderRadius: BorderRadius.circular(64),
-                                  onLongPress: () =>
-                                      widget.event.saveFile(context),
-                                  onTap: _onButtonTap,
-                                  child: Material(
-                                    color: widget.color.withAlpha(64),
-                                    borderRadius: BorderRadius.circular(64),
-                                    child: Icon(
-                                      audioPlayer?.playing == true &&
-                                              audioPlayer?.isAtEndPosition ==
-                                                  false
-                                          ? Icons.pause_outlined
-                                          : Icons.play_arrow_outlined,
-                                      color: widget.color,
-                                    ),
-                                  ),
+                              : StreamBuilder<PlayerState>(
+                                  stream: audioPlayer?.playerStateStream,
+                                  builder: (context, stateSnapshot) {
+                                    final isPlaying = stateSnapshot.data?.playing ?? audioPlayer?.playing ?? false;
+                                    final isAtEnd = audioPlayer?.isAtEndPosition ?? false;
+                                    return InkWell(
+                                      borderRadius: BorderRadius.circular(64),
+                                      onLongPress: () =>
+                                          widget.event.saveFile(context),
+                                      onTap: _onButtonTap,
+                                      child: Material(
+                                        color: widget.color.withAlpha(64),
+                                        borderRadius: BorderRadius.circular(64),
+                                        child: Icon(
+                                          isPlaying && !isAtEnd
+                                              ? Icons.pause_outlined
+                                              : Icons.play_arrow_outlined,
+                                          color: widget.color,
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 ),
                         ),
                         const SizedBox(width: 8),
@@ -506,51 +504,63 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
                             ],
                           ),
                         ),
-                        const SizedBox(width: 8),
-                        SizedBox(
-                          width: 36,
-                          child: Text(
-                            statusText,
-                            style: TextStyle(
-                              color: widget.color,
-                              fontSize: 12,
+                        const SizedBox(width: 4),
+                        Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            SizedBox(
+                              width: 36,
+                              child: Text(
+                                statusText,
+                                style: TextStyle(
+                                  color: widget.color,
+                                  fontSize: 12,
+                                ),
+                              ),
                             ),
-                          ),
+                            Text(
+                              widget.event.originServerTs.localizedTimeShort(context),
+                              style: TextStyle(
+                                color: widget.color.withAlpha(180),
+                                fontSize: 9,
+                              ),
+                            ),
+                          ],
                         ),
-                        const SizedBox(width: 8),
-                        Material(
-                          color: widget.color.withAlpha(64),
-                          borderRadius: BorderRadius.circular(AppConfig.borderRadius),
-                          child: InkWell(
+                        if (_isAIEnabled()) ...[
+                          const SizedBox(width: 8),
+                          Material(
+                            color: widget.color.withAlpha(64),
                             borderRadius: BorderRadius.circular(AppConfig.borderRadius),
-                            onTap: _transcribeAudio,
-                            child: SizedBox(
-                              width: 32,
-                              height: 32,
-                              child: _isTranscribing
-                                  ? Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: CircularProgressIndicator(
-                                        strokeWidth: 2,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(AppConfig.borderRadius),
+                              onTap: _transcribeAudio,
+                              child: SizedBox(
+                                width: 32,
+                                height: 32,
+                                child: _isTranscribing
+                                    ? Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                          color: widget.color,
+                                        ),
+                                      )
+                                    : Icon(
+                                        Icons.text_fields,
                                         color: widget.color,
+                                        size: 20,
                                       ),
-                                    )
-                                  : Icon(
-                                      Icons.text_fields,
-                                      color: widget.color,
-                                      size: 20,
-                                    ),
+                              ),
                             ),
                           ),
-                        ),
+                        ],
                         const SizedBox(width: 8),
                         AnimatedCrossFade(
-                          firstChild: Padding(
-                            padding: const EdgeInsets.only(right: 8.0),
-                            child: Icon(
-                              Icons.mic_none_outlined,
-                              color: widget.color,
-                            ),
+                          firstChild: Icon(
+                            Icons.mic_none_outlined,
+                            color: widget.color,
                           ),
                           secondChild: Material(
                             color: widget.color.withAlpha(64),
@@ -583,32 +593,34 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
                         ),
                       ],
                     ),
-                  ),
                   AnimatedSize(
                     duration: QuikxChatThemes.animationDuration,
                     curve: Curves.easeInOut,
-                    child: _transcribedText != null && _showTranscription
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: 8),
-                            child: AnimatedOpacity(
-                              opacity: _showTranscription ? 1.0 : 0.0,
-                              duration: const Duration(milliseconds: 300),
-                              child: Container(
-                                padding: const EdgeInsets.all(12),
-                                margin: const EdgeInsets.symmetric(horizontal: 8),
-                                decoration: BoxDecoration(
-                                  color: widget.color.withAlpha(32),
-                                  borderRadius: BorderRadius.circular(AppConfig.borderRadius),
-                                ),
-                                child: SelectableText(
-                                  _transcribedText!,
-                                  style: TextStyle(
-                                    color: widget.color,
-                                    fontSize: widget.fontSize,
-                                  ),
-                                ),
-                              ),
-                            ),
+                    child: _transcribedText != null
+                        ? AnimatedOpacity(
+                            opacity: _showTranscription ? 1.0 : 0.0,
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                            child: _showTranscription
+                                ? Padding(
+                                    padding: const EdgeInsets.only(top: 8),
+                                    child: Container(
+                                      padding: const EdgeInsets.all(12),
+                                      margin: const EdgeInsets.symmetric(horizontal: 8),
+                                      decoration: BoxDecoration(
+                                        color: widget.color.withAlpha(32),
+                                        borderRadius: BorderRadius.circular(AppConfig.borderRadius),
+                                      ),
+                                      child: SelectableText(
+                                        _transcribedText!,
+                                        style: TextStyle(
+                                          color: widget.color,
+                                          fontSize: widget.fontSize,
+                                        ),
+                                      ),
+                                    ),
+                                  )
+                                : const SizedBox.shrink(),
                           )
                         : const SizedBox.shrink(),
                   ),
@@ -673,7 +685,8 @@ extension on AudioPlayer {
   bool get isAtEndPosition {
     final duration = this.duration;
     if (duration == null) return true;
-    return position >= duration;
+    // Считаем что достигли конца если осталось меньше 100мс
+    return position >= duration - const Duration(milliseconds: 100);
   }
 }
 
