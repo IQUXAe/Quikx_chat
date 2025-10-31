@@ -110,7 +110,7 @@ class _ImportEmoteArchiveDialogState extends State<ImportEmoteArchiveDialog> {
 
     // check for duplicates first
 
-    final skipKeys = [];
+    final skipKeys = <ArchiveFile>[];
 
     for (final entry in imports.entries) {
       final imageCode = entry.value;
@@ -303,7 +303,7 @@ class _EmojiImportPreviewState extends State<_EmojiImportPreview> {
     );
   }
 
-  _setRenderError() {
+  void _setRenderError() {
     hasErrorNotifier.value = true;
     widget.onRemove.call();
   }

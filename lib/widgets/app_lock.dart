@@ -42,7 +42,7 @@ class AppLock extends State<AppLockWidget> with WidgetsBindingObserver {
     WidgetsBinding.instance.addPostFrameCallback(_checkLoggedIn);
   }
 
-  void _checkLoggedIn(_) async {
+  void _checkLoggedIn(Object? _) async {
     if (widget.clients.any((client) => client.isLogged())) return;
 
     await changePincode(null);

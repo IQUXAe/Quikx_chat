@@ -323,7 +323,7 @@ class InputBar extends StatelessWidget {
     return const SizedBox.shrink();
   }
 
-  void insertSuggestion(_, Map<String, String?> suggestion) {
+  void insertSuggestion(Object? _, Map<String, String?> suggestion) {
     final replaceText =
         controller!.text.substring(0, controller!.selection.baseOffset);
     var startText = '';

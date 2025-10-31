@@ -29,7 +29,7 @@ class ChatMembersController extends State<ChatMembersPage> {
     setFilter();
   }
 
-  void setFilter([_]) async {
+  void setFilter([Object? _]) async {
     final filter = filterController.text.toLowerCase().trim();
 
     final members = this
@@ -56,7 +56,7 @@ class ChatMembersController extends State<ChatMembersPage> {
     });
   }
 
-  void refreshMembers([_]) async {
+  void refreshMembers([Object? _]) async {
     Logs().d('Load room members from', widget.roomId);
     try {
       setState(() {

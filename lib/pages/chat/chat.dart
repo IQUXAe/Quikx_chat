@@ -121,9 +121,9 @@ class ChatController extends State<ChatPageWithRoom>
 
   bool dragging = false;
 
-  void onDragEntered(_) => setState(() => dragging = true);
+  void onDragEntered(Object? _) => setState(() => dragging = true);
 
-  void onDragExited(_) => setState(() => dragging = false);
+  void onDragExited(Object? _) => setState(() => dragging = false);
 
   void onDragDone(DropDoneDetails details) async {
     setState(() => dragging = false);
@@ -149,11 +149,11 @@ class ChatController extends State<ChatPageWithRoom>
         MessageTypes.File,
       }.contains(selectedEvents.single.messageType);
 
-  void saveSelectedEvent(context) => selectedEvents.single.saveFile(context);
+  void saveSelectedEvent(BuildContext context) => selectedEvents.single.saveFile(context);
 
   List<Event> selectedEvents = [];
 
-  final Set<String> unfolded = {};
+  final Set<String> unfolded = <String>{};
 
   Event? replyEvent;
 
@@ -193,7 +193,7 @@ class ChatController extends State<ChatPageWithRoom>
     context.go('/rooms');
   }
 
-  void requestHistory([_]) async {
+  void requestHistory([Object? _]) async {
     Logs().v('Requesting history...');
     await timeline?.requestHistory(historyCount: _loadHistoryCount);
   }
@@ -343,7 +343,7 @@ class ChatController extends State<ChatPageWithRoom>
   
 
 
-  final Set<String> expandedEventIds = {};
+  final Set<String> expandedEventIds = <String>{};
 
   void expandEventsFrom(Event event, bool expand) {
     final events = timeline!.events.filterByVisibleInGui();
@@ -1063,7 +1063,7 @@ class ChatController extends State<ChatPageWithRoom>
     scrollController.jumpTo(0);
   }
 
-  void onEmojiSelected(_, Emoji? emoji) {
+  void onEmojiSelected(Object? _, Emoji? emoji) {
     typeEmoji(emoji);
     onInputBarChanged(sendController.text);
   }
@@ -1186,7 +1186,7 @@ class ChatController extends State<ChatPageWithRoom>
     return index + 1;
   }
 
-  void onInputBarSubmitted(_) {
+  void onInputBarSubmitted(Object? _) {
     send();
     FocusScope.of(context).requestFocus(inputFocus);
   }
@@ -1214,7 +1214,7 @@ class ChatController extends State<ChatPageWithRoom>
     }
   }
 
-  unpinEvent(String eventId) async {
+  Future<void> unpinEvent(String eventId) async {
     final response = await showOkCancelAlertDialog(
       context: context,
       title: L10n.of(context).unpin,

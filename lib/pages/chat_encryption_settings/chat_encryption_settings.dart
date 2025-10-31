@@ -30,7 +30,7 @@ class ChatEncryptionSettingsController extends State<ChatEncryptionSettings> {
     }
   }
 
-  void enableEncryption(_) async {
+  void enableEncryption(Object? _) async {
     if (room.encrypted) {
       showOkAlertDialog(
         context: context,
