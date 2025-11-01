@@ -1,4 +1,3 @@
-import 'dart:ffi';
 import 'package:flutter/material.dart';
 
 import 'package:collection/collection.dart';
@@ -6,8 +5,6 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_vodozemac/flutter_vodozemac.dart' as vod;
 import 'package:matrix/matrix.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:ffi/ffi.dart';
-import 'package:just_audio_media_kit/just_audio_media_kit.dart';
 
 import 'package:quikxchat/config/app_config.dart';
 import 'package:quikxchat/utils/client_manager.dart';
@@ -19,6 +16,7 @@ import 'package:quikxchat/utils/memory_manager.dart';
 import 'package:quikxchat/utils/message_translator.dart';
 import 'package:quikxchat/utils/notification_handler.dart';
 import 'package:quikxchat/utils/image_cache_manager.dart';
+import 'package:quikxchat/utils/audio_init.dart';
 
 import 'package:flutter_webrtc/flutter_webrtc.dart';
 import 'config/setting_keys.dart';
@@ -35,27 +33,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize media_kit for Linux audio support (optional)
-  var mediaKitInitialized = false;
-  if (PlatformInfos.isLinux) {
-    try {
-      // Set LC_NUMERIC=C for media_kit via FFI
-      try {
-        final libc = DynamicLibrary.open('libc.so.6');
-        final setlocale = libc.lookupFunction<
-            Pointer<Utf8> Function(Int32, Pointer<Utf8>),
-            Pointer<Utf8> Function(int, Pointer<Utf8>)
-        >('setlocale');
-        const lcAll = 6;
-        setlocale(lcAll, 'C'.toNativeUtf8());
-      } catch (_) {}
-      
-      JustAudioMediaKit.ensureInitialized(linux: true, windows: false);
-      mediaKitInitialized = true;
-      Logs().i('media_kit initialized. Audio playback enabled.');
-    } catch (e) {
-      Logs().w('media_kit failed (mpv not installed). Audio disabled.', e);
-    }
-  }
+  final mediaKitInitialized = PlatformInfos.isLinux ? initAudio() : false;
   PlatformInfos.mediaKitAvailable = mediaKitInitialized;
 
   // Параллельная инициализация для ускорения запуска
