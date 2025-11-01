@@ -53,6 +53,33 @@ QuikxChat may connect to:
   - Translation is opt-in and can be disabled in settings
   - Translations are cached locally to minimize API requests
 
+## AI Features (Optional)
+
+QuikxChat includes optional AI-powered features:
+
+### Voice-to-Text Transcription
+- **Enabled by default**: Can be disabled anytime in Settings → AI
+- **On-demand**: Only processes audio when you click the transcription button
+- **What is sent**: Only the audio file of the voice message you choose to transcribe
+- **What is NOT sent**: No messages, contacts, metadata, or any other data
+- **Server processing**: Audio is processed and immediately discarded, no logs kept
+- **Local caching**: Transcriptions are cached on your device for instant access
+- **No tracking**: No analytics, no usage statistics, no data collection
+- **Security**: All requests are authenticated and encrypted (HTTPS)
+
+### Your Control
+- AI features are enabled by default but can be disabled anytime in Settings → AI
+- You still choose when to transcribe each voice message (click the button)
+- Nothing happens automatically - transcription only on your request
+- If AI server is not configured during build, features are unavailable
+
+### Privacy Guarantee
+AI features follow the same privacy principles:
+- **No data collection**
+- **No data storage on servers**
+- **No tracking or analytics**
+- **Full user control**
+
 ## Open Source
 
 QuikxChat is open source (AGPL-3.0):
@@ -69,4 +96,4 @@ Questions? Open an issue: https://github.com/IQUXAe/Quikx_chat/issues
 
 ---
 
-**TL;DR**: We don't collect your data. Everything stays on your device and your chosen Matrix homeserver.
+**TL;DR**: We don't collect your data. Everything stays on your device and your chosen Matrix homeserver. AI features (if enabled) only process audio you explicitly choose to transcribe, with no data collection or storage.

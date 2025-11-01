@@ -14,6 +14,7 @@ QuikxChat is a fork of FluffyChat with redesigned UI and additional features. Bu
 
 - **Security**: End-to-end encryption (E2EE) by default
 - **Communication**: Text messages, voice/video calls (experimental), file sharing
+- **AI Features**: Voice-to-text transcription for voice messages (optional)
 - **Customization**: Custom themes, wallpapers, color schemes, font sizes
 - **Translation**: Built-in message translation (beta)
 - **Multi-account**: Support for multiple Matrix accounts
@@ -23,10 +24,10 @@ QuikxChat is a fork of FluffyChat with redesigned UI and additional features. Bu
 ## Platform Support
 
 - ✅ Android (5.0+)
-- ✅ Linux (AppImage)
-- ✅ Web (not deployed yet)
-- ❌ iOS/macOS (removed, soon maybe)
-- ✅ Windows (not tested yet)
+- ✅ Linux (AppImage, tar.gz)
+- ✅ Windows (tested)
+- ✅ [Web](https://quikxchat.vercel.app/app/)
+- ❌ iOS/macOS (removed)
 
 ## Installation
 
@@ -55,11 +56,11 @@ chmod +x QuikxChat-x86_64.AppImage
 ./QuikxChat-x86_64.AppImage
 ```
 
-### Web
-Not deployed yet
-
 ### Windows
-Not build yet
+Download installer or portable version from [Releases](https://github.com/IQUXAe/Quikx_chat/releases)
+
+### Web
+[Here](https://quikxchat.vercel.app/app/)
 
 ## Building from Source
 
@@ -81,16 +82,42 @@ sudo dnf install cmake ninja-build gtk3-devel pkgconfig clang mpv
 sudo pacman -S cmake ninja gtk3 pkgconfig clang mpv
 ```
 
+### AI Features Configuration (Optional)
+
+To enable AI-powered voice-to-text transcription:
+
+1. Create a `.env` file in the project root:
+```bash
+V2T_SECRET_KEY=your_secret_key
+V2T_SERVER_URL=https://your-server.com
+```
+
+2. Build with environment variables:
+```bash
+# The build scripts automatically load .env file
+./scripts/build_apk_release.sh
+./scripts/build_linux_release.sh
+./scripts/build_appimage.sh
+```
+
+Or run in development:
+```bash
+./run_linux.sh
+```
+
 ### Build Commands
 ```bash
 # Install dependencies
 flutter pub get
 
-# Android
+# Android (with AI features if .env exists)
 ./scripts/build_apk_release.sh
 
-# Linux
+# Linux AppImage
 ./scripts/build_appimage.sh
+
+# Linux tar.gz
+./scripts/build_linux_release.sh
 
 # Web
 ./scripts/build_web.sh
@@ -99,20 +126,41 @@ flutter pub get
 ## Development
 
 ```bash
-# Run in debug mode
-flutter run
+# Run with AI features (loads .env automatically)
+./run_linux.sh
 
-# Run on specific platform
+# Or run manually
 flutter run -d linux
 flutter run -d chrome
 flutter run -d android
+
+# Run with AI features manually
+source .env
+flutter run -d linux \
+  --dart-define=V2T_SECRET_KEY="$V2T_SECRET_KEY" \
+  --dart-define=V2T_SERVER_URL="$V2T_SERVER_URL"
 ```
 
 ## What's Different from FluffyChat?
 
+### UI/UX Improvements
 - Redesigned UI with Material Design 3
-- Improved settings layout with card-based design
+- Modern back button design across all pages
+- Card-based settings layout
+- Two-column desktop layout (chat list + content)
+- Improved voice message player with smooth animations
+- Better reply display with overflow handling
+
+### New Features
+- **AI-powered voice-to-text** transcription (optional)
+- Voice message transcription with show/hide animation
+- Improved voice message stability on Linux
+- Better audio playback progress tracking
+
+### Technical Improvements
 - Performance optimizations
+- Optimized HTTP client for all platforms
+- Updated dependencies to latest stable versions
 - Removed iOS/macOS support (focus on Android/Linux/Windows/Web)
 
 ## Credits

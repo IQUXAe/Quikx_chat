@@ -61,6 +61,7 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
   String? _transcribedText;
   bool _showTranscription = false;
   double _lastPosition = 0.0;
+  bool _isSeeking = false;
   
   static final Map<String, String> _transcriptionCache = {};
 
@@ -381,10 +382,15 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
             var currentPosition = positionSnapshot.data?.inMilliseconds.toDouble() ??
                 audioPlayer?.position.inMilliseconds.toDouble() ?? 0.0;
             
-            // Предотвращаем подергивание назад
-            if (audioPlayer != null && currentPosition < _lastPosition && 
-                (_lastPosition - currentPosition) < 1000) {
-              currentPosition = _lastPosition;
+            // Предотвращаем подергивание назад (только если не seek)
+            if (!_isSeeking && audioPlayer != null && currentPosition < _lastPosition) {
+              final diff = _lastPosition - currentPosition;
+              // Игнорируем скачки назад меньше 2 секунд
+              if (diff < 2000) {
+                currentPosition = _lastPosition;
+              } else {
+                _lastPosition = currentPosition;
+              }
             } else {
               _lastPosition = currentPosition;
             }
@@ -492,13 +498,21 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
                                       : Colors.transparent,
                                   max: maxPosition,
                                   value: currentPosition,
-                                  onChanged: (position) => audioPlayer == null
-                                      ? _onButtonTap()
-                                      : audioPlayer.seek(
-                                          Duration(
-                                            milliseconds: position.round(),
-                                          ),
-                                        ),
+                                  onChanged: (position) {
+                                    if (audioPlayer == null) {
+                                      _onButtonTap();
+                                    } else {
+                                      _isSeeking = true;
+                                      _lastPosition = position;
+                                      audioPlayer.seek(
+                                        Duration(milliseconds: position.round()),
+                                      ).then((_) {
+                                        Future.delayed(const Duration(milliseconds: 100), () {
+                                          _isSeeking = false;
+                                        });
+                                      });
+                                    }
+                                  },
                                 ),
                               ),
                             ],

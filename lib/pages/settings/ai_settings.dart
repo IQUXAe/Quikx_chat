@@ -83,7 +83,28 @@ class _AiSettingsPageState extends State<AiSettingsPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('AI'),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('AI'),
+            const SizedBox(width: 8),
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              decoration: BoxDecoration(
+                color: Colors.orange,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              child: const Text(
+                'BETA',
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ],
+        ),
         leading: const Center(child: ModernBackButton()),
       ),
       body: MaxWidthBody(
@@ -132,7 +153,29 @@ class _AiSettingsPageState extends State<AiSettingsPage> {
                 ),
                 child: const Icon(Icons.text_fields, color: Colors.blue),
               ),
-              title: const Text('Voice to Text'),
+              title: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text('Voice to Text'),
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: Colors.orange.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(3),
+                      border: Border.all(color: Colors.orange, width: 1),
+                    ),
+                    child: const Text(
+                      'BETA',
+                      style: TextStyle(
+                        fontSize: 9,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.orange,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
               subtitle: Text(
                 serverConfigured
                     ? 'Convert voice messages to text'

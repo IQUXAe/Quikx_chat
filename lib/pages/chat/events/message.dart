@@ -627,6 +627,8 @@ class _MessageState extends State<Message> {
                                                                             replyEvent,
                                                                             ownMessage:
                                                                                 ownMessage,
+                                                                            textColor:
+                                                                                textColor,
                                                                             timeline:
                                                                                 timeline,
                                                                           ),

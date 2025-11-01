@@ -10,10 +10,12 @@ class ReplyContent extends StatelessWidget {
   final Event replyEvent;
   final bool ownMessage;
   final Timeline? timeline;
+  final Color? textColor;
 
   const ReplyContent(
     this.replyEvent, {
     this.ownMessage = false,
+    this.textColor,
     super.key,
     this.timeline,
   });
@@ -32,17 +34,10 @@ class ReplyContent extends StatelessWidget {
         timeline != null ? replyEvent.getDisplayEvent(timeline) : replyEvent;
     final fontSize = AppConfig.messageFontSize * AppConfig.fontSizeFactor;
     
-    final textColor = ownMessage
-        ? (theme.brightness == Brightness.dark
-            ? theme.colorScheme.onSurface
-            : theme.colorScheme.onPrimary)
-        : theme.colorScheme.onSurface;
-    
-    final color = theme.brightness == Brightness.dark
-        ? theme.colorScheme.onTertiaryContainer
-        : ownMessage
-            ? theme.colorScheme.tertiaryContainer
-            : theme.colorScheme.tertiary;
+    // Используем цвет текста сообщения для всего
+    final replyTextColor = textColor ?? (ownMessage
+        ? theme.colorScheme.onPrimary
+        : theme.colorScheme.onSurface);
 
     return Material(
       color: Colors.transparent,
@@ -58,7 +53,7 @@ class ReplyContent extends StatelessWidget {
                 width: 5,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(AppConfig.borderRadius),
-                  color: color,
+                  color: replyTextColor.withValues(alpha: 0.5),
                 ),
               ),
               const SizedBox(width: 6),
@@ -78,7 +73,7 @@ class ReplyContent extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            color: color,
+                            color: replyTextColor,
                             fontSize: fontSize,
                           ),
                         );
@@ -93,7 +88,7 @@ class ReplyContent extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                       style: TextStyle(
-                        color: textColor,
+                        color: replyTextColor.withValues(alpha: 0.7),
                         fontSize: fontSize,
                       ),
                     ),

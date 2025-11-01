@@ -26,7 +26,7 @@ jobs:
       run: flutter pub get
     
     - name: Build Windows
-      run: flutter build windows --release --dart-define=V2T_SERVER_URL=${{ secrets.V2T_SERVER_URL }} --dart-define=V2T_SECRET_KEY=${{ secrets.V2T_SECRET_KEY }}
+      run: flutter build windows --release --dart-define=V2T_SERVER_URL="${{ secrets.V2T_SERVER_URL }}" --dart-define=V2T_SECRET_KEY="${{ secrets.V2T_SECRET_KEY }}"
     
     - name: Debug SQLCipher plugin
       run: |

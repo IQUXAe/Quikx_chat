@@ -8,6 +8,7 @@ import 'package:quikxchat/utils/fluffy_share.dart';
 import 'package:quikxchat/widgets/avatar.dart';
 import 'package:quikxchat/widgets/future_loading_dialog.dart';
 import 'package:quikxchat/widgets/matrix.dart';
+import 'package:quikxchat/widgets/modern_back_button.dart';
 import 'package:quikxchat/widgets/mxc_image_viewer.dart';
 import 'package:quikxchat/widgets/presence_builder.dart';
 import '../../utils/url_launcher.dart';
@@ -83,6 +84,7 @@ class _UserProfilePageState extends State<UserProfilePage> {
             pinned: true,
             elevation: 0,
             backgroundColor: theme.colorScheme.primary,
+            leading: const Center(child: ModernBackButton()),
             flexibleSpace: Builder(
               builder: (context) => FlexibleSpaceBar(
                 collapseMode: CollapseMode.parallax,

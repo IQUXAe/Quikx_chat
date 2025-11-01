@@ -9,9 +9,17 @@ if ! command -v flutter &> /dev/null; then
     exit 1
 fi
 
+# Load .env variables
+if [ -f .env ]; then
+    export $(cat .env | grep -v '^#' | xargs)
+    echo "✅ Loaded environment variables from .env"
+fi
+
 # Build Linux version
 echo "🔍 Building Linux release..."
-flutter build linux --release
+flutter build linux --release \
+  --dart-define=V2T_SECRET_KEY="$V2T_SECRET_KEY" \
+  --dart-define=V2T_SERVER_URL="$V2T_SERVER_URL"
 
 # Check if build was successful
 if [ ! -f "build/linux/x64/release/bundle/quikxchat" ]; then

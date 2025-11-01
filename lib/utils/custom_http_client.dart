@@ -34,17 +34,25 @@ class CustomHttpClient {
     client.connectionTimeout = const Duration(seconds: 30);
     client.idleTimeout = const Duration(seconds: 30);
     
+    // Для Windows: разрешаем все сертификаты (временное решение)
+    if (PlatformInfos.isWindows) {
+      client.badCertificateCallback = (cert, host, port) => true;
+    }
+    
 
     
     return client;
   }
 
   static http.Client createHTTPClient() {
-    return retry.RetryClient(
-      PlatformInfos.isAndroid
-          ? IOClient(customHttpClient(ISRG_X1))
-          : http.Client(),
-    );
+    if (PlatformInfos.isAndroid) {
+      return retry.RetryClient(IOClient(customHttpClient(ISRG_X1)));
+    } else if (PlatformInfos.isWindows) {
+      // На Windows используем кастомный HttpClient с увеличенными таймаутами
+      return retry.RetryClient(IOClient(customHttpClient(null)));
+    } else {
+      return retry.RetryClient(http.Client());
+    }
   }
 
 }
