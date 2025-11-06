@@ -240,6 +240,7 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
   }
 
   bool _isAIEnabled() {
+    if (kIsWeb) return false; // Security: API key exposed in web build
     if (EnvConfig.v2tServerUrl.isEmpty || EnvConfig.v2tSecretKey.isEmpty) {
       return false;
     }
@@ -279,22 +280,9 @@ class AudioPlayerState extends State<AudioPlayerWidget> {
     
     try {
       final matrixFile = await widget.event.downloadAndDecryptAttachment();
+      final fileName = matrixFile.name;
       
-      File? file;
-      if (!kIsWeb) {
-        final tempDir = await getTemporaryDirectory();
-        final fileName = Uri.encodeComponent(
-          widget.event.attachmentOrThumbnailMxcUrl()!.pathSegments.last,
-        );
-        file = File('${tempDir.path}/${fileName}_${matrixFile.name}');
-        await file.writeAsBytes(matrixFile.bytes);
-      }
-      
-      if (file == null) {
-        throw Exception('Web platform not supported for transcription');
-      }
-      
-      final text = await VoiceToTextClient.convert(file.path);
+      final text = await VoiceToTextClient.convert(matrixFile.bytes, fileName);
       
       setState(() {
         _transcribedText = text;

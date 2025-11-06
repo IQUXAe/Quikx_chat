@@ -35,7 +35,7 @@ abstract class PlatformInfos {
   static bool get platformCanRecord => isMobile || (isLinux && mediaKitAvailable);
   
   /// Audio playback support
-  static bool get supportsAudioPlayback => isMobile || (isLinux && mediaKitAvailable);
+  static bool get supportsAudioPlayback => isMobile || isWeb || (isLinux && mediaKitAvailable);
 
   static String get clientName =>
       '${AppConfig.applicationName} ${isWeb ? 'web' : Platform.operatingSystem}${kReleaseMode ? '' : 'Debug'}';

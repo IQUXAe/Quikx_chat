@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -15,6 +17,7 @@ import 'package:quikxchat/config/setting_keys.dart';
 import 'package:quikxchat/l10n/l10n.dart';
 import 'package:quikxchat/utils/platform_infos.dart';
 import 'package:quikxchat/utils/voice_to_text_client.dart';
+import 'package:quikxchat/utils/file_io.dart';
 import 'package:quikxchat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
 import 'package:quikxchat/widgets/matrix.dart';
 import 'events/audio_player.dart';
@@ -213,7 +216,14 @@ class RecordingViewModelState extends State<RecordingViewModel> {
       isSending = true;
     });
     try {
-      final text = await VoiceToTextClient.convert(path);
+      late Uint8List bytes;
+      if (kIsWeb) {
+        final base64Data = path.split(',').last;
+        bytes = base64Decode(base64Data);
+      } else {
+        bytes = await readFileBytes(path);
+      }
+      final text = await VoiceToTextClient.convert(bytes, fileName ?? 'recording.ogg');
       onTextReady(text);
     } catch (e, s) {
       Logs().e('Unable to convert voice to text', e, s);

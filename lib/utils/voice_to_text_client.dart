@@ -1,6 +1,7 @@
 import 'dart:convert';
-import 'dart:io';
+import 'dart:io' if (dart.library.html) '';
 import 'dart:math';
+import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
 import 'package:http/http.dart' as http;
 import 'package:quikxchat/config/env_config.dart';
@@ -12,8 +13,7 @@ class VoiceToTextClient {
     return EnvConfig.v2tServerUrl.split(',').map((s) => s.trim()).toList();
   }
   
-  static Future<String> convert(String audioPath) async {
-    final audioFile = File(audioPath);
+  static Future<String> convert(Uint8List audioBytes, String fileName) async {
     final servers = _getServers();
     
     // Shuffle servers for random selection
@@ -36,7 +36,11 @@ class VoiceToTextClient {
         
         request.headers['X-Signature'] = signature;
         request.headers['X-Timestamp'] = timestamp.toString();
-        request.files.add(await http.MultipartFile.fromPath('audio', audioFile.path));
+        request.files.add(http.MultipartFile.fromBytes(
+          'audio',
+          audioBytes,
+          filename: fileName,
+        ));
         
         final response = await request.send();
         final responseData = await response.stream.bytesToString();

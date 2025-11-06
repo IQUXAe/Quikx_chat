@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 import 'package:quikxchat/config/env_config.dart';
@@ -24,7 +25,7 @@ class RecordingInputRow extends StatelessWidget {
     final aiEnabled = AppSettings.aiEnabled.getItem(store);
     final voiceToTextEnabled = AppSettings.voiceToTextEnabled.getItem(store);
     final configValid = EnvConfig.v2tServerUrl.isNotEmpty && EnvConfig.v2tSecretKey.isNotEmpty;
-    final showV2TButton = configValid && aiEnabled && voiceToTextEnabled;
+    final showV2TButton = !kIsWeb && configValid && aiEnabled && voiceToTextEnabled; // Security: API key exposed in web
     const maxDecibalWidth = 36.0;
     final time =
         '${state.duration.inMinutes.toString().padLeft(2, '0')}:${(state.duration.inSeconds % 60).toString().padLeft(2, '0')}';

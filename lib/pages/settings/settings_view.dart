@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 
 import 'package:go_router/go_router.dart';
@@ -315,37 +316,38 @@ class SettingsView extends StatelessWidget {
                             isActive: activeRoute.startsWith('/rooms/settings/security'),
                             position: CardPosition.middle,
                           ),
-                          Builder(
-                            builder: (context) {
-                              final isConfigured = EnvConfig.v2tServerUrl.isNotEmpty && EnvConfig.v2tSecretKey.isNotEmpty;
-                              return Opacity(
-                                opacity: isConfigured ? 1.0 : 0.5,
-                                child: IgnorePointer(
-                                  ignoring: !isConfigured,
-                                  child: SettingsCardTile(
-                                    leading: Container(
-                                      padding: const EdgeInsets.all(8),
-                                      decoration: BoxDecoration(
-                                        color: isConfigured
-                                            ? Colors.deepPurple.withValues(alpha: 0.1)
-                                            : Colors.grey.withValues(alpha: 0.1),
-                                        borderRadius: BorderRadius.circular(8),
+                          if (!kIsWeb)
+                            Builder(
+                              builder: (context) {
+                                final isConfigured = EnvConfig.v2tServerUrl.isNotEmpty && EnvConfig.v2tSecretKey.isNotEmpty;
+                                return Opacity(
+                                  opacity: isConfigured ? 1.0 : 0.5,
+                                  child: IgnorePointer(
+                                    ignoring: !isConfigured,
+                                    child: SettingsCardTile(
+                                      leading: Container(
+                                        padding: const EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          color: isConfigured
+                                              ? Colors.deepPurple.withValues(alpha: 0.1)
+                                              : Colors.grey.withValues(alpha: 0.1),
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        child: Icon(
+                                          Icons.auto_awesome,
+                                          color: isConfigured ? Colors.deepPurple : Colors.grey,
+                                        ),
                                       ),
-                                      child: Icon(
-                                        Icons.auto_awesome,
-                                        color: isConfigured ? Colors.deepPurple : Colors.grey,
-                                      ),
+                                      title: const Text('AI'),
+                                      trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                                      onTap: () => context.go('/rooms/settings/ai'),
+                                      isActive: activeRoute.startsWith('/rooms/settings/ai'),
+                                      position: CardPosition.last,
                                     ),
-                                    title: const Text('AI'),
-                                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                                    onTap: () => context.go('/rooms/settings/ai'),
-                                    isActive: activeRoute.startsWith('/rooms/settings/ai'),
-                                    position: CardPosition.last,
                                   ),
-                                ),
-                              );
-                            },
-                          ),
+                                );
+                              },
+                            ),
                         ],
                       ),
                       _buildSection(
