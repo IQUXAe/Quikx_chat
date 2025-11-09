@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 
 import 'package:go_router/go_router.dart';
 
 import 'package:quikxchat/config/app_config.dart';
 import 'package:quikxchat/config/themes.dart';
-import 'package:quikxchat/l10n/l10n.dart';
 import 'package:quikxchat/pages/chat_list/chat_list.dart';
 import 'package:quikxchat/widgets/app_drawer.dart';
 import 'package:quikxchat/widgets/navigation_rail.dart';
@@ -57,25 +57,18 @@ class ChatListView extends StatelessWidget {
               child: Scaffold(
                 drawer: const AppDrawer(),
                 body: Container(
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                      colors: [
-                        Theme.of(context).colorScheme.surface,
-                        Theme.of(context).colorScheme.surfaceContainerLow,
-                      ],
-                    ),
-                  ),
+                  color: Theme.of(context).colorScheme.surface,
                   child: RepaintBoundary(
                     child: ChatListViewBody(controller),
                   ),
                 ),
-                floatingActionButton: _AnimatedFAB(
-                  visible: !controller.isSearchMode && controller.activeSpaceId == null,
-                  onPressed: () => context.go('/rooms/newprivatechat'),
-                  label: L10n.of(context).chat,
-                ),
+                floatingActionButton: controller.scrollController.hasClients
+                    ? _AnimatedFAB(
+                        scrollController: controller.scrollController,
+                        visible: !controller.isSearchMode && controller.activeSpaceId == null,
+                        onPressed: () => context.go('/rooms/newprivatechat'),
+                      )
+                    : null,
               ),
             ),
           ),
@@ -86,14 +79,14 @@ class ChatListView extends StatelessWidget {
 }
 
 class _AnimatedFAB extends StatefulWidget {
+  final ScrollController scrollController;
   final bool visible;
   final VoidCallback onPressed;
-  final String label;
 
   const _AnimatedFAB({
+    required this.scrollController,
     required this.visible,
     required this.onPressed,
-    required this.label,
   });
 
   @override
@@ -103,26 +96,42 @@ class _AnimatedFAB extends StatefulWidget {
 class _AnimatedFABState extends State<_AnimatedFAB> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
+  bool _isScrollingDown = false;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 300),
+      duration: const Duration(milliseconds: 200),
       vsync: this,
     );
     _scaleAnimation = CurvedAnimation(
       parent: _controller,
-      curve: Curves.easeOutBack,
+      curve: Curves.easeInOut,
     );
+    widget.scrollController.addListener(_onScroll);
     if (widget.visible) _controller.forward();
+  }
+
+  void _onScroll() {
+    if (widget.scrollController.position.userScrollDirection == ScrollDirection.reverse) {
+      if (!_isScrollingDown) {
+        setState(() => _isScrollingDown = true);
+        _controller.reverse();
+      }
+    } else if (widget.scrollController.position.userScrollDirection == ScrollDirection.forward) {
+      if (_isScrollingDown) {
+        setState(() => _isScrollingDown = false);
+        _controller.forward();
+      }
+    }
   }
 
   @override
   void didUpdateWidget(_AnimatedFAB oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.visible != oldWidget.visible) {
-      if (widget.visible) {
+      if (widget.visible && !_isScrollingDown) {
         _controller.forward();
       } else {
         _controller.reverse();
@@ -132,6 +141,7 @@ class _AnimatedFABState extends State<_AnimatedFAB> with SingleTickerProviderSta
 
   @override
   void dispose() {
+    widget.scrollController.removeListener(_onScroll);
     _controller.dispose();
     super.dispose();
   }
@@ -140,50 +150,11 @@ class _AnimatedFABState extends State<_AnimatedFAB> with SingleTickerProviderSta
   Widget build(BuildContext context) {
     return ScaleTransition(
       scale: _scaleAnimation,
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [
-              Theme.of(context).colorScheme.primary,
-              Theme.of(context).colorScheme.primaryContainer,
-            ],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(
-              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.5),
-              blurRadius: 20,
-              spreadRadius: 2,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: widget.onPressed,
-            borderRadius: BorderRadius.circular(24),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.add_rounded, size: 26),
-                  const SizedBox(width: 8),
-                  Text(
-                    widget.label,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
+      child: FloatingActionButton(
+        onPressed: widget.onPressed,
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        elevation: 3,
+        child: const Icon(Icons.edit_outlined, size: 24),
       ),
     );
   }

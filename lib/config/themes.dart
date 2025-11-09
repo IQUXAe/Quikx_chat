@@ -54,7 +54,7 @@ abstract class QuikxChatThemes {
         ? ColorScheme.fromSeed(
             brightness: brightness,
             seedColor: seed ?? AppConfig.colorSchemeSeed ?? const Color(0xFF6366F1),
-            dynamicSchemeVariant: DynamicSchemeVariant.vibrant,
+            dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
           ).copyWith(
             surface: Colors.black,
             surfaceContainerLowest: Colors.black,
@@ -66,92 +66,152 @@ abstract class QuikxChatThemes {
         : ColorScheme.fromSeed(
             brightness: brightness,
             seedColor: seed ?? AppConfig.colorSchemeSeed ?? const Color(0xFF6366F1),
-            dynamicSchemeVariant: DynamicSchemeVariant.vibrant,
+            dynamicSchemeVariant: DynamicSchemeVariant.fidelity,
           );
     final isColumnMode = QuikxChatThemes.isColumnMode(context);
     return ThemeData(
-      visualDensity: VisualDensity.standard,
+      visualDensity: VisualDensity.compact,
       useMaterial3: true,
       brightness: brightness,
       colorScheme: colorScheme,
-      dividerColor: Colors.transparent,
+      dividerColor: colorScheme.outlineVariant.withValues(alpha: 0.3),
       cardTheme: CardThemeData(
-        elevation: 0,
+        elevation: 1,
+        shadowColor: colorScheme.shadow.withValues(alpha: 0.1),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(
+            color: colorScheme.outlineVariant.withValues(alpha: 0.2),
+            width: 0.5,
+          ),
         ),
-        color: brightness == Brightness.dark
-            ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.5)
-            : colorScheme.surfaceContainerLow,
+        color: colorScheme.surfaceContainerLow,
       ),
       popupMenuTheme: PopupMenuThemeData(
-        elevation: 8,
-        color: colorScheme.surfaceContainer,
+        elevation: 4,
+        color: colorScheme.surfaceContainerHighest,
+        shadowColor: colorScheme.shadow.withValues(alpha: 0.15),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
+          side: BorderSide(
+            color: colorScheme.outlineVariant.withValues(alpha: 0.2),
+            width: 0.5,
+          ),
         ),
       ),
       segmentedButtonTheme: SegmentedButtonThemeData(
         style: SegmentedButton.styleFrom(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          side: BorderSide(
+            color: colorScheme.outlineVariant.withValues(alpha: 0.3),
+            width: 1,
           ),
         ),
       ),
       textSelectionTheme: TextSelectionThemeData(
-        selectionColor: colorScheme.primary.withValues(alpha: 0.3),
+        selectionColor: colorScheme.primaryContainer,
         selectionHandleColor: colorScheme.primary,
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: brightness == Brightness.dark
-            ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.3)
-            : colorScheme.surfaceContainerLow,
+        fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.6),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide(color: colorScheme.outline.withValues(alpha: 0.5)),
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(
+            color: colorScheme.outlineVariant.withValues(alpha: 0.4),
+            width: 1,
+          ),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide(color: colorScheme.outline.withValues(alpha: 0.5)),
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(
+            color: colorScheme.outlineVariant.withValues(alpha: 0.4),
+            width: 1,
+          ),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(20),
-          borderSide: BorderSide(color: colorScheme.primary, width: 2),
+          borderRadius: BorderRadius.circular(16),
+          borderSide: BorderSide(
+            color: colorScheme.primary,
+            width: 2,
+          ),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        hintStyle: TextStyle(
+          color: colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
+          fontSize: 15,
+        ),
       ),
       chipTheme: ChipThemeData(
         showCheckmark: false,
-        backgroundColor: colorScheme.primaryContainer.withValues(alpha: 0.5),
-        side: BorderSide.none,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+        backgroundColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.7),
+        side: BorderSide(
+          color: colorScheme.outlineVariant.withValues(alpha: 0.3),
+          width: 1,
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        labelStyle: TextStyle(
+          fontSize: 13,
+          fontWeight: FontWeight.w500,
+          color: colorScheme.onSurface,
+        ),
       ),
       iconButtonTheme: IconButtonThemeData(
         style: IconButton.styleFrom(
+          backgroundColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
+          foregroundColor: colorScheme.onSurface,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(12),
+            side: BorderSide(
+              color: colorScheme.outlineVariant.withValues(alpha: 0.2),
+              width: 0.5,
+            ),
           ),
         ),
       ),
 
       appBarTheme: kIsWeb
-          ? const AppBarTheme(
-              toolbarHeight: 64,
+          ? AppBarTheme(
+              toolbarHeight: 60,
               elevation: 0,
-              scrolledUnderElevation: 0,
+              scrolledUnderElevation: 2,
               centerTitle: false,
-              backgroundColor: Colors.transparent,
+              backgroundColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.8),
+              iconTheme: IconThemeData(
+                color: colorScheme.onSurface,
+              ),
+              titleTextStyle: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: colorScheme.onSurface,
+              ),
+              systemOverlayStyle: SystemUiOverlayStyle(
+                statusBarColor: Colors.transparent,
+                statusBarIconBrightness: brightness.reversed,
+                statusBarBrightness: brightness,
+                systemNavigationBarIconBrightness: brightness.reversed,
+                systemNavigationBarColor: colorScheme.surface,
+              ),
             )
           : AppBarTheme(
-              toolbarHeight: 64,
+              toolbarHeight: 60,
               elevation: 0,
-              scrolledUnderElevation: 0,
+              scrolledUnderElevation: 2,
               centerTitle: false,
-              backgroundColor: Colors.transparent,
+              backgroundColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.8),
+              iconTheme: IconThemeData(
+                color: colorScheme.onSurface,
+              ),
+              titleTextStyle: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: colorScheme.onSurface,
+              ),
               systemOverlayStyle: SystemUiOverlayStyle(
                 statusBarColor: Colors.transparent,
                 statusBarIconBrightness: brightness.reversed,
@@ -162,42 +222,92 @@ abstract class QuikxChatThemes {
             ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         elevation: 4,
+        backgroundColor: colorScheme.primary,
+        foregroundColor: colorScheme.onPrimary,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(16),
         ),
+        focusColor: colorScheme.primaryContainer,
+        hoverColor: colorScheme.primaryContainer.withValues(alpha: 0.1),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          side: BorderSide(width: 2, color: colorScheme.primary),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+          side: BorderSide(
+            width: 1.5,
+            color: colorScheme.primary,
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          textStyle: const TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: colorScheme.primary,
+          textStyle: const TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+          ),
         ),
       ),
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+        backgroundColor: colorScheme.surfaceContainerHighest,
+        actionTextColor: colorScheme.primary,
+        contentTextStyle: TextStyle(
+          color: colorScheme.onSurface,
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
         ),
-        width: isColumnMode ? QuikxChatThemes.columnWidth * 1.5 : null,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: BorderSide(
+            color: colorScheme.outlineVariant.withValues(alpha: 0.3),
+            width: 0.5,
+          ),
+        ),
+        width: isColumnMode ? QuikxChatThemes.columnWidth * 1.2 : null,
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: colorScheme.primary,
           foregroundColor: colorScheme.onPrimary,
           elevation: 2,
-          shadowColor: colorScheme.primary.withValues(alpha: 0.4),
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
-          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          shadowColor: colorScheme.shadow.withValues(alpha: 0.3),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          textStyle: const TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+          ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(12),
           ),
         ),
       ),
       listTileTheme: ListTileThemeData(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        minVerticalPadding: 8,
+        dense: false,
+        titleTextStyle: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+          color: colorScheme.onSurface,
+        ),
+        subtitleTextStyle: TextStyle(
+          fontSize: 14,
+          color: colorScheme.onSurfaceVariant,
+        ),
+        leadingAndTrailingTextStyle: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
         ),
       ),
     );

@@ -67,11 +67,11 @@ class UserDialog extends StatelessWidget {
             return Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const SizedBox(height: 32),
+                const SizedBox(height: 24),
                 Avatar(
                   mxContent: avatar,
                   name: displayname,
-                  size: Avatar.defaultSize * 2.5,
+                  size: Avatar.defaultSize * 2.8,
                   onTap: avatar != null
                       ? () => showDialog(
                             context: context,
@@ -85,13 +85,25 @@ class UserDialog extends StatelessWidget {
                   child: Text(
                     displayname,
                     style: theme.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 22,
                     ),
                     textAlign: TextAlign.center,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
+                if (presenceText != null) ...[
+                  const SizedBox(height: 6),
+                  Text(
+                    presenceText,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.primary,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
                 const SizedBox(height: 8),
                 HoverBuilder(
                   builder: (context, hovered) => StatefulBuilder(
@@ -108,33 +120,37 @@ class UserDialog extends StatelessWidget {
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 12,
-                            vertical: 6,
+                            horizontal: 16,
+                            vertical: 8,
                           ),
                           decoration: BoxDecoration(
                             color: copied
                                 ? theme.colorScheme.primaryContainer
                                 : hovered
                                     ? theme.colorScheme.surfaceContainerHighest
-                                    : Colors.transparent,
-                            borderRadius: BorderRadius.circular(12),
+                                    : theme.colorScheme.surfaceContainerLow,
+                            borderRadius: BorderRadius.circular(20),
                           ),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Icon(
                                 copied ? Icons.check : Icons.alternate_email,
-                                size: 14,
+                                size: 16,
                                 color: copied
                                     ? theme.colorScheme.primary
-                                    : theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                                    : theme.colorScheme.onSurfaceVariant,
                               ),
-                              const SizedBox(width: 6),
+                              const SizedBox(width: 8),
                               Flexible(
                                 child: Text(
                                   profile.userId,
-                                  style: theme.textTheme.bodySmall?.copyWith(
-                                    color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                                  style: TextStyle(
+                                    color: copied
+                                        ? theme.colorScheme.primary
+                                        : theme.colorScheme.onSurfaceVariant,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                   overflow: TextOverflow.ellipsis,
                                 ),
@@ -146,25 +162,19 @@ class UserDialog extends StatelessWidget {
                     ),
                   ),
                 ),
-                if (presenceText != null) ...[
-                  const SizedBox(height: 8),
-                  Text(
-                    presenceText,
-                    style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.primary,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
                 if (statusMsg != null) ...[
                   const SizedBox(height: 16),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Container(
-                      padding: const EdgeInsets.all(12),
+                      padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
                         color: theme.colorScheme.surfaceContainerHighest,
-                        borderRadius: BorderRadius.circular(12),
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(
+                          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
+                          width: 0.8,
+                        ),
                       ),
                       child: SelectableLinkify(
                         text: statusMsg,
@@ -176,7 +186,10 @@ class UserDialog extends StatelessWidget {
                           color: theme.colorScheme.primary,
                           decoration: TextDecoration.underline,
                         ),
-                        style: theme.textTheme.bodyMedium,
+                        style: TextStyle(
+                          color: theme.colorScheme.onSurfaceVariant,
+                          fontSize: 14,
+                        ),
                         onOpen: (url) =>
                             UrlLauncher(context, url.url).launchUrl(),
                       ),
@@ -185,8 +198,8 @@ class UserDialog extends StatelessWidget {
                 ],
                 const SizedBox(height: 24),
                 if (client.userID != profile.userId)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Column(
                       children: [
                         SizedBox(
@@ -203,18 +216,21 @@ class UserDialog extends StatelessWidget {
                               if (context.mounted) Navigator.of(context).pop();
                               router.go('/rooms/$roomId');
                             },
-                            icon: const Icon(Icons.send_outlined),
+                            icon: const Icon(Icons.message_outlined, size: 18),
                             label: Text(
                               dmRoomId == null
                                   ? L10n.of(context).startConversation
                                   : L10n.of(context).sendAMessage,
                             ),
                             style: FilledButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
                             ),
                           ),
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: 12),
                         SizedBox(
                           width: double.infinity,
                           child: OutlinedButton.icon(
@@ -228,25 +244,43 @@ class UserDialog extends StatelessWidget {
                             },
                             icon: Icon(
                               Icons.block_outlined,
+                              size: 18,
                               color: theme.colorScheme.error,
                             ),
                             label: Text(
                               L10n.of(context).ignoreUser,
-                              style: TextStyle(color: theme.colorScheme.error),
                             ),
                             style: OutlinedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              side: BorderSide(color: theme.colorScheme.error),
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              side: BorderSide(
+                                color: theme.colorScheme.errorContainer,
+                                width: 1,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
                             ),
                           ),
                         ),
                       ],
                     ),
                   ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 12),
                 TextButton(
                   onPressed: Navigator.of(context).pop,
-                  child: Text(L10n.of(context).close),
+                  style: TextButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(
+                    L10n.of(context).close,
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
                 ),
                 const SizedBox(height: 8),
               ],

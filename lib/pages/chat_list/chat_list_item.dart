@@ -8,10 +8,7 @@ import 'package:quikxchat/l10n/l10n.dart';
 import 'package:quikxchat/utils/matrix_sdk_extensions/matrix_locals.dart';
 import 'package:quikxchat/utils/room_status_extension.dart';
 import 'package:quikxchat/widgets/adaptive_dialogs/show_ok_cancel_alert_dialog.dart';
-import 'package:quikxchat/widgets/animated_loading_indicator.dart';
 import 'package:quikxchat/widgets/future_loading_dialog.dart';
-import 'package:quikxchat/widgets/hover_builder.dart';
-import '../../config/themes.dart';
 import '../../utils/date_time_extension.dart';
 import '../../widgets/avatar.dart';
 import '../../utils/message_status_helper.dart';
@@ -145,8 +142,8 @@ class _ChatListItemState extends State<ChatListItem> with SingleTickerProviderSt
     final isDirectChat = directChatMatrixId != null;
     final unreadBubbleSize = unread || widget.room.hasNewMessages
         ? widget.room.notificationCount > 0
-            ? 24.0
-            : 16.0
+            ? 22.0
+            : 8.0
         : 0.0;
     final hasNotifications = widget.room.notificationCount > 0;
     final displayname = widget.room.getLocalizedDisplayname(
@@ -158,65 +155,44 @@ class _ChatListItemState extends State<ChatListItem> with SingleTickerProviderSt
     }
 
     final space = widget.space;
-    final borderRadius = _getBorderRadius();
-    final margin = _getMargin();
 
-    return GestureDetector(
-      onTapDown: (_) => _animationController.forward(),
-      onTapUp: (_) => _animationController.reverse(),
-      onTapCancel: () => _animationController.reverse(),
-      child: ScaleTransition(
-        scale: _scaleAnimation,
+    return Material(
+      color: widget.activeChat
+          ? theme.colorScheme.primaryContainer
+          : widget.room.isFavourite
+              ? theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.2)
+              : Colors.transparent,
+      child: InkWell(
+        onTap: widget.onTap,
+        onLongPress: () => widget.onLongPress?.call(context),
         child: Container(
-          margin: margin,
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
           decoration: BoxDecoration(
-            color: widget.activeChat
-                ? theme.colorScheme.primaryContainer.withValues(alpha: 0.3)
-                : theme.colorScheme.surface,
-            borderRadius: borderRadius,
-            border: Border.all(
-              color: widget.activeChat
-                  ? theme.colorScheme.primary.withValues(alpha: 0.3)
-                  : theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
-              width: 1,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: theme.colorScheme.shadow.withValues(alpha: 0.05),
-                blurRadius: 4,
-                offset: const Offset(0, 2),
+            border: Border(
+              bottom: BorderSide(
+                color: theme.dividerColor.withValues(alpha: 0.4),
+                width: 0.6,
               ),
-            ],
+            ),
           ),
-          child: Material(
-            color: Colors.transparent,
-            borderRadius: borderRadius,
-            clipBehavior: Clip.hardEdge,
-            child: InkWell(
-              onTap: widget.onTap,
-              onLongPress: () => widget.onLongPress?.call(context),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                child: Row(
+          child: Row(
+            children: [
+              _buildAvatar(theme, space, directChatMatrixId, displayname),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    _buildAvatar(theme, space, directChatMatrixId, displayname),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          _buildTitle(theme, displayname, isMuted, hasNotifications, lastEvent),
-                          const SizedBox(height: 4),
-                          _buildSubtitle(theme, typingText, ownMessage, lastEvent, isDirectChat, directChatMatrixId, unread),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    _buildTrailing(theme, unreadBubbleSize, hasNotifications),
+                    _buildTitle(theme, displayname, isMuted, hasNotifications, lastEvent),
+                    const SizedBox(height: 4),
+                    _buildSubtitle(theme, typingText, ownMessage, lastEvent, isDirectChat, directChatMatrixId, unread),
                   ],
                 ),
               ),
-            ),
+              const SizedBox(width: 12),
+              _buildTrailing(theme, unreadBubbleSize, hasNotifications),
+            ],
           ),
         ),
       ),
@@ -224,54 +200,52 @@ class _ChatListItemState extends State<ChatListItem> with SingleTickerProviderSt
   }
 
   Widget _buildAvatar(ThemeData theme, Room? space, String? directChatMatrixId, String displayname) {
-    return HoverBuilder(
-      builder: (context, hovered) => AnimatedScale(
-        duration: QuikxChatThemes.animationDuration,
-        curve: QuikxChatThemes.animationCurve,
-        scale: hovered ? 1.08 : 1.0,
-        child: SizedBox(
-          width: 56,
-          height: 56,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              if (space != null)
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  child: Avatar(
-                    border: BorderSide(
-                      width: 2,
-                      color: theme.colorScheme.surface,
-                    ),
-                    borderRadius: BorderRadius.circular(AppConfig.borderRadius / 4),
-                    mxContent: space.avatar,
-                    size: 36,
-                    name: space.getLocalizedDisplayname(),
-                    client: widget.room.client,
-                    onTap: () => widget.onLongPress?.call(context),
+    return SizedBox(
+      width: 52,
+      height: 52,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          if (space != null)
+            Positioned(
+              top: -8,
+              left: -8,
+              child: Container(
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: theme.colorScheme.surface,
+                    width: 2,
                   ),
                 ),
-              Avatar(
-                border: space == null
-                    ? widget.room.isSpace
-                        ? BorderSide(width: 1, color: theme.dividerColor)
-                        : null
-                    : BorderSide(width: 2, color: theme.colorScheme.surface),
-                borderRadius: widget.room.isSpace
-                    ? BorderRadius.circular(AppConfig.borderRadius / 4)
-                    : null,
-                mxContent: widget.room.avatar,
-                size: space != null ? 36 : 56,
-                name: displayname,
-                client: widget.room.client,
-                presenceUserId: directChatMatrixId,
-                presenceBackgroundColor: theme.colorScheme.surface,
-                onTap: () => widget.onLongPress?.call(context),
+                child: Avatar(
+                  borderRadius: BorderRadius.circular(16),
+                  mxContent: space.avatar,
+                  size: 24,
+                  name: space.getLocalizedDisplayname(),
+                  client: widget.room.client,
+                  onTap: () => widget.onLongPress?.call(context),
+                ),
               ),
-            ],
+            ),
+          Avatar(
+            border: space == null
+                ? widget.room.isSpace
+                    ? BorderSide(width: 1, color: theme.dividerColor)
+                    : null
+                : BorderSide(width: 2, color: theme.colorScheme.surface),
+            borderRadius: widget.room.isSpace
+                ? BorderRadius.circular(AppConfig.borderRadius / 4)
+                : const BorderRadius.all(Radius.circular(16)),
+            mxContent: widget.room.avatar,
+            size: 52,
+            name: displayname,
+            client: widget.room.client,
+            presenceUserId: directChatMatrixId,
+            presenceBackgroundColor: theme.colorScheme.surface,
+            onTap: () => widget.onLongPress?.call(context),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -286,55 +260,26 @@ class _ChatListItemState extends State<ChatListItem> with SingleTickerProviderSt
             overflow: TextOverflow.ellipsis,
             style: TextStyle(
               fontWeight: widget.room.isUnread || widget.room.hasNewMessages
-                  ? FontWeight.w700
-                  : FontWeight.w600,
+                  ? FontWeight.w500
+                  : FontWeight.w400,
               fontSize: 16,
-              letterSpacing: 0.2,
+              color: widget.room.isUnread || widget.room.hasNewMessages
+                  ? theme.colorScheme.onSurface
+                  : theme.colorScheme.onSurfaceVariant,
+              height: 1.3,
             ),
           ),
         ),
-        if (isMuted)
-          Container(
-            margin: const EdgeInsets.only(left: 6),
-            padding: const EdgeInsets.all(4),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: Icon(
-              Icons.notifications_off_rounded,
-              size: 14,
-              color: theme.colorScheme.outline,
-            ),
-          ),
-        if (widget.room.isFavourite)
-          Container(
-            margin: const EdgeInsets.only(left: 6),
-            padding: const EdgeInsets.all(4),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  theme.colorScheme.primary.withValues(alpha: 0.2),
-                  theme.colorScheme.primary.withValues(alpha: 0.1),
-                ],
-              ),
-              borderRadius: BorderRadius.circular(6),
-            ),
-            child: Icon(
-              Icons.push_pin_rounded,
-              size: 14,
-              color: theme.colorScheme.primary,
-            ),
-          ),
         if (!widget.room.isSpace && lastEvent != null && widget.room.membership != Membership.invite)
           Padding(
-            padding: const EdgeInsets.only(left: 6),
+            padding: const EdgeInsets.only(left: 8),
             child: Text(
               lastEvent.originServerTs.localizedTimeShort(context),
               style: TextStyle(
-                fontSize: 11,
-                fontWeight: FontWeight.w500,
-                color: theme.colorScheme.outline,
+                fontSize: 13,
+                fontWeight: FontWeight.w400,
+                color: theme.colorScheme.onSurfaceVariant,
+                height: 1.3,
               ),
             ),
           ),
@@ -346,27 +291,22 @@ class _ChatListItemState extends State<ChatListItem> with SingleTickerProviderSt
     return Row(
       children: [
         if (typingText.isEmpty && ownMessage && widget.room.lastEvent!.status.isSending) ...[
-          const AnimatedLoadingIndicator(size: 16),
-          const SizedBox(width: 6),
+          Icon(
+            Icons.access_time,
+            size: 14,
+            color: theme.colorScheme.primary,
+          ),
+          const SizedBox(width: 4),
         ] else if (typingText.isEmpty && ownMessage && lastEvent != null) ...[
           Icon(
-            MessageStatusHelper.isMessageRead(lastEvent) ? Icons.done_all_rounded : Icons.done_rounded,
-            size: 16,
+            MessageStatusHelper.isMessageRead(lastEvent) ? Icons.done_all : Icons.check,
+            size: 14,
             color: MessageStatusHelper.isMessageRead(lastEvent)
-                ? const Color(0xFF4CAF50)
-                : theme.colorScheme.outline,
+                ? theme.colorScheme.primary
+                : theme.colorScheme.onSurfaceVariant,
           ),
-          const SizedBox(width: 6),
+          const SizedBox(width: 4),
         ],
-        if (typingText.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(right: 6),
-            child: Icon(
-              Icons.edit_rounded,
-              color: theme.colorScheme.primary,
-              size: 16,
-            ),
-          ),
         Expanded(
           child: widget.room.isSpace && widget.room.membership == Membership.join
               ? Text(
@@ -375,8 +315,10 @@ class _ChatListItemState extends State<ChatListItem> with SingleTickerProviderSt
                     (widget.room.summary.mJoinedMemberCount ?? 1),
                   ),
                   style: TextStyle(
-                    color: theme.colorScheme.outline,
-                    fontSize: 13,
+                    color: theme.colorScheme.onSurfaceVariant,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w400,
+                    height: 1.4,
                   ),
                 )
               : typingText.isNotEmpty
@@ -384,10 +326,12 @@ class _ChatListItemState extends State<ChatListItem> with SingleTickerProviderSt
                       typingText,
                       style: TextStyle(
                         color: theme.colorScheme.primary,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 13,
+                        fontWeight: FontWeight.w400,
+                        fontSize: 14,
+                        height: 1.4,
                       ),
                       maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                     )
                   : Text(
                       widget.room.membership == Membership.invite
@@ -410,14 +354,23 @@ class _ChatListItemState extends State<ChatListItem> with SingleTickerProviderSt
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        color: unread || widget.room.hasNewMessages
-                            ? theme.colorScheme.onSurface.withValues(alpha: 0.8)
-                            : theme.colorScheme.outline,
-                        fontSize: 13,
+                        color: theme.colorScheme.onSurfaceVariant,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w400,
+                        height: 1.4,
                         decoration: widget.room.lastEvent?.redacted == true ? TextDecoration.lineThrough : null,
                       ),
                     ),
         ),
+        if (widget.room.isFavourite)
+          Padding(
+            padding: const EdgeInsets.only(left: 8),
+            child: Icon(
+              Icons.push_pin,
+              size: 16,
+              color: theme.colorScheme.primary,
+            ),
+          ),
       ],
     );
   }
@@ -425,7 +378,7 @@ class _ChatListItemState extends State<ChatListItem> with SingleTickerProviderSt
   Widget _buildTrailing(ThemeData theme, double unreadBubbleSize, bool hasNotifications) {
     if (widget.onForget != null) {
       return IconButton(
-        icon: const Icon(Icons.delete_outline_rounded),
+        icon: const Icon(Icons.delete_outline_rounded, size: 20),
         onPressed: widget.onForget,
       );
     }
@@ -433,7 +386,7 @@ class _ChatListItemState extends State<ChatListItem> with SingleTickerProviderSt
     if (widget.room.membership == Membership.invite) {
       return IconButton(
         tooltip: L10n.of(context).declineInvitation,
-        icon: const Icon(Icons.delete_forever_rounded),
+        icon: const Icon(Icons.delete_forever_rounded, size: 20),
         color: theme.colorScheme.error,
         onPressed: () async {
           final consent = await showOkCancelAlertDialog(
@@ -453,96 +406,55 @@ class _ChatListItemState extends State<ChatListItem> with SingleTickerProviderSt
       );
     }
 
-    return AnimatedContainer(
-      duration: QuikxChatThemes.animationDuration,
-      curve: QuikxChatThemes.animationCurve,
-      alignment: Alignment.center,
-      padding: const EdgeInsets.symmetric(horizontal: 8),
-      height: unreadBubbleSize,
-      constraints: BoxConstraints(
-        minWidth: unreadBubbleSize,
-      ),
-      decoration: BoxDecoration(
-        gradient: widget.room.highlightCount > 0
-            ? LinearGradient(
-                colors: [
-                  Color.lerp(theme.colorScheme.error, Colors.white, 0.15)!,
-                  theme.colorScheme.error,
-                  Color.lerp(theme.colorScheme.error, Colors.black, 0.2)!,
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              )
-            : hasNotifications || widget.room.markedUnread
-                ? LinearGradient(
-                    colors: [
-                      Color.lerp(theme.colorScheme.primary, Colors.white, 0.15)!,
-                      theme.colorScheme.primary,
-                      Color.lerp(theme.colorScheme.primary, Colors.black, 0.2)!,
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  )
-                : null,
-        color: !hasNotifications && !widget.room.markedUnread && (widget.room.isUnread || widget.room.hasNewMessages)
-            ? theme.colorScheme.primaryContainer
-            : null,
-        borderRadius: BorderRadius.circular(14),
-        boxShadow: hasNotifications
-            ? [
-                BoxShadow(
-                  color: (widget.room.highlightCount > 0 ? theme.colorScheme.error : theme.colorScheme.primary)
-                      .withValues(alpha: 0.5),
-                  blurRadius: 10,
-                  spreadRadius: 1,
-                  offset: const Offset(0, 3),
-                ),
-              ]
-            : null,
-      ),
-      child: hasNotifications
-          ? Text(
-              widget.room.notificationCount.toString(),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        if (hasNotifications)
+          Container(
+            alignment: Alignment.center,
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            constraints: const BoxConstraints(
+              minWidth: 24,
+              minHeight: 24,
+            ),
+            decoration: BoxDecoration(
+              color: widget.room.highlightCount > 0
+                  ? theme.colorScheme.error
+                  : theme.colorScheme.primary,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Text(
+              widget.room.notificationCount > 99 ? '99+' : widget.room.notificationCount.toString(),
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 12,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w500,
               ),
               textAlign: TextAlign.center,
-            )
-          : const SizedBox.shrink(),
+            ),
+          )
+        else if (widget.room.isUnread || widget.room.hasNewMessages || widget.room.markedUnread)
+          Container(
+            width: 8,
+            height: 8,
+            decoration: BoxDecoration(
+              color: theme.colorScheme.primary,
+              shape: BoxShape.circle,
+            ),
+          ),
+        if (widget.room.pushRuleState != PushRuleState.notify)
+          Padding(
+            padding: const EdgeInsets.only(top: 6),
+            child: Icon(
+              Icons.notifications_off,
+              size: 16,
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+      ],
     );
   }
 
-  BorderRadius _getBorderRadius() {
-    switch (widget.position) {
-      case CardPosition.single:
-        return BorderRadius.circular(16);
-      case CardPosition.first:
-        return const BorderRadius.only(
-          topLeft: Radius.circular(16),
-          topRight: Radius.circular(16),
-        );
-      case CardPosition.middle:
-        return BorderRadius.zero;
-      case CardPosition.last:
-        return const BorderRadius.only(
-          bottomLeft: Radius.circular(16),
-          bottomRight: Radius.circular(16),
-        );
-    }
-  }
 
-  EdgeInsets _getMargin() {
-    switch (widget.position) {
-      case CardPosition.single:
-        return const EdgeInsets.symmetric(horizontal: 12, vertical: 6);
-      case CardPosition.first:
-        return const EdgeInsets.only(left: 12, right: 12, top: 6, bottom: 1);
-      case CardPosition.middle:
-        return const EdgeInsets.only(left: 12, right: 12, top: 1, bottom: 1);
-      case CardPosition.last:
-        return const EdgeInsets.only(left: 12, right: 12, top: 1, bottom: 6);
-    }
-  }
 }

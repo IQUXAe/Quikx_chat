@@ -17,7 +17,7 @@ dependencies:
   chewie: ^1.13.0
   collection: ^1.19.1
   cross_file: ^0.3.4+2
-  crypto: ^3.0.3
+  crypto: ^3.0.7
   desktop_drop: ^0.7.0
   desktop_notifications: ^0.6.3
   device_info_plus: ^12.2.0

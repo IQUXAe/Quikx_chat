@@ -23,6 +23,8 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
 
   late List<AnimationController> _itemControllers;
   late List<Animation<double>> _itemAnimations;
+  
+  Client? _client;
 
 
   @override
@@ -60,16 +62,22 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _client = Matrix.of(context).client;
+  }
+
+  @override
   void initState() {
     super.initState();
-    _loadProfile();
-    
-    Matrix.of(context).client.onSync.stream.listen((_) async {
-      if (mounted) await _loadProfile();
-    });
     
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      if (mounted) await _loadProfile();
+      if (mounted) {
+        _client?.onSync.stream.listen((_) async {
+          if (mounted) await _loadProfile();
+        });
+        await _loadProfile();
+      }
     });
     
     _slideController = AnimationController(
@@ -114,15 +122,14 @@ class _AppDrawerState extends State<AppDrawer> with TickerProviderStateMixin {
   }
 
   Future<void> _loadProfile() async {
-    if (_isLoadingProfile) return;
+    if (_isLoadingProfile || _client == null) return;
     
-    final client = Matrix.of(context).client;
-    if (!client.isLogged()) return;
+    if (!_client!.isLogged()) return;
     
     setState(() => _isLoadingProfile = true);
     
     try {
-      final profile = await client.fetchOwnProfile();
+      final profile = await _client!.fetchOwnProfile();
       if (mounted) {
         setState(() {
           _cachedProfile = profile;

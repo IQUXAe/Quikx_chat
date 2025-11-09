@@ -239,67 +239,82 @@ class _ReactionState extends State<_Reaction> with SingleTickerProviderStateMixi
 
     return ScaleTransition(
       scale: _scaleAnimation,
-      child: InkWell(
-        onTap: () => widget.onTap != null ? widget.onTap!() : null,
-        onLongPress: () => widget.onLongPress != null ? widget.onLongPress!() : null,
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          decoration: BoxDecoration(
-            color: widget.reacted == true
-                ? theme.colorScheme.primaryContainer
-                : theme.colorScheme.surfaceContainerHigh,
-            border: widget.reacted == true
-                ? Border.all(
-                    color: theme.colorScheme.primary,
-                    width: 1,
-                  )
-                : null,
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) {
+          return InkWell(
+            onTap: () => widget.onTap != null ? widget.onTap!() : null,
+            onLongPress: () => widget.onLongPress != null ? widget.onLongPress!() : null,
             borderRadius: BorderRadius.circular(12),
-          ),
-          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              emojiContent,
-              if (showAvatars) ...[
-                const SizedBox(width: 4),
-                ...List.generate(
-                  widget.reactors!.length > 3 ? 3 : widget.reactors!.length,
-                  (i) => Transform.translate(
-                    offset: Offset(i * -6.0, 0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        border: Border.all(
-                          color: theme.colorScheme.surface,
-                          width: 1.5,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeInOut,
+              decoration: BoxDecoration(
+                color: widget.reacted == true
+                    ? theme.colorScheme.primaryContainer
+                    : theme.colorScheme.surfaceContainerHigh,
+                border: widget.reacted == true
+                    ? Border.all(
+                        color: theme.colorScheme.primary,
+                        width: 1,
+                      )
+                    : null,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  AnimatedScale(
+                    scale: widget.reacted == true ? 1.2 : 1.0,
+                    duration: const Duration(milliseconds: 200),
+                    child: emojiContent,
+                  ),
+                  if (showAvatars) ...[
+                    const SizedBox(width: 4),
+                    ...List.generate(
+                      widget.reactors!.length > 3 ? 3 : widget.reactors!.length,
+                      (i) => AnimatedScale(
+                        scale: widget.reacted == true ? 1.1 : 1.0,
+                        duration: const Duration(milliseconds: 200),
+                        child: Transform.translate(
+                          offset: Offset(i * -6.0, 0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: theme.colorScheme.surface,
+                                width: 1.5,
+                              ),
+                            ),
+                            child: Avatar(
+                              mxContent: widget.reactors![i].avatarUrl,
+                              name: widget.reactors![i].displayName,
+                              size: 16,
+                              client: client,
+                            ),
+                          ),
                         ),
                       ),
-                      child: Avatar(
-                        mxContent: widget.reactors![i].avatarUrl,
-                        name: widget.reactors![i].displayName,
-                        size: 16,
-                        client: client,
+                    ),
+                  ] else if (widget.count > 0) ...[
+                    const SizedBox(width: 4),
+                    Text(
+                      widget.count.toString(),
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w600,
+                        color: widget.reacted == true
+                            ? theme.colorScheme.onPrimaryContainer
+                            : theme.colorScheme.onSurface,
                       ),
                     ),
-                  ),
-                ),
-              ] else if (widget.count > 0) ...[
-                const SizedBox(width: 4),
-                Text(
-                  widget.count.toString(),
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: widget.reacted == true
-                        ? theme.colorScheme.onPrimaryContainer
-                        : theme.colorScheme.onSurface,
-                  ),
-                ),
-              ],
-            ],
-          ),
-        ),
+                  ],
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }

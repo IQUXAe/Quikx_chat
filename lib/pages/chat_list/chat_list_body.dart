@@ -90,6 +90,7 @@ class ChatListViewBody extends StatelessWidget {
         return SafeArea(
           child: CustomScrollView(
             controller: controller.scrollController,
+            physics: const BouncingScrollPhysics(), // Современная физика прокрутки
             slivers: [
               ChatListHeader(controller: controller),
               SliverList(
@@ -165,10 +166,10 @@ class ChatListViewBody extends StatelessWidget {
                     ),
                     if (client.rooms.isNotEmpty && !controller.isSearchMode)
                       Container(
-                        height: 52,
-                        margin: const EdgeInsets.symmetric(vertical: 8),
+                        height: 44,
+                        margin: const EdgeInsets.only(top: 8, bottom: 8),
                         child: ListView(
-                          padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
                           shrinkWrap: true,
                           scrollDirection: Axis.horizontal,
                           children: [
@@ -185,7 +186,7 @@ class ChatListViewBody extends StatelessWidget {
                           ]
                               .map(
                                 (filter) => Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 4.0),
+                                  padding: const EdgeInsets.only(right: 8),
                                   child: _ModernFilterChip(
                                     label: filter.toLocalizedString(context),
                                     selected: filter == controller.activeFilter,
@@ -269,17 +270,6 @@ class ChatListViewBody extends StatelessWidget {
                     final room = rooms[i];
                     final space = spaceDelegateCandidates[room.id];
                     
-                    CardPosition position;
-                    if (rooms.length == 1) {
-                      position = CardPosition.single;
-                    } else if (i == 0) {
-                      position = CardPosition.first;
-                    } else if (i == rooms.length - 1) {
-                      position = CardPosition.last;
-                    } else {
-                      position = CardPosition.middle;
-                    }
-                    
                     return RepaintBoundary(
                       child: ChatListItem(
                         room,
@@ -290,7 +280,7 @@ class ChatListViewBody extends StatelessWidget {
                         onLongPress: (context) =>
                             controller.chatContextAction(room, context, space),
                         activeChat: controller.activeChat == room.id,
-                        position: position,
+                        position: CardPosition.single,
                       ),
                     );
                   },
@@ -406,34 +396,34 @@ class _ModernFilterChip extends StatelessWidget {
       duration: const Duration(milliseconds: 200),
       curve: Curves.easeInOut,
       decoration: BoxDecoration(
-        color: selected ? theme.colorScheme.primary : theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(16),
+        color: selected
+            ? theme.colorScheme.primaryContainer
+            : theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: selected
+              ? theme.colorScheme.primary
+              : theme.colorScheme.outlineVariant.withValues(alpha: 0.4),
+          width: selected ? 1.5 : 1,
+        ),
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(16),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  icon,
-                  size: 18,
-                  color: selected ? Colors.white : theme.colorScheme.onSurface,
-                ),
-                const SizedBox(width: 6),
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
-                    color: selected ? Colors.white : theme.colorScheme.onSurface,
-                  ),
-                ),
-              ],
+          borderRadius: BorderRadius.circular(20),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+            alignment: Alignment.center,
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: selected ? FontWeight.w500 : FontWeight.w400,
+                color: selected ? theme.colorScheme.primary : theme.colorScheme.onSurfaceVariant,
+                height: 1.4,
+              ),
+              textAlign: TextAlign.center,
             ),
           ),
         ),

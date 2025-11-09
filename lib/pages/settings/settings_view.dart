@@ -71,8 +71,8 @@ class SettingsView extends StatelessWidget {
                           decoration: BoxDecoration(
                             gradient: LinearGradient(
                               colors: [
-                                Color.lerp(theme.colorScheme.primary, Colors.white, 0.1)!,
-                                Color.lerp(theme.colorScheme.secondary, Colors.white, 0.1)!,
+                                theme.colorScheme.primaryContainer,
+                                theme.colorScheme.secondaryContainer,
                               ],
                               begin: Alignment.topLeft,
                               end: Alignment.bottomRight,
@@ -94,9 +94,9 @@ class SettingsView extends StatelessWidget {
                                             shape: BoxShape.circle,
                                             boxShadow: [
                                               BoxShadow(
-                                                color: Colors.black.withValues(alpha: 0.3),
-                                                blurRadius: 20,
-                                                spreadRadius: 5,
+                                                color: Colors.black.withValues(alpha: 0.15),
+                                                blurRadius: 12,
+                                                spreadRadius: 3,
                                               ),
                                             ],
                                           ),
@@ -117,15 +117,18 @@ class SettingsView extends StatelessWidget {
                                         bottom: 0,
                                         right: 0,
                                         child: Container(
-                                          padding: const EdgeInsets.all(8),
+                                          padding: const EdgeInsets.all(6),
                                           decoration: BoxDecoration(
                                             color: theme.colorScheme.primaryContainer,
                                             shape: BoxShape.circle,
-                                            border: Border.all(color: Colors.white, width: 3),
+                                            border: Border.all(
+                                              color: Colors.white,
+                                              width: 2,
+                                            ),
                                           ),
                                           child: Icon(
                                             Icons.edit,
-                                            size: 18,
+                                            size: 16,
                                             color: theme.colorScheme.onPrimaryContainer,
                                           ),
                                         ),
@@ -133,39 +136,47 @@ class SettingsView extends StatelessWidget {
                                     ],
                                   ),
                                 ),
-                                const SizedBox(height: 16),
+                                const SizedBox(height: 20),
                                 GestureDetector(
                                   onTap: controller.setDisplaynameAction,
                                   child: Text(
                                     displayname,
-                                    style: const TextStyle(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.white,
+                                    style: TextStyle(
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.w600,
+                                      color: theme.colorScheme.onPrimaryContainer,
                                     ),
                                   ),
                                 ),
-                                const SizedBox(height: 8),
+                                const SizedBox(height: 10),
                                 GestureDetector(
                                   onTap: () => FluffyShare.share(mxid, context),
                                   child: Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
                                     decoration: BoxDecoration(
-                                      color: Colors.white.withValues(alpha: 0.2),
+                                      color: theme.colorScheme.surfaceContainerHighest,
                                       borderRadius: BorderRadius.circular(20),
+                                      border: Border.all(
+                                        color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
+                                        width: 1,
+                                      ),
                                     ),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Text(
                                           mxid,
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            color: Colors.white,
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            color: theme.colorScheme.onSurfaceVariant,
                                           ),
                                         ),
-                                        const SizedBox(width: 8),
-                                        const Icon(Icons.copy, size: 16, color: Colors.white),
+                                        const SizedBox(width: 6),
+                                        Icon(
+                                          Icons.copy,
+                                          size: 14,
+                                          color: theme.colorScheme.onSurfaceVariant,
+                                        ),
                                       ],
                                     ),
                                   ),
@@ -420,19 +431,19 @@ class SettingsView extends StatelessWidget {
 
   Widget _buildSection(BuildContext context, {required String title, required List<Widget> children}) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 24),
+      padding: const EdgeInsets.only(bottom: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(24, 0, 24, 12),
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 10),
             child: Text(
               title.toUpperCase(),
               style: TextStyle(
                 fontSize: 12,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.7),
-                letterSpacing: 1.2,
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                letterSpacing: 1.0,
               ),
             ),
           ),
@@ -443,40 +454,38 @@ class SettingsView extends StatelessWidget {
   }
 
   Widget _buildLogoutButton(BuildContext context) {
+    final theme = Theme.of(context);
     return Container(
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.red.shade400, Colors.pink.shade600],
-          begin: Alignment.centerLeft,
-          end: Alignment.centerRight,
+        color: theme.colorScheme.errorContainer,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: theme.colorScheme.error,
+          width: 1,
         ),
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.red.withValues(alpha: 0.3),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-          ),
-        ],
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: controller.logoutAction,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(14),
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 16),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.logout, color: Colors.white, size: 24),
-                const SizedBox(width: 12),
+                Icon(
+                  Icons.logout,
+                  color: theme.colorScheme.onErrorContainer,
+                  size: 20,
+                ),
+                const SizedBox(width: 10),
                 Text(
                   L10n.of(context).logout,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: theme.colorScheme.onErrorContainer,
                   ),
                 ),
               ],

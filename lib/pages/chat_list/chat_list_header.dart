@@ -26,18 +26,19 @@ class ChatListHeader extends StatelessWidget implements PreferredSizeWidget {
 
     return SliverAppBar(
       floating: true,
-      toolbarHeight: 64,
+      toolbarHeight: 60,
       pinned: QuikxChatThemes.isColumnMode(context),
-      scrolledUnderElevation: 0,
-      backgroundColor: Colors.transparent,
+      scrolledUnderElevation: 2,
+      backgroundColor: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.9),
+      shadowColor: theme.colorScheme.shadow.withValues(alpha: 0.1),
       flexibleSpace: Container(
         decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
-              theme.colorScheme.surface.withValues(alpha: 0.1),
+              theme.colorScheme.primaryContainer.withValues(alpha: 0.1),
+              theme.colorScheme.surface.withValues(alpha: 0.05),
             ],
           ),
         ),
@@ -46,12 +47,17 @@ class ChatListHeader extends StatelessWidget implements PreferredSizeWidget {
         builder: (context) => Container(
           margin: const EdgeInsets.all(8),
           decoration: BoxDecoration(
-            color: theme.colorScheme.primaryContainer.withValues(alpha: 0.5),
+            color: theme.colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
+              width: 1,
+            ),
           ),
           child: IconButton(
             icon: const Icon(Icons.menu_rounded),
             onPressed: () => Scaffold.of(context).openDrawer(),
+            color: theme.colorScheme.onSurface,
           ),
         ),
       ),
@@ -65,20 +71,12 @@ class ChatListHeader extends StatelessWidget implements PreferredSizeWidget {
               client.prevBatch != null;
           return Container(
             decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  theme.colorScheme.secondaryContainer.withValues(alpha: 0.8),
-                  theme.colorScheme.secondaryContainer.withValues(alpha: 0.6),
-                ],
+              color: theme.colorScheme.surfaceContainerLow,
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
+                width: 1,
               ),
-              borderRadius: BorderRadius.circular(32),
-              boxShadow: [
-                BoxShadow(
-                  color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
             ),
             child: TextField(
               controller: controller.searchController,
@@ -92,30 +90,31 @@ class ChatListHeader extends StatelessWidget implements PreferredSizeWidget {
                 filled: false,
                 border: OutlineInputBorder(
                   borderSide: BorderSide.none,
-                  borderRadius: BorderRadius.circular(32),
+                  borderRadius: BorderRadius.circular(24),
                 ),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: theme.colorScheme.outline.withValues(alpha: 0.2),
-                    width: 1,
-                  ),
-                  borderRadius: BorderRadius.circular(32),
+                  borderSide: BorderSide.none,
+                  borderRadius: BorderRadius.circular(24),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderSide: BorderSide(
                     color: theme.colorScheme.primary,
-                    width: 2,
+                    width: 1.5,
                   ),
-                  borderRadius: BorderRadius.circular(32),
+                  borderRadius: BorderRadius.circular(24),
                 ),
-                contentPadding: const EdgeInsets.symmetric(vertical: 12),
+                contentPadding: const EdgeInsets.symmetric(
+                  vertical: 12,
+                  horizontal: 16,
+                ),
                 hintText: hide
                     ? L10n.of(context).searchChatsRooms
                     : status.calcLocalizedString(context),
                 hintStyle: TextStyle(
                   color: status.error != null
                       ? Colors.orange
-                      : theme.colorScheme.onSecondaryContainer.withValues(alpha: 0.7),
+                      : theme.colorScheme.onSurfaceVariant,
+                  fontSize: 15,
                   fontWeight: FontWeight.w500,
                 ),
                 prefixIcon: hide
@@ -123,30 +122,35 @@ class ChatListHeader extends StatelessWidget implements PreferredSizeWidget {
                         ? Container(
                             margin: const EdgeInsets.all(8),
                             decoration: BoxDecoration(
-                              color: theme.colorScheme.primary.withValues(alpha: 0.1),
+                              color: theme.colorScheme.surfaceContainerHighest,
                               shape: BoxShape.circle,
+                              border: Border.all(
+                                color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
+                                width: 1,
+                              ),
                             ),
                             child: IconButton(
                               tooltip: L10n.of(context).cancel,
-                              icon: const Icon(Icons.close_rounded),
+                              icon: const Icon(Icons.close_rounded, size: 18),
                               onPressed: controller.cancelSearch,
-                              color: theme.colorScheme.primary,
+                              color: theme.colorScheme.onSurface,
                             ),
                           )
                         : Padding(
                             padding: const EdgeInsets.all(12.0),
                             child: Icon(
                               Icons.search_rounded,
-                              color: theme.colorScheme.onSecondaryContainer,
+                              color: theme.colorScheme.onSurfaceVariant,
+                              size: 20,
                             ),
                           )
                     : Container(
-                        margin: const EdgeInsets.all(14),
+                        margin: const EdgeInsets.all(12),
                         width: 8,
                         height: 8,
                         child: Center(
                           child: CircularProgressIndicator.adaptive(
-                            strokeWidth: 2.5,
+                            strokeWidth: 2,
                             value: status.progress,
                             valueColor: status.error != null
                                 ? const AlwaysStoppedAnimation<Color>(
@@ -158,42 +162,55 @@ class ChatListHeader extends StatelessWidget implements PreferredSizeWidget {
                       ),
                 suffixIcon: controller.isSearchMode && globalSearch
                     ? controller.isSearching
-                        ? const Padding(
-                            padding: EdgeInsets.symmetric(
-                              vertical: 10.0,
-                              horizontal: 12,
-                            ),
+                        ? Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 12),
                             child: SizedBox.square(
-                              dimension: 24,
+                              dimension: 20,
                               child: CircularProgressIndicator.adaptive(
-                                strokeWidth: 2.5,
+                                strokeWidth: 2,
                               ),
                             ),
                           )
                         : Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                            margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
                             decoration: BoxDecoration(
-                              color: theme.colorScheme.primary.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(20),
+                              color: theme.colorScheme.surfaceContainerHigh,
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
+                                width: 1,
+                              ),
                             ),
                             child: TextButton.icon(
                               onPressed: controller.setServer,
                               style: TextButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 6,
                                 ),
-                                textStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                textStyle: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: theme.colorScheme.primary,
+                                ),
                               ),
-                              icon: const Icon(Icons.edit_rounded, size: 16),
+                              icon: const Icon(Icons.edit_rounded, size: 14),
                               label: Text(
                                 controller.searchServer ??
                                     Matrix.of(context).client.homeserver!.host,
                                 maxLines: 1,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
                             ),
                           )
                     : Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+                        padding: const EdgeInsets.symmetric(horizontal: 6.0, vertical: 6.0),
                         child: ClientChooserButton(controller),
                       ),
               ),

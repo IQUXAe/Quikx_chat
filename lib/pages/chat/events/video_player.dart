@@ -6,6 +6,7 @@ import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:matrix/matrix.dart';
 
 import 'package:quikxchat/config/app_config.dart';
+import 'package:quikxchat/utils/date_time_extension.dart';
 import 'package:quikxchat/utils/file_description.dart';
 import 'package:quikxchat/utils/matrix_sdk_extensions/event_extension.dart';
 import 'package:quikxchat/utils/platform_infos.dart';
@@ -108,15 +109,48 @@ class EventVideoPlayer extends StatelessWidget {
                     if (duration != null)
                       Positioned(
                         bottom: 8,
-                        left: 16,
-                        child: Text(
-                          '${duration.inMinutes.toString().padLeft(2, '0')}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}',
-                          style: TextStyle(
-                            color: Colors.white,
-                            backgroundColor: Colors.black.withAlpha(32),
+                        left: 8,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.6),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            _formatDuration(duration),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
                       ),
+                    Positioned(
+                      bottom: 8,
+                      right: 8,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.6),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          event.originServerTs.localizedTimeShort(context),
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -153,5 +187,15 @@ class EventVideoPlayer extends StatelessWidget {
           ),
       ],
     );
+  }
+
+  String _formatDuration(Duration duration) {
+    if (duration.inHours > 0) {
+      return '${duration.inHours.toString().padLeft(2, '0')}:${(duration.inMinutes % 60).toString().padLeft(2, '0')}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}';
+    } else if (duration.inMinutes > 0) {
+      return '${duration.inMinutes.toString().padLeft(2, '0')}:${(duration.inSeconds % 60).toString().padLeft(2, '0')}';
+    } else {
+      return '00:${duration.inSeconds.toString().padLeft(2, '0')}';
+    }
   }
 }

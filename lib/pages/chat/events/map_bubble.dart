@@ -42,8 +42,8 @@ class MapBubble extends StatelessWidget {
                     maxZoom: 20,
                     minZoom: 0,
                     urlTemplate:
-                        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                    subdomains: const ['a', 'b', 'c'],
+                        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    userAgentPackageName: 'com.iquxae.quikxchat',
                   ),
                   MarkerLayer(
                     rotate: true,

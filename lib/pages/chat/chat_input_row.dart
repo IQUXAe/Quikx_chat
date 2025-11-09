@@ -136,10 +136,11 @@ class ChatInputRow extends StatelessWidget {
                   useRootNavigator: true,
                   icon: const Icon(Icons.add_rounded),
                   style: IconButton.styleFrom(
-                    backgroundColor: theme.colorScheme.primaryContainer,
-                    foregroundColor: theme.colorScheme.onPrimaryContainer,
+                    backgroundColor: Colors.transparent,
+                    foregroundColor: theme.colorScheme.primary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
+                      side: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.4), width: 1),
                     ),
                   ),
                   onSelected: controller.onAddPopupMenuButtonSelected,
@@ -153,12 +154,16 @@ class ChatInputRow extends StatelessWidget {
                             width: 40,
                             height: 40,
                             decoration: BoxDecoration(
-                              color: theme.colorScheme.primaryContainer,
+                              color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                               borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: theme.colorScheme.outline.withValues(alpha: 0.4),
+                                width: 1,
+                              ),
                             ),
                             child: Icon(
                               Icons.my_location_rounded,
-                              color: theme.colorScheme.onPrimaryContainer,
+                              color: theme.colorScheme.primary,
                               size: 20,
                             ),
                           ),
@@ -173,12 +178,16 @@ class ChatInputRow extends StatelessWidget {
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
-                            color: theme.colorScheme.primaryContainer,
+                            color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                             borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: theme.colorScheme.outline.withValues(alpha: 0.4),
+                              width: 1,
+                            ),
                           ),
                           child: Icon(
                             Icons.photo_library_rounded,
-                            color: theme.colorScheme.onPrimaryContainer,
+                            color: theme.colorScheme.primary,
                             size: 20,
                           ),
                         ),
@@ -193,12 +202,16 @@ class ChatInputRow extends StatelessWidget {
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
-                            color: theme.colorScheme.primaryContainer,
+                            color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                             borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: theme.colorScheme.outline.withValues(alpha: 0.4),
+                              width: 1,
+                            ),
                           ),
                           child: Icon(
                             Icons.play_circle_rounded,
-                            color: theme.colorScheme.onPrimaryContainer,
+                            color: theme.colorScheme.primary,
                             size: 20,
                           ),
                         ),
@@ -213,12 +226,16 @@ class ChatInputRow extends StatelessWidget {
                           width: 40,
                           height: 40,
                           decoration: BoxDecoration(
-                            color: theme.colorScheme.primaryContainer,
+                            color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                             borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: theme.colorScheme.outline.withValues(alpha: 0.4),
+                              width: 1,
+                            ),
                           ),
                           child: Icon(
                             Icons.insert_drive_file_rounded,
-                            color: theme.colorScheme.onPrimaryContainer,
+                            color: theme.colorScheme.primary,
                             size: 20,
                           ),
                         ),
@@ -242,10 +259,11 @@ class ChatInputRow extends StatelessWidget {
                     useRootNavigator: true,
                     icon: const Icon(Icons.photo_camera_rounded),
                     style: IconButton.styleFrom(
-                      backgroundColor: theme.colorScheme.primaryContainer,
-                      foregroundColor: theme.colorScheme.onPrimaryContainer,
+                      backgroundColor: Colors.transparent,
+                      foregroundColor: theme.colorScheme.primary,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
+                        side: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.4), width: 1),
                       ),
                     ),
                     onSelected: controller.onAddPopupMenuButtonSelected,
@@ -257,12 +275,16 @@ class ChatInputRow extends StatelessWidget {
                             width: 40,
                             height: 40,
                             decoration: BoxDecoration(
-                              color: theme.colorScheme.primaryContainer,
+                              color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                               borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: theme.colorScheme.outline.withValues(alpha: 0.4),
+                                width: 1,
+                              ),
                             ),
                             child: Icon(
                               Icons.video_camera_front_rounded,
-                              color: theme.colorScheme.onPrimaryContainer,
+                              color: theme.colorScheme.primary,
                               size: 20,
                             ),
                           ),
@@ -277,12 +299,16 @@ class ChatInputRow extends StatelessWidget {
                             width: 40,
                             height: 40,
                             decoration: BoxDecoration(
-                              color: theme.colorScheme.primaryContainer,
+                              color: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
                               borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: theme.colorScheme.outline.withValues(alpha: 0.4),
+                                width: 1,
+                              ),
                             ),
                             child: Icon(
                               Icons.camera_rounded,
-                              color: theme.colorScheme.onPrimaryContainer,
+                              color: theme.colorScheme.primary,
                               size: 20,
                             ),
                           ),
@@ -300,10 +326,11 @@ class ChatInputRow extends StatelessWidget {
                 child: IconButton(
                   tooltip: L10n.of(context).emojis,
                   style: IconButton.styleFrom(
-                    backgroundColor: theme.colorScheme.primaryContainer,
-                    foregroundColor: theme.colorScheme.onPrimaryContainer,
+                    backgroundColor: Colors.transparent,
+                    foregroundColor: theme.colorScheme.primary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
+                      side: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.4), width: 1),
                     ),
                   ),
                   icon: AnimatedSwitcher(
@@ -345,47 +372,53 @@ class ChatInputRow extends StatelessWidget {
                         margin: const EdgeInsets.only(bottom: 8),
                         child: controller.inputLinkPreview!,
                       ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 0.0),
-                      child: InputBar(
-                        room: controller.room,
-                        minLines: 1,
-                        maxLines: 8,
-                        autofocus: !PlatformInfos.isMobile,
-                        keyboardType: TextInputType.multiline,
-                        textInputAction:
-                            AppConfig.sendOnEnter == true && PlatformInfos.isMobile
-                                ? TextInputAction.send
-                                : null,
-                        onSubmitted: controller.onInputBarSubmitted,
-                        onSubmitImage: controller.sendImageFromClipBoard,
-                        focusNode: controller.inputFocus,
-                        controller: controller.sendController,
-                        decoration: InputDecoration(
-                          contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16.0,
-                            vertical: 12.0,
-                          ),
-                          counter: const SizedBox.shrink(),
-                          hintText: L10n.of(context).writeAMessage,
-                          hintMaxLines: 1,
-                          filled: true,
-                          fillColor: theme.colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(24),
-                            borderSide: BorderSide.none,
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(24),
-                            borderSide: BorderSide.none,
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(24),
-                            borderSide: BorderSide.none,
+                    InputBar(
+                      room: controller.room,
+                      minLines: 1,
+                      maxLines: 8,
+                      autofocus: !PlatformInfos.isMobile,
+                      keyboardType: TextInputType.multiline,
+                      textInputAction:
+                          AppConfig.sendOnEnter == true && PlatformInfos.isMobile
+                              ? TextInputAction.send
+                              : null,
+                      onSubmitted: controller.onInputBarSubmitted,
+                      onSubmitImage: controller.sendImageFromClipBoard,
+                      focusNode: controller.inputFocus,
+                      controller: controller.sendController,
+                      decoration: InputDecoration(
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 16.0,
+                          vertical: 12.0,
+                        ),
+                        counter: const SizedBox.shrink(),
+                        hintText: L10n.of(context).writeAMessage,
+                        hintMaxLines: 1,
+                        filled: true,
+                        fillColor: theme.colorScheme.surface.withValues(alpha: 0.2), // Гораздо более прозрачный фон
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(24),
+                          borderSide: BorderSide(
+                            color: theme.colorScheme.outline.withValues(alpha: 0.4),
+                            width: 1,
                           ),
                         ),
-                        onChanged: controller.onInputBarChanged,
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(24),
+                          borderSide: BorderSide(
+                            color: theme.colorScheme.outline.withValues(alpha: 0.4),
+                            width: 1,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(24),
+                          borderSide: BorderSide(
+                            color: theme.colorScheme.primary,
+                            width: 1.5,
+                          ),
+                        ),
                       ),
+                      onChanged: controller.onInputBarChanged,
                     ),
                   ],
                 ),
@@ -411,49 +444,29 @@ class ChatInputRow extends StatelessWidget {
                             ? () => recordingViewModel.startRecording(controller.room)
                             : null,
                         style: IconButton.styleFrom(
-                          backgroundColor: theme.colorScheme.primary,
-                          foregroundColor: theme.colorScheme.onPrimary,
+                          backgroundColor: Colors.transparent,
+                          foregroundColor: theme.colorScheme.primary,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
+                            side: BorderSide(color: theme.colorScheme.outline.withValues(alpha: 0.4), width: 1),
                           ),
                         ),
                         icon: const Icon(Icons.mic_rounded, size: 20),
                         iconSize: 20,
                       )
-                    : _SendButton(
+                    : Container(
+                      height: height,
+                      width: height,
+                      alignment: Alignment.center,
+                      child: _SendButton(
                         onPressed: controller.send,
                         tooltip: L10n.of(context).send,
                       ),
+                    ),
               ),
             ],
         );
       },
-    );
-  }
-}
-
-class _SendButton extends StatelessWidget {
-  final VoidCallback onPressed;
-  final String tooltip;
-
-  const _SendButton({required this.onPressed, required this.tooltip});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    
-    return IconButton(
-      tooltip: tooltip,
-      onPressed: onPressed,
-      style: IconButton.styleFrom(
-        backgroundColor: theme.colorScheme.primary,
-        foregroundColor: theme.colorScheme.onPrimary,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(20),
-        ),
-      ),
-      icon: const Icon(Icons.arrow_upward_rounded, size: 20),
-      iconSize: 20,
     );
   }
 }
@@ -515,3 +528,31 @@ class _ChatAccountPicker extends StatelessWidget {
     );
   }
 }
+
+class _SendButton extends StatelessWidget {
+  final VoidCallback onPressed;
+  final String tooltip;
+
+  const _SendButton({required this.onPressed, required this.tooltip});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    
+    return IconButton(
+      tooltip: tooltip,
+      onPressed: onPressed,
+      style: IconButton.styleFrom(
+        backgroundColor: theme.colorScheme.primary,
+        foregroundColor: theme.colorScheme.onPrimary,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+      ),
+      icon: const Icon(Icons.arrow_upward_rounded, size: 20),
+      iconSize: 20,
+    );
+  }
+}
+
+
