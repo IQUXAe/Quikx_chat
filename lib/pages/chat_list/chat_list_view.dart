@@ -102,12 +102,13 @@ class _AnimatedFABState extends State<_AnimatedFAB> with SingleTickerProviderSta
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 200),
+      duration: const Duration(milliseconds: 300), // Increased duration for smoother animation
       vsync: this,
     );
     _scaleAnimation = CurvedAnimation(
       parent: _controller,
-      curve: Curves.easeInOut,
+      curve: Curves.elasticOut, // Changed to elastic curve for more physics
+      reverseCurve: Curves.elasticIn, // Reverse curve for more physics when hiding
     );
     widget.scrollController.addListener(_onScroll);
     if (widget.visible) _controller.forward();
@@ -150,11 +151,26 @@ class _AnimatedFABState extends State<_AnimatedFAB> with SingleTickerProviderSta
   Widget build(BuildContext context) {
     return ScaleTransition(
       scale: _scaleAnimation,
-      child: FloatingActionButton(
-        onPressed: widget.onPressed,
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        elevation: 3,
-        child: const Icon(Icons.edit_outlined, size: 24),
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) {
+          return Transform.translate(
+            offset: Offset(0, (1 - _scaleAnimation.value) * 20), // Add subtle vertical movement
+            child: FloatingActionButton(
+              onPressed: widget.onPressed,
+              backgroundColor: Theme.of(context).colorScheme.primary,
+              elevation: 6, // Increased elevation for more depth
+              shape: RoundedRectangleBorder( // Add more physics-like shape
+                borderRadius: BorderRadius.circular(16 + (4 * (1 - _scaleAnimation.value))),
+              ),
+              child: AnimatedScale(
+                scale: 1.0 + (0.1 * (1 - _scaleAnimation.value)), // Slight scale effect on tap
+                duration: const Duration(milliseconds: 100),
+                child: const Icon(Icons.edit_outlined, size: 24),
+              ),
+            ),
+          );
+        },
       ),
     );
   }

@@ -59,6 +59,9 @@ class ChatEventList extends StatelessWidget {
         reverse: true,
         controller: controller.scrollController,
         keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.manual,
+        physics: const BouncingScrollPhysics(
+            parent:
+                AlwaysScrollableScrollPhysics()), // Add bounce physics for better scrolling
         childrenDelegate: SliverChildBuilderDelegate(
           (BuildContext context, int i) {
             // Footer to display typing indicator and read receipts:
@@ -95,7 +98,8 @@ class ChatEventList extends StatelessWidget {
               // Fix infinite scroll bug - check if we can actually request more history
               if (timeline.canRequestHistory && timeline.events.isNotEmpty) {
                 // Check if we have reached the beginning by comparing event count
-                final hasReachedStart = timeline.events.length < 50 && !timeline.canRequestHistory;
+                final hasReachedStart =
+                    timeline.events.length < 50 && !timeline.canRequestHistory;
                 if (!hasReachedStart) {
                   return Builder(
                     builder: (context) {
@@ -148,53 +152,57 @@ class ChatEventList extends StatelessWidget {
                 previousEvent?.isCollapsedState == true &&
                 !controller.expandedEventIds.contains(event.eventId);
 
-            return AnimatedSlide(
-              offset: animateIn ? const Offset(0.1, 0) : Offset.zero,
-              duration: QuikxChatThemes.animationDuration,
-              child: AnimatedScale(
-                scale: animateIn ? 0.95 : 1.0,
+            // Оптимизация: используем RepaintBoundary для изоляции перерисовки
+            return RepaintBoundary(
+              child: AnimatedSlide(
+                offset: animateIn ? const Offset(0.1, 0) : Offset.zero,
                 duration: QuikxChatThemes.animationDuration,
-                child: AutoScrollTag(
-                  key: ValueKey(event.eventId),
-                  index: i,
-                  controller: controller.scrollController,
-                  child: Message(
-                    event,
-                    animateIn: animateIn,
-                    resetAnimateIn: () {
-                      controller.animateInEventIndex = null;
-                    },
-                    onSwipe: () => controller.replyAction(replyTo: event),
-                    onInfoTab: controller.showEventInfo,
-                    onMention: () => controller.sendController.text +=
-                        '${event.senderFromMemoryOrFallback.mention} ',
-                    highlightMarker:
-                        controller.scrollToEventIdMarker == event.eventId,
-                    onSelect: controller.onSelectMessage,
-                    scrollToEventId: (String eventId) =>
-                        controller.scrollToEventId(eventId),
-                    longPressSelect: controller.selectedEvents.isNotEmpty,
-                    selected: controller.selectedEvents
-                        .any((e) => e.eventId == event.eventId),
-                    singleSelected:
-                        controller.selectedEvents.singleOrNull?.eventId ==
-                            event.eventId,
-                    onEdit: () => controller.editSelectedEventAction(),
-                    timeline: timeline,
-                    displayReadMarker:
-                        i > 0 && controller.readMarkerEventId == event.eventId,
-                    nextEvent: nextEvent,
-                    previousEvent: previousEvent,
-                    wallpaperMode: hasWallpaper,
-                    scrollController: controller.scrollController,
-                    colors: colors,
-                    isCollapsed: isCollapsed,
-                    onExpand: canExpand
-                        ? () => controller.expandEventsFrom(
-                              event,
-                              !controller.expandedEventIds.contains(event.eventId),
-                            )
-                        : null,
+                child: AnimatedScale(
+                  scale: animateIn ? 0.95 : 1.0,
+                  duration: QuikxChatThemes.animationDuration,
+                  child: AutoScrollTag(
+                    key: ValueKey(event.eventId),
+                    index: i,
+                    controller: controller.scrollController,
+                    child: Message(
+                      event,
+                      animateIn: animateIn,
+                      resetAnimateIn: () {
+                        controller.animateInEventIndex = null;
+                      },
+                      onSwipe: () => controller.replyAction(replyTo: event),
+                      onInfoTab: controller.showEventInfo,
+                      onMention: () => controller.sendController.text +=
+                          '${event.senderFromMemoryOrFallback.mention} ',
+                      highlightMarker:
+                          controller.scrollToEventIdMarker == event.eventId,
+                      onSelect: controller.onSelectMessage,
+                      scrollToEventId: (String eventId) =>
+                          controller.scrollToEventId(eventId),
+                      longPressSelect: controller.selectedEvents.isNotEmpty,
+                      selected: controller.selectedEvents
+                          .any((e) => e.eventId == event.eventId),
+                      singleSelected:
+                          controller.selectedEvents.singleOrNull?.eventId ==
+                              event.eventId,
+                      onEdit: () => controller.editSelectedEventAction(),
+                      timeline: timeline,
+                      displayReadMarker:
+                          i > 0 && controller.readMarkerEventId == event.eventId,
+                      nextEvent: nextEvent,
+                      previousEvent: previousEvent,
+                      wallpaperMode: hasWallpaper,
+                      scrollController: controller.scrollController,
+                      colors: colors,
+                      isCollapsed: isCollapsed,
+                      onExpand: canExpand
+                          ? () => controller.expandEventsFrom(
+                                event,
+                                !controller.expandedEventIds
+                                    .contains(event.eventId),
+                              )
+                          : null,
+                    ),
                   ),
                 ),
               ),

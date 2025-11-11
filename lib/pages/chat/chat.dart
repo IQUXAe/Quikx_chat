@@ -436,6 +436,19 @@ class ChatController extends State<ChatPageWithRoom>
   void onInsert(int i) {
     // setState will be called by updateView() anyway
     animateInEventIndex = i;
+    
+    // If at the bottom of the chat and new message arrives, smoothly scroll to it
+    if (scrollController.hasClients && 
+        scrollController.position.pixels <= 5.0 && // Allow small threshold for physics
+        timeline != null && 
+        timeline!.events.isNotEmpty) {
+      // Animate to new message with physics-based curve
+      scrollController.animateTo(
+        0.0,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.elasticOut, // Physics-based curve
+      );
+    }
   }
 
   Future<void> _getTimeline({
@@ -568,7 +581,8 @@ class ChatController extends State<ChatPageWithRoom>
       if (!_scrolledUp) setReadMarker();
     }
     
-    if (atBottom || scrollController.position.pixels == 64) {
+    // Add physics-based threshold for requesting new messages
+    if (atBottom || scrollController.position.pixels <= 10) {
       requestFuture();
     }
   }
@@ -1068,7 +1082,12 @@ class ChatController extends State<ChatPageWithRoom>
       });
       await loadTimelineFuture;
     }
-    scrollController.jumpTo(0);
+    // Use animateTo instead of jumpTo for smoother physics-based scrolling
+    await scrollController.animateTo(
+      0.0,
+      duration: const Duration(milliseconds: 500), // Increased duration for smoother animation
+      curve: Curves.elasticOut, // Added physics-based curve
+    );
   }
 
   void onEmojiSelected(Object? _, Emoji? emoji) {
