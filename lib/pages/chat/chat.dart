@@ -28,6 +28,7 @@ import 'package:quikxchat/utils/error_reporter.dart';
 import 'package:quikxchat/utils/file_selector.dart';
 import 'package:quikxchat/utils/matrix_sdk_extensions/event_extension.dart';
 import 'package:quikxchat/utils/matrix_sdk_extensions/filtered_timeline_extension.dart';
+import 'package:quikxchat/utils/settings_cache.dart';
 import 'package:quikxchat/utils/matrix_sdk_extensions/matrix_locals.dart';
 import 'package:quikxchat/utils/other_party_can_receive.dart';
 import 'package:quikxchat/utils/platform_infos.dart';
@@ -302,7 +303,7 @@ class ChatController extends State<ChatPageWithRoom>
 
     super.initState();
     _displayChatDetailsColumn = ValueNotifier(
-      AppSettings.displayChatDetailsColumn.getItem(Matrix.of(context).store),
+      SettingsCache.getSetting(AppSettings.displayChatDetailsColumn, Matrix.of(context).store),
     );
 
     sendingClient = Matrix.of(context).client;

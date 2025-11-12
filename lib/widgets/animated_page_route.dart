@@ -13,8 +13,8 @@ class ModernPageRoute<T> extends PageRouteBuilder<T> {
     super.settings,
   }) : super(
           pageBuilder: (context, animation, secondaryAnimation) => child,
-          transitionDuration: const Duration(milliseconds: 400),
-          reverseTransitionDuration: const Duration(milliseconds: 350),
+          transitionDuration: const Duration(milliseconds: 250),
+          reverseTransitionDuration: const Duration(milliseconds: 200),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return _buildTransition(
               context,
@@ -39,7 +39,7 @@ class ModernPageRoute<T> extends PageRouteBuilder<T> {
       parent: animation,
       curve: const Cubic(0.25, 0.1, 0.25, 1.0),
     );
-    
+
     final reverseCurvedAnimation = CurvedAnimation(
       parent: secondaryAnimation,
       curve: const Cubic(0.4, 0.0, 0.2, 1.0),

@@ -143,12 +143,19 @@ abstract class AppRoutes {
           );
         } else {
           // Для чатов показываем список чатов слева
+          // Проверяем, не находится ли текущий маршрут в настройках чатов
+          final isChatSettings = state.fullPath?.contains('/rooms/') == true && 
+                                state.fullPath?.contains('/settings') == true;
+          
+          // Если это настройки чата, не выделяем активный чат в списке
+          final activeChat = isChatSettings ? null : state.pathParameters['roomid'];
+          
           return noTransitionPageBuilder(
             context,
             state,
             TwoColumnLayout(
               mainView: ChatList(
-                activeChat: state.pathParameters['roomid'],
+                activeChat: activeChat,
                 displayNavigationRail: true,
               ),
               sideView: child,

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:quikxchat/config/setting_keys.dart';
+import 'package:quikxchat/utils/settings_cache.dart';
 import 'package:quikxchat/widgets/adaptive_dialogs/show_text_input_dialog.dart';
 import 'package:quikxchat/widgets/matrix.dart';
 
@@ -21,7 +22,7 @@ class _ConfigViewerState extends State<ConfigViewer> {
     String initialValue,
   ) async {
     if (appSetting is AppSettings<bool>) {
-      await appSetting.setItem(store, !(initialValue == 'true'));
+      await SettingsCache.setSetting(appSetting, store, !(initialValue == 'true'));
       setState(() {});
       return;
     }
@@ -35,13 +36,13 @@ class _ConfigViewerState extends State<ConfigViewer> {
     if (value == null) return;
 
     if (appSetting is AppSettings<String>) {
-      await appSetting.setItem(store, value);
+      await SettingsCache.setSetting(appSetting, store, value);
     }
     if (appSetting is AppSettings<int>) {
-      await appSetting.setItem(store, int.parse(value));
+      await SettingsCache.setSetting(appSetting, store, int.parse(value));
     }
     if (appSetting is AppSettings<double>) {
-      await appSetting.setItem(store, double.parse(value));
+      await SettingsCache.setSetting(appSetting, store, double.parse(value));
     }
 
     setState(() {});
@@ -78,16 +79,16 @@ class _ConfigViewerState extends State<ConfigViewer> {
                 final appSetting = AppSettings.values[i];
                 var value = '';
                 if (appSetting is AppSettings<String>) {
-                  value = appSetting.getItem(store);
+                  value = SettingsCache.getSetting(appSetting, store);
                 }
                 if (appSetting is AppSettings<int>) {
-                  value = appSetting.getItem(store).toString();
+                  value = SettingsCache.getSetting(appSetting, store).toString();
                 }
                 if (appSetting is AppSettings<bool>) {
-                  value = appSetting.getItem(store).toString();
+                  value = SettingsCache.getSetting(appSetting, store).toString();
                 }
                 if (appSetting is AppSettings<double>) {
-                  value = appSetting.getItem(store).toString();
+                  value = SettingsCache.getSetting(appSetting, store).toString();
                 }
                 return ListTile(
                   title: Text(appSetting.name),

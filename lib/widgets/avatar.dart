@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:matrix/matrix.dart';
 
 import 'package:quikxchat/utils/string_color.dart';
+import 'package:quikxchat/utils/global_cache.dart';
 import 'package:quikxchat/widgets/mxc_image.dart';
 import 'package:quikxchat/widgets/presence_builder.dart';
 
@@ -100,6 +101,46 @@ class _AvatarState extends State<Avatar> {
         ),
       );
     } else {
+      // Check cache first for avatar
+      final cacheKey = '${widget.mxContent}_${widget.size}';
+      final cachedData = AppCaches.avatars.get(cacheKey);
+
+      Widget avatarImage;
+      if (cachedData != null) {
+        // Use cached data if available
+        avatarImage = MxcImage(
+          client: widget.client,
+          borderRadius: borderRadius,
+          key: ValueKey(widget.mxContent.toString()),
+          cacheKey: cacheKey,
+          uri: widget.mxContent,
+          fit: BoxFit.cover,
+          width: widget.size,
+          height: widget.size,
+          placeholder: (_) => _buildInitialsPlaceholder(name, theme, widget.size, borderRadius, widget.border),
+        );
+      } else {
+        // Load image and cache result
+        avatarImage = MxcImage(
+          client: widget.client,
+          borderRadius: borderRadius,
+          key: ValueKey(widget.mxContent.toString()),
+          cacheKey: cacheKey,
+          uri: widget.mxContent,
+          fit: BoxFit.cover,
+          width: widget.size,
+          height: widget.size,
+          placeholder: (_) => _buildInitialsPlaceholder(name, theme, widget.size, widget.borderRadius, widget.border),
+        );
+
+        // Cache the result after image loads
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (widget.mxContent != null) {
+            AppCaches.avatars.put(cacheKey, widget.mxContent.toString());
+          }
+        });
+      }
+
       avatarContent = SizedBox(
         width: widget.size,
         height: widget.size,
@@ -112,23 +153,7 @@ class _AvatarState extends State<Avatar> {
             side: widget.border ?? BorderSide.none,
           ),
           clipBehavior: Clip.antiAlias,
-          child: MxcImage(
-            client: widget.client,
-            borderRadius: borderRadius,
-            key: ValueKey(widget.mxContent.toString()),
-            cacheKey: '${widget.mxContent}_${widget.size}',
-            uri: widget.mxContent,
-            fit: BoxFit.cover,
-            width: widget.size,
-            height: widget.size,
-            placeholder: (_) => Center(
-              child: Icon(
-                Icons.person_2,
-                color: theme.colorScheme.tertiary,
-                size: widget.size / 1.5,
-              ),
-            ),
-          ),
+          child: avatarImage,
         ),
       );
     }
@@ -230,5 +255,31 @@ class _AvatarState extends State<Avatar> {
     } catch (e) {
       // Ignore errors
     }
+  }
+
+  Widget _buildInitialsPlaceholder(String? name, ThemeData theme, double size, BorderRadius? borderRadius, BorderSide? border) {
+    final fallbackLetters = name == null || name.isEmpty ? '@' : name.substring(0, 1);
+    final computedBorderRadius = borderRadius ?? BorderRadius.circular(size / 2);
+
+    return Container(
+      width: size,
+      height: size,
+      decoration: BoxDecoration(
+        color: name?.lightColorAvatar,
+        borderRadius: computedBorderRadius,
+        border: border != null ? Border.fromBorderSide(border) : null,
+      ),
+      alignment: Alignment.center,
+      child: Text(
+        fallbackLetters,
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontFamily: 'RobotoMono',
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+          fontSize: (size / 2.5).roundToDouble(),
+        ),
+      ),
+    );
   }
 }

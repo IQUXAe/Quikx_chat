@@ -8,6 +8,7 @@ class OptimizedMessageBubble extends StatefulWidget {
   final BorderRadius borderRadius;
   final bool animateIn;
   final VoidCallback? onAnimationComplete;
+  final int index; // Added for index-based delays like in the original animated version
 
   const OptimizedMessageBubble({
     super.key,
@@ -17,6 +18,7 @@ class OptimizedMessageBubble extends StatefulWidget {
     required this.borderRadius,
     this.animateIn = false,
     this.onAnimationComplete,
+    this.index = 0, // Default to 0 for backward compatibility
   });
 
   @override
@@ -35,7 +37,9 @@ class _OptimizedMessageBubbleState extends State<OptimizedMessageBubble>
     super.initState();
     
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 400),
+      duration: Duration(
+        milliseconds: 400 + (widget.index * 30).clamp(0, 150), // Added index-based delay
+      ),
       vsync: this,
     );
 
@@ -64,10 +68,14 @@ class _OptimizedMessageBubbleState extends State<OptimizedMessageBubble>
       curve: const Interval(0.2, 1.0, curve: Curves.easeOutQuart),
     ),);
 
-    // Запускаем анимацию если нужно
+    // Запускаем анимацию если нужно, с небольшой задержкой на основе индекса
     if (widget.animateIn) {
-      _controller.forward().then((_) {
-        widget.onAnimationComplete?.call();
+      Future.delayed(Duration(milliseconds: widget.index * 20), () { // Added index-based delay
+        if (mounted) {
+          _controller.forward().then((_) {
+            widget.onAnimationComplete?.call();
+          });
+        }
       });
     } else {
       _controller.value = 1.0;

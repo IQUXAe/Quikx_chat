@@ -19,6 +19,7 @@ import 'package:url_launcher/url_launcher_string.dart';
 
 import 'package:quikxchat/l10n/l10n.dart';
 import 'package:quikxchat/utils/client_manager.dart';
+import 'package:quikxchat/utils/settings_cache.dart';
 
 
 import 'package:quikxchat/utils/init_with_restore.dart';
@@ -460,7 +461,7 @@ class MatrixState extends State<Matrix> with WidgetsBindingObserver {
             AppConfig.displayNavigationRail;
 
     AppConfig.showLinkPreviews =
-        AppSettings.showLinkPreviews.getItem(store);
+        SettingsCache.getSetting(AppSettings.showLinkPreviews, store);
   }
 
   @override

@@ -15,6 +15,7 @@ import 'package:quikxchat/config/app_config.dart';
 import 'package:quikxchat/config/setting_keys.dart';
 import 'package:quikxchat/l10n/l10n.dart';
 import 'package:quikxchat/utils/custom_http_client.dart';
+import 'package:quikxchat/utils/settings_cache.dart';
 
 import 'package:quikxchat/utils/custom_image_resizer.dart';
 import 'package:quikxchat/utils/init_with_restore.dart';
@@ -102,45 +103,8 @@ abstract class ClientManager {
     String clientName,
     SharedPreferences store,
   ) async {
-    final shareKeysWith = AppSettings.shareKeysWith.getItem(store);
-    final enableSoftLogout = AppSettings.enableSoftLogout.getItem(store);
-
-    return Client(
-      clientName,
-      httpClient: CustomHttpClient.createHTTPClient(),
-      verificationMethods: {
-        KeyVerificationMethod.numbers,
-        if (kIsWeb || PlatformInfos.isMobile || PlatformInfos.isLinux)
-          KeyVerificationMethod.emoji,
-      },
-      importantStateEvents: <String>{
-        'im.ponies.room_emotes',
-      },
-      logLevel: kReleaseMode ? Level.warning : Level.info,
-      database: await flutterMatrixSdkDatabaseBuilder(clientName),
-      supportedLoginTypes: {
-        AuthenticationTypes.password,
-        AuthenticationTypes.sso,
-      },
-      nativeImplementations: nativeImplementations,
-      customImageResizer: PlatformInfos.isMobile ? customImageResizer : null,
-      defaultNetworkRequestTimeout: const Duration(minutes: 10),
-      enableDehydratedDevices: true,
-      shareKeysWith: ShareKeysWith.values
-              .singleWhereOrNull((share) => share.name == shareKeysWith) ??
-          ShareKeysWith.all,
-      convertLinebreaksInFormatting: false,
-      onSoftLogout:
-          enableSoftLogout ? (client) => client.refreshAccessToken() : null,
-    );
-  }
-  
-  static Future<Client> createClientLegacy(
-    String clientName,
-    SharedPreferences store,
-  ) async {
-    final shareKeysWith = AppSettings.shareKeysWith.getItem(store);
-    final enableSoftLogout = AppSettings.enableSoftLogout.getItem(store);
+    final shareKeysWith = SettingsCache.getSetting(AppSettings.shareKeysWith, store);
+    final enableSoftLogout = SettingsCache.getSetting(AppSettings.enableSoftLogout, store);
 
     return Client(
       clientName,
